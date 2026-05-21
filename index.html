@@ -144,15 +144,18 @@
             letter-spacing: 0.5px;
         }
 
-        .input-group {
+        .input-block {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .input-block:last-child { border-bottom: none; }
+        
+        .input-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
         }
         
-        .input-group:last-child { border-bottom: none; }
         .input-label { font-size: 15px; font-weight: 500; }
         
         .counter { display: flex; align-items: center; gap: 8px; }
@@ -188,9 +191,9 @@
             color: var(--text-color);
         }
 
-        /* Стилі для повзунка */
+        /* Стилі повзунків */
         .slider-container {
-            padding: 10px 0;
+            padding-top: 12px;
             width: 100%;
         }
         input[type=range] {
@@ -198,19 +201,17 @@
             width: 100%;
             background: transparent;
         }
-        input[type=range]:focus {
-            outline: none;
-        }
+        input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 26px;
-            width: 26px;
+            height: 22px;
+            width: 22px;
             border-radius: 50%;
             background: var(--card-bg);
             border: 2px solid var(--accent-success);
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             cursor: pointer;
-            margin-top: -10px;
+            margin-top: -8px;
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
@@ -315,58 +316,88 @@
 
         <div class="card">
             <div class="card-title">Параметри маршруту</div>
-            <div class="input-group">
-                <span class="input-label">📍 Км місто</span>
-                <div class="counter">
-                    <button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button>
-                    <input type="number" step="0.1" class="counter-value" id="inp-dist" value="4.6" oninput="recalc()">
-                    <button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button>
+            
+            <div class="input-block">
+                <div class="input-header">
+                    <span class="input-label">📍 Км місто</span>
+                    <div class="counter">
+                        <button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button>
+                        <input type="number" step="0.1" class="counter-value" id="inp-dist" value="4.6" oninput="syncInputToSlider('dist')">
+                        <button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="slider-dist" min="0" max="50" step="0.1" value="4.6" oninput="syncSliderToInput('dist')">
                 </div>
             </div>
-            <div class="input-group">
-                <span class="input-label">🌳 Км за містом</span>
-                <div class="counter">
-                    <button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button>
-                    <input type="number" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="recalc()">
-                    <button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button>
+
+            <div class="input-block">
+                <div class="input-header">
+                    <span class="input-label">🌳 Км за містом</span>
+                    <div class="counter">
+                        <button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button>
+                        <input type="number" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')">
+                        <button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="slider-distOut" min="0" max="100" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')">
                 </div>
             </div>
-            <div class="input-group">
-                <span class="input-label">🚗 Подача (км)</span>
-                <div class="counter">
-                    <button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button>
-                    <input type="number" step="0.1" class="counter-value" id="inp-delivery" value="1.2" oninput="recalc()">
-                    <button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button>
+
+            <div class="input-block">
+                <div class="input-header">
+                    <span class="input-label">🚗 Подача (км)</span>
+                    <div class="counter">
+                        <button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button>
+                        <input type="number" step="0.1" class="counter-value" id="inp-delivery" value="1.2" oninput="syncInputToSlider('delivery')">
+                        <button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="1.2" oninput="syncSliderToInput('delivery')">
                 </div>
             </div>
-            <div class="input-group">
-                <span class="input-label">⏳ Очікування (хв)</span>
-                <div class="counter">
-                    <button class="btn-counter" onclick="changeVal('wait', -1)">-</button>
-                    <input type="number" class="counter-value" id="inp-wait" value="0" oninput="recalc()">
-                    <button class="btn-counter" onclick="changeVal('wait', 1)">+</button>
+
+            <div class="input-block">
+                <div class="input-header">
+                    <span class="input-label">⏳ Очікування (хв)</span>
+                    <div class="counter">
+                        <button class="btn-counter" onclick="changeVal('wait', -1)">-</button>
+                        <input type="number" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')">
+                        <button class="btn-counter" onclick="changeVal('wait', 1)">+</button>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')">
                 </div>
             </div>
-            <div class="input-group">
-                <span class="input-label">📌 Дод. точки (₴)</span>
-                <div class="counter">
-                    <button class="btn-counter" onclick="changeVal('stops', -1)">-</button>
-                    <input type="number" class="counter-value" id="inp-stops" value="0" oninput="recalc()">
-                    <button class="btn-counter" onclick="changeVal('stops', 1)">+</button>
+
+            <div class="input-block">
+                <div class="input-header">
+                    <span class="input-label">📌 Дод. точки (шт)</span>
+                    <div class="counter">
+                        <button class="btn-counter" onclick="changeVal('stops', -1)">-</button>
+                        <input type="number" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')">
+                        <button class="btn-counter" onclick="changeVal('stops', 1)">+</button>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')">
                 </div>
             </div>
             
-            <div class="input-group" style="flex-direction: column; align-items: stretch; border-bottom: none; border-top: 1px dashed rgba(0,0,0,0.1); margin-top: 8px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="input-label">⚡ Коефіцієнт (Сурдж)</span>
+            <div class="input-block">
+                <div class="input-header">
+                    <span class="input-label">⚡ Коефіцієнт (x)</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button>
-                        <input type="number" step="0.1" class="counter-value coef-badge" id="inp-coef" value="1.0" oninput="syncSlider(); recalc()">
+                        <input type="number" step="0.1" class="counter-value coef-badge" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')">
                         <button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button>
                     </div>
                 </div>
                 <div class="slider-container">
-                    <input type="range" id="slider-coef" min="1.0" max="3.5" step="0.1" value="1.0" oninput="syncInput(); recalc()">
+                    <input type="range" id="slider-coef" min="1.0" max="4.0" step="0.1" value="1.0" oninput="syncSliderToInput('coef')">
                 </div>
             </div>
         </div>
@@ -386,17 +417,10 @@
     <div id="page-branding" class="page">
         <div class="card">
             <div class="card-title">Програма лояльності</div>
-            <div class="input-group">
-                <span>Виконано замовлень:</span>
-                <input type="number" class="admin-input" id="brand-done" value="451" oninput="calcBranding()">
-            </div>
-            <div class="input-group">
-                <span>Цільовий план:</span>
-                <input type="number" class="admin-input" id="brand-target" value="700" oninput="calcBranding()">
-            </div>
-            <div class="input-group">
-                <span>Залишилось днів:</span>
-                <input type="number" class="admin-input" id="brand-days" value="10" oninput="calcBranding()">
+            <div class="input-block" style="border-bottom:none; padding: 4px 0;">
+                <div class="input-header" style="margin-bottom:10px;"><span>Виконано замовлень:</span><input type="number" class="admin-input" id="brand-done" value="451" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Цільовий план:</span><input type="number" class="admin-input" id="brand-target" value="700" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Залишилось днів:</span><input type="number" class="admin-input" id="brand-days" value="10" oninput="calcBranding()"></div>
             </div>
 
             <div class="progress-container">
@@ -419,23 +443,24 @@
     <script>
         const tg = window.Telegram.WebApp;
 
-        // Функція для тактильного відгуку
         function haptic() {
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
 
+        // Оновлені тарифи згідно зі скріншотами
         let tariffs = {
-            standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50 },
-            comfort: { name: 'Комфорт', minPrice: 110, minKm: 1.6, perKmCity: 19.00, perKmOut: 19.80, perMin: 4.00 },
-            business: { name: 'Бізнес', minPrice: 160, minKm: 1.8, perKmCity: 26.00, perKmOut: 27.00, perMin: 5.50 }
+            standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
+            comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
+            business: { name: 'Бізнес', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }
         };
 
         let currentClass = 'standard';
 
-        if(localStorage.getItem('taxi_tariffs_v3')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v3'));
+        // Новий ключ кешу, щоб підтягнути нові тарифи
+        if(localStorage.getItem('taxi_tariffs_v4')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v4'));
         }
 
         function renderCarSelector() {
@@ -464,13 +489,24 @@
             recalc();
         }
 
-        // Синхронізація повзунка і поля вводу
-        function syncSlider() {
-            document.getElementById('slider-coef').value = document.getElementById('inp-coef').value;
-        }
-        function syncInput() {
+        // Функції синхронізації повзунка та поля вводу
+        function syncSliderToInput(id) {
             haptic();
-            document.getElementById('inp-coef').value = parseFloat(document.getElementById('slider-coef').value).toFixed(1);
+            const val = document.getElementById('slider-' + id).value;
+            const input = document.getElementById('inp-' + id);
+            
+            if (id === 'dist' || id === 'distOut' || id === 'delivery' || id === 'coef') {
+                input.value = parseFloat(val).toFixed(1);
+            } else {
+                input.value = Math.round(val);
+            }
+            recalc();
+        }
+
+        function syncInputToSlider(id) {
+            const val = document.getElementById('inp-' + id).value;
+            document.getElementById('slider-' + id).value = val;
+            recalc();
         }
 
         function changeVal(id, step) {
@@ -478,16 +514,16 @@
             const input = document.getElementById('inp-' + id);
             let val = parseFloat(input.value) + step;
             
-            // Коефіцієнт не може бути менше 1.0
             if (id === 'coef' && val < 1.0) val = 1.0;
             else if (val < 0) val = 0;
             
             if (id === 'dist' || id === 'distOut' || id === 'delivery' || id === 'coef') {
                 input.value = val.toFixed(1);
-                if (id === 'coef') syncSlider();
             } else {
                 input.value = Math.round(val);
             }
+            
+            document.getElementById('slider-' + id).value = val;
             recalc();
         }
 
@@ -496,7 +532,7 @@
             const distOut = parseFloat(document.getElementById('inp-distOut').value) || 0;
             const delivery = parseFloat(document.getElementById('inp-delivery').value) || 0;
             const wait = parseInt(document.getElementById('inp-wait').value) || 0;
-            const stopsCost = parseInt(document.getElementById('inp-stops').value) || 0;
+            const stopsQty = parseInt(document.getElementById('inp-stops').value) || 0;
             const coef = parseFloat(document.getElementById('inp-coef').value) || 1.0;
 
             const t = tariffs[currentClass];
@@ -504,9 +540,11 @@
             let extraDistCity = distCity > t.minKm ? distCity - t.minKm : 0;
             const costExtraCity = extraDistCity * t.perKmCity;
             const costOut = distOut * t.perKmOut;
+            
+            // Вартість додаткових точок рахується як (Кількість * Ціна за точку для класу)
+            const stopsCost = stopsQty * t.stopPrice;
             const costAddons = (wait * t.perMin) + stopsCost;
             
-            // Загальна сума з урахуванням коефіцієнта
             const baseTotal = t.minPrice + costExtraCity + costOut + costAddons;
             const finalTotal = baseTotal * coef;
             
@@ -568,11 +606,12 @@
                 container.innerHTML += `
                     <div class="card">
                         <h3 style="margin-bottom:10px; font-size:15px;">🚖 ${t.name}</h3>
-                        <div class="input-group"><span>Мінімалка (₴):</span><input type="number" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}"></div>
-                        <div class="input-group"><span>Включено км місто:</span><input type="number" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}"></div>
-                        <div class="input-group"><span>1 км місто (₴):</span><input type="number" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}"></div>
-                        <div class="input-group"><span>1 км за містом (₴):</span><input type="number" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}"></div>
-                        <div class="input-group"><span>Хв очікування (₴):</span><input type="number" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}"></div>
                     </div>
                 `;
             });
@@ -586,10 +625,11 @@
                 tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value);
                 tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value);
                 tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value);
+                tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value);
             });
 
-            localStorage.setItem('taxi_tariffs_v3', JSON.stringify(tariffs));
-            alert('Збережено!');
+            localStorage.setItem('taxi_tariffs_v4', JSON.stringify(tariffs));
+            alert('Усі тарифи успішно оновлено!');
             switchTab('calc');
             renderCarSelector();
         }
@@ -597,7 +637,6 @@
         // Ініціалізація
         renderCarSelector();
         recalc();
-        syncSlider();
     </script>
 </body>
 </html>
