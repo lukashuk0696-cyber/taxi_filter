@@ -286,6 +286,19 @@
             cursor: pointer;
             margin-top: 15px;
         }
+
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: #8e8e93;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
         
         .progress-container {
             width: 100%;
@@ -327,12 +340,12 @@
                     <span class="input-label">📍 Км місто</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button>
-                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="4.6" oninput="syncInputToSlider('dist')">
+                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')">
                         <button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button>
                     </div>
                 </div>
                 <div class="slider-container">
-                    <input type="range" id="slider-dist" min="0" max="50" step="0.1" value="4.6" oninput="syncSliderToInput('dist')">
+                    <input type="range" id="slider-dist" min="0" max="50" step="0.1" value="0.0" oninput="syncSliderToInput('dist')">
                 </div>
             </div>
 
@@ -355,12 +368,12 @@
                     <span class="input-label">🚗 Подача (км)</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button>
-                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="1.2" oninput="syncInputToSlider('delivery')">
+                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')">
                         <button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button>
                     </div>
                 </div>
                 <div class="slider-container">
-                    <input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="1.2" oninput="syncSliderToInput('delivery')">
+                    <input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="0.0" oninput="syncSliderToInput('delivery')">
                 </div>
             </div>
 
@@ -443,6 +456,7 @@
     <div id="page-settings" class="page">
         <div id="settings-container"></div>
         <button class="save-btn" onclick="saveTariffsClick()">💾 Зберегти сітку примусово</button>
+        <button class="reset-btn" onclick="resetToFactoryTariffs()">🔄 Повернутись до початкових тарифів</button>
     </div>
 
     <script>
@@ -456,17 +470,52 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        let tariffs = {
+        // Початкова фабрична сітка тарифів
+        const defaultTariffs = {
             standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
             business: { name: 'Бізнес', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
             intercity: { name: 'За місто', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
         };
 
+        let tariffs = JSON.parse(JSON.stringify(defaultTariffs));
         let currentClass = 'standard';
 
-        if(localStorage.getItem('taxi_tariffs_v8')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v8'));
+        // Ключ v9 для чистої ініціалізації
+        if(localStorage.getItem('taxi_tariffs_v9')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v9'));
+        }
+
+        // Завантаження збережених параметрів маршруту при старті
+        function loadSavedRouteParams() {
+            if(localStorage.getItem('taxi_route_params_v9')) {
+                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v9'));
+                document.getElementById('inp-dist').value = saved.dist || "0.0";
+                document.getElementById('slider-dist').value = saved.dist || "0.0";
+                document.getElementById('inp-distOut').value = saved.distOut || "0.0";
+                document.getElementById('slider-distOut').value = saved.distOut || "0.0";
+                document.getElementById('inp-delivery').value = saved.delivery || "0.0";
+                document.getElementById('slider-delivery').value = saved.delivery || "0.0";
+                document.getElementById('inp-wait').value = saved.wait || "0";
+                document.getElementById('slider-wait').value = saved.wait || "0";
+                document.getElementById('inp-stops').value = saved.stops || "0";
+                document.getElementById('slider-stops').value = saved.stops || "0";
+                document.getElementById('inp-coef').value = saved.coef || "1.0";
+                document.getElementById('slider-coef').value = saved.coef || "1.0";
+            }
+        }
+
+        // Функція автоматичного збереження введених параметрів маршруту
+        function saveCurrentRouteParams() {
+            const params = {
+                dist: document.getElementById('inp-dist').value,
+                distOut: document.getElementById('inp-distOut').value,
+                delivery: document.getElementById('inp-delivery').value,
+                wait: document.getElementById('inp-wait').value,
+                stops: document.getElementById('inp-stops').value,
+                coef: document.getElementById('inp-coef').value
+            };
+            localStorage.setItem('taxi_route_params_v9', JSON.stringify(params));
         }
 
         function renderCarSelector() {
@@ -540,6 +589,8 @@
             const stopsQty = parseInt(document.getElementById('inp-stops').value) || 0;
             const coef = parseFloat(document.getElementById('inp-coef').value) || 1.0;
 
+            saveCurrentRouteParams(); // Автоматично зберігаємо змінені параметри
+
             const t = tariffs[currentClass];
 
             let remainingMinKm = t.minKm;
@@ -606,7 +657,7 @@
             if(tab === 'calc') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('page-calc').classList.add('active');
-                renderCarSelector(); // Оновлюємо цінники при поверненні
+                renderCarSelector();
                 recalc();
             } else if(tab === 'branding') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
@@ -625,7 +676,6 @@
 
             Object.keys(tariffs).forEach(key => {
                 const t = tariffs[key];
-                // Додано oninput="autoSaveTariffs()" для автозбереження на льоту
                 container.innerHTML += `
                     <div class="card">
                         <h3 style="margin-bottom:10px; font-size:15px;">🚖 ${t.name}</h3>
@@ -640,7 +690,6 @@
             });
         }
 
-        // Автоматичне збереження
         function autoSaveTariffs() {
             Object.keys(tariffs).forEach(key => {
                 tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0;
@@ -650,7 +699,7 @@
                 tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
             });
-            localStorage.setItem('taxi_tariffs_v8', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v9', JSON.stringify(tariffs));
         }
 
         function saveTariffsClick() {
@@ -661,6 +710,18 @@
             switchTab('calc');
         }
 
+        // Повне повернення до заводських налаштувань тарифів
+        function resetToFactoryTariffs() {
+            haptic();
+            tariffs = JSON.parse(JSON.stringify(defaultTariffs));
+            localStorage.setItem('taxi_tariffs_v9', JSON.stringify(tariffs));
+            renderSettings();
+            if (tg.showAlert) tg.showAlert('Усі тарифи скинуто до початкових!');
+            else alert('Усі тарифи скинуто до початкових!');
+        }
+
+        // Ініціалізація додатку при завантаженні
+        loadSavedRouteParams();
         renderCarSelector();
         recalc();
     </script>
