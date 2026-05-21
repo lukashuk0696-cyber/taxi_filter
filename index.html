@@ -16,6 +16,7 @@
             --border-radius: 16px;
         }
 
+        /* Темна тема */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-color: #121212;
@@ -23,6 +24,18 @@
                 --text-color: #ffffff;
                 --text-muted: #aaaaaa;
             }
+        }
+        body[data-theme="dark"] {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+        }
+        body[data-theme="light"] {
+            --bg-color: #f4f5f7;
+            --card-bg: #ffffff;
+            --text-color: #1c1c1e;
+            --text-muted: #8e8e93;
         }
 
         * {
@@ -43,6 +56,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .app-header {
@@ -52,12 +66,29 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: background-color 0.3s;
         }
         
         .app-title {
             font-size: 18px;
             font-weight: 700;
             color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle {
+            font-size: 22px;
+            cursor: pointer;
+            padding: 4px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tabs {
@@ -231,6 +262,7 @@
             border-radius: var(--border-radius);
             padding: 16px;
             border: 2px dashed rgba(0,0,0,0.08);
+            margin-bottom: 12px;
         }
         
         .result-row {
@@ -319,14 +351,14 @@
 <body>
 
     <div class="app-header">
-        <div class="app-title">Калькулятор Водія</div>
-        <div style="font-size: 24px;">🚖</div>
+        <div class="app-title">🚖 Калькулятор Водія</div>
+        <div class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙</div>
     </div>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('calc')">🧮 Розрахунок</button>
         <button class="tab-btn" onclick="switchTab('branding')">🚕 Брендування</button>
-        <button class="tab-btn" onclick="switchTab('settings')">⚙️ Тарифи</button>
+        <button class="tab-btn" onclick="switchTab('settings')">⚙️ Налаштування</button>
     </div>
 
     <div id="page-calc" class="page active">
@@ -424,9 +456,16 @@
             <div class="result-row"><span>Мінімалка класу:</span><span id="res-base">0 ₴</span></div>
             <div class="result-row"><span>Понад ліміт:</span><span id="res-extra-dist">0 ₴</span></div>
             <div class="result-row"><span>Очікування та точки:</span><span id="res-addons">0 ₴</span></div>
-            <div class="result-row result-total"><span>Разом до сплати:</span><span id="res-total">0 ₴</span></div>
+            <div class="result-row result-total"><span>Для клієнта:</span><span id="res-total">0 ₴</span></div>
+        </div>
+
+        <div class="result-panel" style="border-color: var(--accent-success); background: rgba(36, 193, 126, 0.05);">
+            <div class="card-title" style="margin-bottom: 8px;">💵 Ваш чистий дохід</div>
+            <div class="result-row" style="color: var(--text-muted);"><span>Комісія (<span id="lbl-comm">17</span>%):</span><span id="res-comm">0 ₴</span></div>
+            <div class="result-row" style="color: var(--text-muted);"><span>Пальне (<span id="lbl-fuel-dist">0</span> км):</span><span id="res-fuel">0 ₴</span></div>
+            <div class="result-row result-total" style="color: var(--accent-success);"><span>В КИШЕНЮ:</span><span id="res-net">0 ₴</span></div>
             <div class="result-row" style="margin-top: 10px; align-items: center;">
-                <span>Ефективна ціна:</span>
+                <span style="font-size: 13px; color: var(--text-muted);">Ефективна ціна:</span>
                 <span class="eff-badge" id="res-eff">0 ₴/км</span>
             </div>
         </div>
@@ -454,6 +493,31 @@
     </div>
 
     <div id="page-settings" class="page">
+        <div class="card">
+            <h3 style="margin-bottom:10px; font-size:15px;">📊 Витрати (Комісія та Пальне)</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <span>Комісія бази (%):</span>
+                <input type="number" step="0.1" class="admin-input" id="set-comm" value="17" oninput="autoSaveSettings()">
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items: center;">
+                <span>Тип пального:</span>
+                <select class="admin-input" style="width:100px;" id="set-fuel-type" onchange="autoSaveSettings()">
+                    <option value="gas">Газ</option>
+                    <option value="petrol">Бензин</option>
+                    <option value="diesel">Дизель</option>
+                    <option value="electro">Електро</option>
+                </select>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <span>Розхід (на 100км):</span>
+                <input type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="10" oninput="autoSaveSettings()">
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <span>Ціна за 1 од. (₴):</span>
+                <input type="number" step="0.1" class="admin-input" id="set-fuel-price" value="28" oninput="autoSaveSettings()">
+            </div>
+        </div>
+
         <div id="settings-container"></div>
         <button class="save-btn" onclick="saveTariffsClick()">💾 Зберегти сітку примусово</button>
         <button class="reset-btn" onclick="resetToFactoryTariffs()">🔄 Повернутись до початкових тарифів</button>
@@ -470,7 +534,30 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Початкова фабрична сітка тарифів
+        // Логіка темної теми
+        function toggleTheme() {
+            haptic();
+            const body = document.body;
+            const btn = document.getElementById('theme-btn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerText = '☀️';
+                localStorage.setItem('taxi_theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerText = '🌙';
+                localStorage.setItem('taxi_theme', 'dark');
+            }
+        }
+        
+        if (localStorage.getItem('taxi_theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('theme-btn').innerText = '🌙';
+        } else if (localStorage.getItem('taxi_theme') === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            document.getElementById('theme-btn').innerText = '☀️';
+        }
+
         const defaultTariffs = {
             standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
@@ -478,18 +565,23 @@
             intercity: { name: 'За місто', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
         };
 
+        const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28 };
+
         let tariffs = JSON.parse(JSON.stringify(defaultTariffs));
+        let expenses = JSON.parse(JSON.stringify(defaultExpenses));
         let currentClass = 'standard';
 
-        // Ключ v9 для чистої ініціалізації
-        if(localStorage.getItem('taxi_tariffs_v9')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v9'));
+        // Ключ v11
+        if(localStorage.getItem('taxi_tariffs_v11')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v11'));
+        }
+        if(localStorage.getItem('taxi_expenses_v11')) {
+            expenses = JSON.parse(localStorage.getItem('taxi_expenses_v11'));
         }
 
-        // Завантаження збережених параметрів маршруту при старті
         function loadSavedRouteParams() {
-            if(localStorage.getItem('taxi_route_params_v9')) {
-                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v9'));
+            if(localStorage.getItem('taxi_route_params_v11')) {
+                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v11'));
                 document.getElementById('inp-dist').value = saved.dist || "0.0";
                 document.getElementById('slider-dist').value = saved.dist || "0.0";
                 document.getElementById('inp-distOut').value = saved.distOut || "0.0";
@@ -503,9 +595,13 @@
                 document.getElementById('inp-coef').value = saved.coef || "1.0";
                 document.getElementById('slider-coef').value = saved.coef || "1.0";
             }
+            
+            document.getElementById('set-comm').value = expenses.comm;
+            document.getElementById('set-fuel-type').value = expenses.type;
+            document.getElementById('set-fuel-cons').value = expenses.cons;
+            document.getElementById('set-fuel-price').value = expenses.price;
         }
 
-        // Функція автоматичного збереження введених параметрів маршруту
         function saveCurrentRouteParams() {
             const params = {
                 dist: document.getElementById('inp-dist').value,
@@ -515,7 +611,7 @@
                 stops: document.getElementById('inp-stops').value,
                 coef: document.getElementById('inp-coef').value
             };
-            localStorage.setItem('taxi_route_params_v9', JSON.stringify(params));
+            localStorage.setItem('taxi_route_params_v11', JSON.stringify(params));
         }
 
         function renderCarSelector() {
@@ -589,7 +685,7 @@
             const stopsQty = parseInt(document.getElementById('inp-stops').value) || 0;
             const coef = parseFloat(document.getElementById('inp-coef').value) || 1.0;
 
-            saveCurrentRouteParams(); // Автоматично зберігаємо змінені параметри
+            saveCurrentRouteParams();
 
             const t = tariffs[currentClass];
 
@@ -619,14 +715,23 @@
             
             const baseTotal = t.minPrice + costExtraCity + costOut + costAddons;
             const finalTotal = baseTotal * coef;
-            
             const totalKm = distCity + distOut + delivery;
-            const effPrice = totalKm > 0 ? (finalTotal / totalKm) : 0;
 
             document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴ (вкл. ${t.minKm} км)`;
             document.getElementById('res-extra-dist').innerText = `${((costExtraCity + costOut) * coef).toFixed(1)} ₴`;
             document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
             document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
+            
+            const commissionCost = finalTotal * (expenses.comm / 100);
+            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
+            const netIncome = finalTotal - commissionCost - fuelCost;
+            const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
+
+            document.getElementById('lbl-comm').innerText = expenses.comm;
+            document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
+            document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
+            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴`;
+            document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
             document.getElementById('res-eff').innerText = `${effPrice.toFixed(2)} ₴/км`;
         }
 
@@ -679,18 +784,18 @@
                 container.innerHTML += `
                     <div class="card">
                         <h3 style="margin-bottom:10px; font-size:15px;">🚖 ${t.name}</h3>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveTariffs()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveTariffs()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveTariffs()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveTariffs()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveTariffs()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveTariffs()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
                     </div>
                 `;
             });
         }
 
-        function autoSaveTariffs() {
+        function autoSaveSettings() {
             Object.keys(tariffs).forEach(key => {
                 tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0;
                 tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0;
@@ -699,28 +804,32 @@
                 tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
             });
-            localStorage.setItem('taxi_tariffs_v9', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v11', JSON.stringify(tariffs));
+
+            expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
+            expenses.type = document.getElementById('set-fuel-type').value;
+            expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
+            expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0;
+            localStorage.setItem('taxi_expenses_v11', JSON.stringify(expenses));
         }
 
         function saveTariffsClick() {
             haptic();
-            autoSaveTariffs();
+            autoSaveSettings();
             if (tg.showAlert) tg.showAlert('Тарифи успішно збережено!');
             else alert('Тарифи успішно збережено!');
             switchTab('calc');
         }
 
-        // Повне повернення до заводських налаштувань тарифів
         function resetToFactoryTariffs() {
             haptic();
             tariffs = JSON.parse(JSON.stringify(defaultTariffs));
-            localStorage.setItem('taxi_tariffs_v9', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v11', JSON.stringify(tariffs));
             renderSettings();
             if (tg.showAlert) tg.showAlert('Усі тарифи скинуто до початкових!');
             else alert('Усі тарифи скинуто до початкових!');
         }
 
-        // Ініціалізація додатку при завантаженні
         loadSavedRouteParams();
         renderCarSelector();
         recalc();
