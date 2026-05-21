@@ -31,6 +31,12 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation; /* Блокує подвійне натискання для зуму */
+        }
+        
+        button, .car-card, .tab-btn, input[type=range] {
+            -webkit-user-select: none;
+            user-select: none; /* Забороняє випадкове виділення елементів при швидкому тапі */
         }
 
         body {
@@ -449,7 +455,6 @@
             }
         }
 
-        // Оновлені тарифи згідно зі скріншотами
         let tariffs = {
             standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
@@ -458,9 +463,8 @@
 
         let currentClass = 'standard';
 
-        // Новий ключ кешу, щоб підтягнути нові тарифи
-        if(localStorage.getItem('taxi_tariffs_v4')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v4'));
+        if(localStorage.getItem('taxi_tariffs_v5')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v5'));
         }
 
         function renderCarSelector() {
@@ -489,7 +493,6 @@
             recalc();
         }
 
-        // Функції синхронізації повзунка та поля вводу
         function syncSliderToInput(id) {
             haptic();
             const val = document.getElementById('slider-' + id).value;
@@ -541,7 +544,6 @@
             const costExtraCity = extraDistCity * t.perKmCity;
             const costOut = distOut * t.perKmOut;
             
-            // Вартість додаткових точок рахується як (Кількість * Ціна за точку для класу)
             const stopsCost = stopsQty * t.stopPrice;
             const costAddons = (wait * t.perMin) + stopsCost;
             
@@ -628,13 +630,12 @@
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value);
             });
 
-            localStorage.setItem('taxi_tariffs_v4', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v5', JSON.stringify(tariffs));
             alert('Усі тарифи успішно оновлено!');
             switchTab('calc');
             renderCarSelector();
         }
 
-        // Ініціалізація
         renderCarSelector();
         recalc();
     </script>
