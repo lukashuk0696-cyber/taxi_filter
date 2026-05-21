@@ -31,12 +31,12 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation; /* Блокує подвійне натискання для зуму */
+            touch-action: manipulation;
         }
         
         button, .car-card, .tab-btn, input[type=range] {
             -webkit-user-select: none;
-            user-select: none; /* Забороняє випадкове виділення елементів при швидкому тапі */
+            user-select: none;
         }
 
         body {
@@ -197,7 +197,6 @@
             color: var(--text-color);
         }
 
-        /* Стилі повзунків */
         .slider-container {
             padding-top: 12px;
             width: 100%;
@@ -455,16 +454,19 @@
             }
         }
 
+        // Оновлена тарифна сітка з урахуванням нового класу "За місто"
         let tariffs = {
             standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
-            business: { name: 'Бізнес', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }
+            business: { name: 'Бізнес', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
+            intercity: { name: 'За місто', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
         };
 
         let currentClass = 'standard';
 
-        if(localStorage.getItem('taxi_tariffs_v5')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v5'));
+        // Новий ключ кешу v6 для коректного оновлення структур даних у пам'яті
+        if(localStorage.getItem('taxi_tariffs_v6')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v6'));
         }
 
         function renderCarSelector() {
@@ -540,10 +542,30 @@
 
             const t = tariffs[currentClass];
 
-            let extraDistCity = distCity > t.minKm ? distCity - t.minKm : 0;
-            const costExtraCity = extraDistCity * t.perKmCity;
-            const costOut = distOut * t.perKmOut;
-            
+            // Розумна логіка вирахування включених км пакета мінімалки
+            let remainingMinKm = t.minKm;
+            let extraCityKm = 0;
+            let extraOutKm = 0;
+
+            // Спочатку списуємо безкоштовні км з міської відстані
+            if (distCity >= remainingMinKm) {
+                extraCityKm = distCity - remainingMinKm;
+                remainingMinKm = 0;
+            } else {
+                remainingMinKm -= distCity;
+                extraCityKm = 0;
+            }
+
+            // Якщо безкоштовний ліміт ще залишився — списуємо його з загородньої відстані
+            if (distOut >= remainingMinKm) {
+                extraOutKm = distOut - remainingMinKm;
+                remainingMinKm = 0;
+            } else {
+                extraOutKm = 0;
+            }
+
+            const costExtraCity = extraCityKm * t.perKmCity;
+            const costOut = extraOutKm * t.perKmOut;
             const stopsCost = stopsQty * t.stopPrice;
             const costAddons = (wait * t.perMin) + stopsCost;
             
@@ -630,7 +652,7 @@
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value);
             });
 
-            localStorage.setItem('taxi_tariffs_v5', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v6', JSON.stringify(tariffs));
             alert('Усі тарифи успішно оновлено!');
             switchTab('calc');
             renderCarSelector();
