@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Калькулятор Водія</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f5f7;
+            --card-bg: #ffffff;
+            --text-color: #1c1c1e;
+            --text-muted: #8e8e93;
+            --accent-color: #ffdd00;
+            --accent-success: #24c17e;
+            --border-radius: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --card-bg: #1e1e1e;
+                --text-color: #ffffff;
+                --text-muted: #aaaaaa;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+        }
+
+        .app-header {
+            background: var(--card-bg);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--card-bg);
+            padding: 4px;
+            margin: 12px;
+            border-radius: 12px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: #000000;
+        }
+
+        .page { display: none; padding: 0 12px; }
+        .page.active { display: block; }
+
+        .car-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 8px 2px 12px 2px;
+            scrollbar-width: none;
+        }
+        
+        .car-selector::-webkit-scrollbar { display: none; }
+
+        .car-card {
+            flex: 0 0 105px;
+            background: var(--card-bg);
+            padding: 12px 6px;
+            border-radius: 14px;
+            text-align: center;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .car-card.active {
+            border-color: var(--accent-color);
+            background: rgba(255, 221, 0, 0.05);
+        }
+        
+        .car-card svg {
+            width: 46px;
+            height: 24px;
+            margin-bottom: 8px;
+            fill: none;
+            stroke: var(--text-color);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .car-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .car-price-info { font-size: 11px; color: var(--text-muted); }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        
+        .input-group:last-child { border-bottom: none; }
+        .input-label { font-size: 15px; font-weight: 500; }
+        
+        .counter { display: flex; align-items: center; gap: 8px; }
+        
+        .btn-counter {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0,0,0,0.05);
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .counter-value {
+            font-size: 16px;
+            font-weight: 600;
+            width: 60px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--text-color);
+        }
+
+        .result-panel {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            border: 2px dashed rgba(0,0,0,0.08);
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .result-total {
+            border-top: 1px solid rgba(0,0,0,0.08);
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .eff-badge {
+            background: var(--accent-success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .admin-input {
+            width: 75px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            text-align: center;
+            font-size: 14px;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-success);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--accent-success);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <div class="app-title">Калькулятор Водія</div>
+        <div style="font-size: 24px;">🚖</div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('calc')">🧮 Розрахунок</button>
+        <button class="tab-btn" onclick="switchTab('branding')">🚕 Брендування</button>
+        <button class="tab-btn" onclick="switchTab('settings')">⚙️ Тарифи</button>
+    </div>
+
+    <div id="page-calc" class="page active">
+        <div class="car-selector" id="car-list"></div>
+
+        <div class="card">
+            <div class="card-title">Параметри маршруту</div>
+            <div class="input-group">
+                <span class="input-label">📍 Відстань (км)</span>
+                <div class="counter">
+                    <button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button>
+                    <input type="number" step="0.1" class="counter-value" id="inp-dist" value="4.6" oninput="recalc()">
+                    <button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-label">🚗 Подача (км)</span>
+                <div class="counter">
+                    <button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button>
+                    <input type="number" step="0.1" class="counter-value" id="inp-delivery" value="1.2" oninput="recalc()">
+                    <button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-label">⏳ Очікування (хв)</span>
+                <div class="counter">
+                    <button class="btn-counter" onclick="changeVal('wait', -1)">-</button>
+                    <input type="number" class="counter-value" id="inp-wait" value="0" oninput="recalc()">
+                    <button class="btn-counter" onclick="changeVal('wait', 1)">+</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-label">📌 Дод. точки (₴)</span>
+                <div class="counter">
+                    <button class="btn-counter" onclick="changeVal('stops', -1)">-</button>
+                    <input type="number" class="counter-value" id="inp-stops" value="0" oninput="recalc()">
+                    <button class="btn-counter" onclick="changeVal('stops', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-panel">
+            <div class="result-row"><span>Мінімалка класу:</span><span id="res-base">0 ₴</span></div>
+            <div class="result-row"><span>Понад ліміт км:</span><span id="res-extra-dist">0 ₴</span></div>
+            <div class="result-row"><span>Очікування та точки:</span><span id="res-addons">0 ₴</span></div>
+            <div class="result-row result-total"><span>Разом до сплати:</span><span id="res-total">0 ₴</span></div>
+            <div class="result-row" style="margin-top: 10px; align-items: center;">
+                <span>Ефективна ціна:</span>
+                <span class="eff-badge" id="res-eff">0 ₴/км</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-branding" class="page">
+        <div class="card">
+            <div class="card-title">Програма лояльності</div>
+            <div class="input-group">
+                <span>Виконано замовлень:</span>
+                <input type="number" class="admin-input" id="brand-done" value="451" oninput="calcBranding()">
+            </div>
+            <div class="input-group">
+                <span>Цільовий план (всього):</span>
+                <input type="number" class="admin-input" id="brand-target" value="700" oninput="calcBranding()">
+            </div>
+            <div class="input-group">
+                <span>Залишилось днів:</span>
+                <input type="number" class="admin-input" id="brand-days" value="10" oninput="calcBranding()">
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="brand-progress"></div>
+            </div>
+
+            <div style="margin-top: 15px; font-size: 14px; line-height: 1.5;">
+                📌 Прогрес виконання: <strong id="brand-pct">0%</strong><br>
+                📉 Залишилось зробити: <strong id="brand-remain">0</strong><br>
+                🚖 Необхідний темп: <strong id="brand-perday" style="color:var(--accent-success)">0 замовлень / день</strong>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-settings" class="page">
+        <div id="settings-container"></div>
+        <button class="save-btn" onclick="saveTariffs()">💾 Зберегти сітку</button>
+    </div>
+
+    <script>
+        let tariffs = {
+            standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKm: 16.30, perMin: 3.50 },
+            light: { name: 'Лайт', minPrice: 80, minKm: 1.6, perKm: 15.00, perMin: 3.00 },
+            comfort: { name: 'Комфорт', minPrice: 110, minKm: 1.6, perKm: 19.00, perMin: 4.00 },
+            business: { name: 'Бізнес', minPrice: 160, minKm: 1.8, perKm: 26.00, perMin: 5.50 }
+        };
+
+        let currentClass = 'standard';
+
+        if(localStorage.getItem('taxi_calc_tariffs')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_calc_tariffs'));
+        }
+
+        function renderCarSelector() {
+            const container = document.getElementById('car-list');
+            container.innerHTML = '';
+            
+            const carSvg = `<svg viewBox="0 0 24 24"><path d="M14 16H9m10 0h3v-3.15a1 1 0 00-.84-.99L16 11l-2.7-3.6a1 1 0 00-.8-.4H8.5a1 1 0 00-.8.4L5 11l-5.16.86a1 1 0 00-.84.99V16h3m14 0a2.5 2.5 0 11-5 0m5 0a2.5 2.5 0 10-5 0m-10 0a2.5 2.5 0 11-5 0m5 0a2.5 2.5 0 10-5 0"/></svg>`;
+
+            Object.keys(tariffs).forEach(key => {
+                const t = tariffs[key];
+                const active = key === currentClass ? 'active' : '';
+                container.innerHTML += `
+                    <div class="car-card ${active}" onclick="selectClass('${key}')">
+                        ${carSvg}
+                        <div class="car-name">${t.name}</div>
+                        <div class="car-price-info">від ${t.minPrice} ₴</div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectClass(key) {
+            currentClass = key;
+            renderCarSelector();
+            recalc();
+        }
+
+        function changeVal(id, step) {
+            const input = document.getElementById('inp-' + id);
+            let val = parseFloat(input.value) + step;
+            if (val < 0) val = 0;
+            
+            if (id === 'dist' || id === 'delivery') {
+                input.value = val.toFixed(1);
+            } else {
+                input.value = Math.round(val);
+            }
+            recalc();
+        }
+
+        function recalc() {
+            const dist = parseFloat(document.getElementById('inp-dist').value) || 0;
+            const delivery = parseFloat(document.getElementById('inp-delivery').value) || 0;
+            const wait = parseInt(document.getElementById('inp-wait').value) || 0;
+            const stopsCost = parseInt(document.getElementById('inp-stops').value) || 0;
+
+            const t = tariffs[currentClass];
+
+            let extraDist = dist > t.minKm ? dist - t.minKm : 0;
+            const costExtraDist = extraDist * t.perKm;
+            
+            const costAddons = (wait * t.perMin) + stopsCost;
+            const total = t.minPrice + costExtraDist + costAddons;
+            
+            const totalKm = dist + delivery;
+            const effPrice = totalKm > 0 ? (total / totalKm) : 0;
+
+            document.getElementById('res-base').innerText = `${t.minPrice} ₴ (вкл. ${t.minKm} км)`;
+            document.getElementById('res-extra-dist').innerText = `${costExtraDist.toFixed(1)} ₴`;
+            document.getElementById('res-addons').innerText = `${costAddons.toFixed(1)} ₴`;
+            document.getElementById('res-total').innerText = `${Math.ceil(total)} ₴`;
+            document.getElementById('res-eff').innerText = `${effPrice.toFixed(2)} ₴/км`;
+        }
+
+        function calcBranding() {
+            const done = parseInt(document.getElementById('brand-done').value) || 0;
+            const target = parseInt(document.getElementById('brand-target').value) || 1;
+            const days = parseInt(document.getElementById('brand-days').value) || 1;
+
+            let pct = (done / target) * 100;
+            if (pct > 100) pct = 100;
+            
+            let remain = target - done;
+            if (remain < 0) remain = 0;
+
+            let perDay = remain / days;
+
+            document.getElementById('brand-progress').style.width = pct + '%';
+            document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%';
+            document.getElementById('brand-remain').innerText = remain;
+            document.getElementById('brand-perday').innerText = perDay.toFixed(1) + ' замовл.';
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            
+            if(tab === 'calc') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('page-calc').classList.add('active');
+                recalc();
+            } else if(tab === 'branding') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('page-branding').classList.add('active');
+                calcBranding();
+            } else {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('page-settings').classList.add('active');
+                renderSettings();
+            }
+        }
+
+        function renderSettings() {
+            const container = document.getElementById('settings-container');
+            container.innerHTML = '';
+
+            Object.keys(tariffs).forEach(key => {
+                const t = tariffs[key];
+                container.innerHTML += `
+                    <div class="card">
+                        <h3 style="margin-bottom:10px; font-size:15px;">🚖 ${t.name}</h3>
+                        <div class="input-group"><span>Мінімалка (₴):</span><input type="number" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}"></div>
+                        <div class="input-group"><span>Включено км:</span><input type="number" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}"></div>
+                        <div class="input-group"><span>1 км понад ліміт:</span><input type="number" step="0.1" class="admin-input" id="set-perKm-${key}" value="${t.perKm}"></div>
+                        <div class="input-group"><span>Хв очікування:</span><input type="number" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}"></div>
+                    </div>
+                `;
+            });
+        }
+
+        function saveTariffs() {
+            Object.keys(tariffs).forEach(key => {
+                tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value);
+                tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value);
+                tariffs[key].perKm = parseFloat(document.getElementById(`set-perKm-${key}`).value);
+                tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value);
+            });
+
+            localStorage.setItem('taxi_calc_tariffs', JSON.stringify(tariffs));
+            alert('Збережено!');
+            switchTab('calc');
+            renderCarSelector();
+        }
+
+        renderCarSelector();
+        recalc();
+    </script>
+</body>
+</html>
