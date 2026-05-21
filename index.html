@@ -490,6 +490,34 @@
                 🚖 Необхідний темп: <strong id="brand-perday" style="color:var(--accent-success)">0 замовлень / день</strong>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-title">🎯 Щоденна Ціль та Прогноз</div>
+            <div class="input-block" style="border-bottom:none; padding: 4px 0;">
+                <div class="input-header" style="margin-bottom:10px;">
+                    <span>Ваша ціль на сьогодні (замовл.):</span>
+                    <strong id="brand-daily-goal-val">0</strong>
+                </div>
+                <div class="input-header" style="margin-bottom:10px;">
+                    <span>Виконано сьогодні:</span>
+                    <div class="counter">
+                        <button class="btn-counter" onclick="changeDailyDone(-1)">-</button>
+                        <input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="calcBranding()">
+                        <button class="btn-counter" onclick="changeDailyDone(1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="brand-daily-progress" style="background-color: #ffdd00;"></div>
+            </div>
+
+            <div style="margin-top: 15px; font-size: 14px; line-height: 1.5;">
+                📌 Прогрес за сьогодні: <strong id="brand-daily-pct">0%</strong><br>
+                📉 Необхідний темп: <strong id="brand-perday-required" style="color:var(--accent-success)">0 замовлень / день</strong><br>
+                🔮 Прогноз досягнення плану: <strong id="brand-daily-comment">Введіть дані</strong>
+            </div>
+        </div>
     </div>
 
     <div id="page-settings" class="page">
@@ -509,12 +537,20 @@
                 </select>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                <span>Розхід (на 100км):</span>
+                <span id="set-fuel-cons-label">Розхід (на 100км):</span>
                 <input type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="10" oninput="autoSaveSettings()">
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                <span>Ціна за 1 од. (₴):</span>
+                <span id="set-fuel-price-label">Ціна за 1 од. (₴):</span>
                 <input type="number" step="0.1" class="admin-input" id="set-fuel-price" value="28" oninput="autoSaveSettings()">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom:10px; font-size:15px;">🎯 Налаштування Щоденної Цілі</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <span>Ваша щоденна ціль (замовл.):</span>
+                <input type="number" step="1" class="admin-input" id="set-daily-goal" value="12" oninput="autoSaveSettings()">
             </div>
         </div>
 
@@ -566,22 +602,30 @@
         };
 
         const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28 };
+        // Ключ v12
+        if(localStorage.getItem('taxi_expenses_v12')) {
+            expenses = JSON.parse(localStorage.getItem('taxi_expenses_v12'));
+        }
+
+        const defaultGoals = { dailyGoal: 12, dailyDone: 0 };
+        // Ключ v12
+        if(localStorage.getItem('taxi_goals_v12')) {
+            goals = JSON.parse(localStorage.getItem('taxi_goals_v12'));
+        }
 
         let tariffs = JSON.parse(JSON.stringify(defaultTariffs));
         let expenses = JSON.parse(JSON.stringify(defaultExpenses));
+        let goals = JSON.parse(JSON.stringify(defaultGoals));
         let currentClass = 'standard';
 
-        // Ключ v11
-        if(localStorage.getItem('taxi_tariffs_v11')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v11'));
-        }
-        if(localStorage.getItem('taxi_expenses_v11')) {
-            expenses = JSON.parse(localStorage.getItem('taxi_expenses_v11'));
+        // Ключ v12
+        if(localStorage.getItem('taxi_tariffs_v12')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v12'));
         }
 
         function loadSavedRouteParams() {
-            if(localStorage.getItem('taxi_route_params_v11')) {
-                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v11'));
+            if(localStorage.getItem('taxi_route_params_v12')) {
+                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v12'));
                 document.getElementById('inp-dist').value = saved.dist || "0.0";
                 document.getElementById('slider-dist').value = saved.dist || "0.0";
                 document.getElementById('inp-distOut').value = saved.distOut || "0.0";
@@ -600,6 +644,11 @@
             document.getElementById('set-fuel-type').value = expenses.type;
             document.getElementById('set-fuel-cons').value = expenses.cons;
             document.getElementById('set-fuel-price').value = expenses.price;
+            
+            document.getElementById('inp-daily-done').value = goals.dailyDone;
+            document.getElementById('set-daily-goal').value = goals.dailyGoal;
+            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
+            updateFuelLabels(expenses.type);
         }
 
         function saveCurrentRouteParams() {
@@ -611,7 +660,7 @@
                 stops: document.getElementById('inp-stops').value,
                 coef: document.getElementById('inp-coef').value
             };
-            localStorage.setItem('taxi_route_params_v11', JSON.stringify(params));
+            localStorage.setItem('taxi_route_params_v12', JSON.stringify(params));
         }
 
         function renderCarSelector() {
@@ -729,10 +778,22 @@
 
             document.getElementById('lbl-comm').innerText = expenses.comm;
             document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
+            
+            const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
+            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴ (${ (fuelCost / expenses.price).toFixed(1) } ${fuelUnit})`;
+            
             document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
-            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴`;
             document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
             document.getElementById('res-eff').innerText = `${effPrice.toFixed(2)} ₴/км`;
+        }
+
+        function changeDailyDone(step) {
+            haptic();
+            const input = document.getElementById('inp-daily-done');
+            let val = parseInt(input.value) + step;
+            if (val < 0) val = 0;
+            input.value = val;
+            calcBranding();
         }
 
         function calcBranding() {
@@ -746,12 +807,50 @@
             let remain = target - done;
             if (remain < 0) remain = 0;
 
-            let perDay = remain / days;
+            let perDayRequired = remain / days;
 
             document.getElementById('brand-progress').style.width = pct + '%';
             document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%';
             document.getElementById('brand-remain').innerText = remain;
-            document.getElementById('brand-perday').innerText = perDay.toFixed(1) + ' замовл.';
+            document.getElementById('brand-perday').innerText = perDayRequired.toFixed(1) + ' замовл.';
+            
+            // Логіка щоденної цілі
+            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
+            const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
+            
+            goals.dailyGoal = dailyGoal;
+            goals.dailyDone = dailyDone;
+            localStorage.setItem('taxi_goals_v12', JSON.stringify(goals));
+            
+            document.getElementById('brand-daily-goal-val').innerText = dailyGoal;
+            
+            let dailyPct = (dailyDone / dailyGoal) * 100;
+            if (dailyPct > 100) dailyPct = 100;
+            document.getElementById('brand-daily-progress').style.width = dailyPct + '%';
+            document.getElementById('brand-daily-pct').innerText = dailyPct.toFixed(1) + '%';
+            document.getElementById('brand-perday-required').innerText = perDayRequired.toFixed(1) + ' замовл.';
+            
+            // Коментар прогнозу
+            const daysToGoal = (remain / dailyGoal).toFixed(1);
+            let comment = "";
+            if (dailyGoal >= perDayRequired) {
+                comment = `Ви йдете з випередженням! З вашим темпом ви досягнете загального плану за **${daysToGoal} днів**.`;
+            } else {
+                comment = `Ваша особиста ціль менша за необхідний середній темп. Щоб досягти загального плану, вам потрібно виконувати не менше **${perDayRequired.toFixed(1)} замовлень** загалом.`;
+            }
+            document.getElementById('brand-daily-comment').innerHTML = comment;
+        }
+
+        function updateFuelLabels(type) {
+            const consLabel = document.getElementById('set-fuel-cons-label');
+            const priceLabel = document.getElementById('set-fuel-price-label');
+            if (type === 'electro') {
+                consLabel.innerText = "Розхід kWt (на 100км):";
+                priceLabel.innerText = "Ціна за 1 kWt (₴):";
+            } else {
+                consLabel.innerText = "Розхід (на 100км):";
+                priceLabel.innerText = "Ціна за 1 од. (₴):";
+            }
         }
 
         function switchTab(tab) {
@@ -804,27 +903,33 @@
                 tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
             });
-            localStorage.setItem('taxi_tariffs_v11', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v12', JSON.stringify(tariffs));
 
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
             expenses.type = document.getElementById('set-fuel-type').value;
             expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
             expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0;
-            localStorage.setItem('taxi_expenses_v11', JSON.stringify(expenses));
+            localStorage.setItem('taxi_expenses_v12', JSON.stringify(expenses));
+            
+            goals.dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
+            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
+            localStorage.setItem('taxi_goals_v12', JSON.stringify(goals));
+            
+            updateFuelLabels(expenses.type);
         }
 
         function saveTariffsClick() {
             haptic();
             autoSaveSettings();
-            if (tg.showAlert) tg.showAlert('Тарифи успішно збережено!');
-            else alert('Тарифи успішно збережено!');
+            if (tg.showAlert) tg.showAlert('Тарифи та ціль успішно збережено!');
+            else alert('Тарифи та ціль успішно збережено!');
             switchTab('calc');
         }
 
         function resetToFactoryTariffs() {
             haptic();
             tariffs = JSON.parse(JSON.stringify(defaultTariffs));
-            localStorage.setItem('taxi_tariffs_v11', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v12', JSON.stringify(tariffs));
             renderSettings();
             if (tg.showAlert) tg.showAlert('Усі тарифи скинуто до початкових!');
             else alert('Усі тарифи скинуто до початкових!');
