@@ -602,30 +602,28 @@
         };
 
         const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28 };
-        // Ключ v12
-        if(localStorage.getItem('taxi_expenses_v12')) {
-            expenses = JSON.parse(localStorage.getItem('taxi_expenses_v12'));
-        }
-
         const defaultGoals = { dailyGoal: 12, dailyDone: 0 };
-        // Ключ v12
-        if(localStorage.getItem('taxi_goals_v12')) {
-            goals = JSON.parse(localStorage.getItem('taxi_goals_v12'));
-        }
 
+        // Оголошуємо змінні ДО того, як присвоювати їм значення з LocalStorage
         let tariffs = JSON.parse(JSON.stringify(defaultTariffs));
         let expenses = JSON.parse(JSON.stringify(defaultExpenses));
         let goals = JSON.parse(JSON.stringify(defaultGoals));
         let currentClass = 'standard';
 
-        // Ключ v12
-        if(localStorage.getItem('taxi_tariffs_v12')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v12'));
+        // Ключ v13
+        if(localStorage.getItem('taxi_tariffs_v13')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v13'));
+        }
+        if(localStorage.getItem('taxi_expenses_v13')) {
+            expenses = JSON.parse(localStorage.getItem('taxi_expenses_v13'));
+        }
+        if(localStorage.getItem('taxi_goals_v13')) {
+            goals = JSON.parse(localStorage.getItem('taxi_goals_v13'));
         }
 
         function loadSavedRouteParams() {
-            if(localStorage.getItem('taxi_route_params_v12')) {
-                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v12'));
+            if(localStorage.getItem('taxi_route_params_v13')) {
+                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v13'));
                 document.getElementById('inp-dist').value = saved.dist || "0.0";
                 document.getElementById('slider-dist').value = saved.dist || "0.0";
                 document.getElementById('inp-distOut').value = saved.distOut || "0.0";
@@ -660,7 +658,7 @@
                 stops: document.getElementById('inp-stops').value,
                 coef: document.getElementById('inp-coef').value
             };
-            localStorage.setItem('taxi_route_params_v12', JSON.stringify(params));
+            localStorage.setItem('taxi_route_params_v13', JSON.stringify(params));
         }
 
         function renderCarSelector() {
@@ -780,7 +778,7 @@
             document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
             
             const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
-            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴ (${ (fuelCost / expenses.price).toFixed(1) } ${fuelUnit})`;
+            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴ (${ (totalKm / 100 * expenses.cons).toFixed(1) } ${fuelUnit})`;
             
             document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
             document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
@@ -820,7 +818,7 @@
             
             goals.dailyGoal = dailyGoal;
             goals.dailyDone = dailyDone;
-            localStorage.setItem('taxi_goals_v12', JSON.stringify(goals));
+            localStorage.setItem('taxi_goals_v13', JSON.stringify(goals));
             
             document.getElementById('brand-daily-goal-val').innerText = dailyGoal;
             
@@ -831,12 +829,16 @@
             document.getElementById('brand-perday-required').innerText = perDayRequired.toFixed(1) + ' замовл.';
             
             // Коментар прогнозу
-            const daysToGoal = (remain / dailyGoal).toFixed(1);
+            let daysToGoal = "∞";
+            if (dailyGoal > 0) {
+                daysToGoal = (remain / dailyGoal).toFixed(1);
+            }
+            
             let comment = "";
             if (dailyGoal >= perDayRequired) {
-                comment = `Ви йдете з випередженням! З вашим темпом ви досягнете загального плану за **${daysToGoal} днів**.`;
+                comment = `Ви йдете з випередженням! З вашим темпом ви досягнете загального плану за <strong>${daysToGoal} днів</strong>.`;
             } else {
-                comment = `Ваша особиста ціль менша за необхідний середній темп. Щоб досягти загального плану, вам потрібно виконувати не менше **${perDayRequired.toFixed(1)} замовлень** загалом.`;
+                comment = `Ваша особиста ціль менша за необхідний середній темп. Щоб досягти загального плану, вам потрібно виконувати не менше <strong>${perDayRequired.toFixed(1)} замовлень</strong> загалом.`;
             }
             document.getElementById('brand-daily-comment').innerHTML = comment;
         }
@@ -903,17 +905,17 @@
                 tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
             });
-            localStorage.setItem('taxi_tariffs_v12', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v13', JSON.stringify(tariffs));
 
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
             expenses.type = document.getElementById('set-fuel-type').value;
             expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
             expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0;
-            localStorage.setItem('taxi_expenses_v12', JSON.stringify(expenses));
+            localStorage.setItem('taxi_expenses_v13', JSON.stringify(expenses));
             
             goals.dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
             document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
-            localStorage.setItem('taxi_goals_v12', JSON.stringify(goals));
+            localStorage.setItem('taxi_goals_v13', JSON.stringify(goals));
             
             updateFuelLabels(expenses.type);
         }
@@ -929,7 +931,7 @@
         function resetToFactoryTariffs() {
             haptic();
             tariffs = JSON.parse(JSON.stringify(defaultTariffs));
-            localStorage.setItem('taxi_tariffs_v12', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_tariffs_v13', JSON.stringify(tariffs));
             renderSettings();
             if (tg.showAlert) tg.showAlert('Усі тарифи скинуто до початкових!');
             else alert('Усі тарифи скинуто до початкових!');
