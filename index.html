@@ -514,7 +514,7 @@
 
         <div class="result-panel">
             <div class="result-row"><span>Мінімалка класу:</span><span id="res-base">0 ₴</span></div>
-            <div class="result-row"><span>Понад ліміт:</span><span id="res-extra-dist">0 ₴</span></div>
+            <div class="result-row"><span>Кілометраж:</span><span id="res-extra-dist">0 ₴</span></div>
             <div class="result-row"><span>Очікування та точки:</span><span id="res-addons">0 ₴</span></div>
             <div class="result-row result-total"><span>Для клієнта:</span><span id="res-total">0 ₴</span></div>
         </div>
@@ -680,7 +680,6 @@
         let brandingData = JSON.parse(JSON.stringify(defaultBranding));
         let currentClass = 'standard';
 
-        // Версія пам'яті v15 (Каса + Оренда + Міжмісто)
         if(localStorage.getItem('taxi_tariffs_v15')) tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v15'));
         if(localStorage.getItem('taxi_expenses_v15')) expenses = JSON.parse(localStorage.getItem('taxi_expenses_v15'));
         if(localStorage.getItem('taxi_goals_v15')) goals = JSON.parse(localStorage.getItem('taxi_goals_v15'));
@@ -848,8 +847,6 @@
             
             const baseTotal = t.minPrice + costExtraCity + costOut + costAddons;
             const finalTotal = baseTotal * coef;
-            
-            // Загальний пробіг включає порожній зворотній пробіг на міжмісто
             const totalKm = distCity + distOut + delivery + emptyKm;
 
             document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴ (вкл. ${t.minKm} км)`;
@@ -857,11 +854,9 @@
             document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
             document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
             
-            // ФІНАНСОВІ РОЗРАХУНКИ
             const commissionCost = finalTotal * (expenses.comm / 100);
             const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
             
-            // Розрахунок частки парку/оренди
             let rentCost = 0;
             if (expenses.workMode === 'rent') {
                 rentCost = expenses.rentVal;
@@ -869,7 +864,6 @@
                 rentCost = (finalTotal - commissionCost) * (expenses.splitPct / 100);
             }
 
-            // Чистий прибуток водія
             const netIncome = finalTotal - commissionCost - fuelCost - extraExp - rentCost;
             const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
 
@@ -880,7 +874,6 @@
             const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
             document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴ (${ (totalKm / 100 * expenses.cons).toFixed(1) } ${fuelUnit})`;
             
-            // Відображення дод. витрат
             if (extraExp > 0) {
                 document.getElementById('row-res-extraExp').style.display = 'flex';
                 document.getElementById('res-extraExp').innerText = `-${extraExp} ₴`;
@@ -888,7 +881,6 @@
                 document.getElementById('row-res-extraExp').style.display = 'none';
             }
 
-            // Відображення оренди парку
             if (rentCost > 0) {
                 document.getElementById('row-res-rent').style.display = 'flex';
                 document.getElementById('res-rent').innerText = `-${rentCost.toFixed(1)} ₴`;
