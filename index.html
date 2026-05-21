@@ -284,7 +284,7 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 5px;
+            margin-top: 15px;
         }
         
         .progress-container {
@@ -442,26 +442,20 @@
 
     <div id="page-settings" class="page">
         <div id="settings-container"></div>
-        <button class="save-btn" onclick="saveTariffs()">💾 Зберегти сітку</button>
+        <button class="save-btn" onclick="saveTariffsClick()">💾 Зберегти сітку примусово</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
 
-        // Автоматичне приховування клавіатури при натисканні Enter на мобільному
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                document.activeElement.blur();
-            }
+            if (event.key === 'Enter') document.activeElement.blur();
         });
 
         function haptic() {
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Оновлена тарифна сітка (4 класи)
         let tariffs = {
             standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
@@ -471,9 +465,8 @@
 
         let currentClass = 'standard';
 
-        // Новий ключ кешу v7
-        if(localStorage.getItem('taxi_tariffs_v7')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v7'));
+        if(localStorage.getItem('taxi_tariffs_v8')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v8'));
         }
 
         function renderCarSelector() {
@@ -613,6 +606,7 @@
             if(tab === 'calc') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('page-calc').classList.add('active');
+                renderCarSelector(); // Оновлюємо цінники при поверненні
                 recalc();
             } else if(tab === 'branding') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
@@ -631,43 +625,40 @@
 
             Object.keys(tariffs).forEach(key => {
                 const t = tariffs[key];
+                // Додано oninput="autoSaveTariffs()" для автозбереження на льоту
                 container.innerHTML += `
                     <div class="card">
                         <h3 style="margin-bottom:10px; font-size:15px;">🚖 ${t.name}</h3>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveTariffs()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveTariffs()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveTariffs()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveTariffs()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveTariffs()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveTariffs()"></div>
                     </div>
                 `;
             });
         }
 
-        function saveTariffs() {
-            haptic();
+        // Автоматичне збереження
+        function autoSaveTariffs() {
             Object.keys(tariffs).forEach(key => {
-                tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value);
-                tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value);
-                tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value);
-                tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value);
-                tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value);
-                tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value);
+                tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0;
+                tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0;
+                tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0;
+                tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0;
+                tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
+                tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
             });
+            localStorage.setItem('taxi_tariffs_v8', JSON.stringify(tariffs));
+        }
 
-            localStorage.setItem('taxi_tariffs_v7', JSON.stringify(tariffs));
-            
-            // Нативне повідомлення Telegram замість блокуючого alert
-            if (tg.showAlert) {
-                tg.showAlert('Тарифи успішно збережено та оновлено!');
-            } else {
-                alert('Тарифи успішно збережено!');
-            }
-            
+        function saveTariffsClick() {
+            haptic();
+            autoSaveTariffs();
+            if (tg.showAlert) tg.showAlert('Тарифи успішно збережено!');
+            else alert('Тарифи успішно збережено!');
             switchTab('calc');
-            renderCarSelector();
-            recalc(); // Примусовий перерахунок після збереження
         }
 
         renderCarSelector();
