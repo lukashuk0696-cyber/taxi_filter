@@ -327,7 +327,7 @@
                     <span class="input-label">📍 Км місто</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button>
-                        <input type="number" step="0.1" class="counter-value" id="inp-dist" value="4.6" oninput="syncInputToSlider('dist')">
+                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="4.6" oninput="syncInputToSlider('dist')">
                         <button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button>
                     </div>
                 </div>
@@ -341,7 +341,7 @@
                     <span class="input-label">🌳 Км за містом</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button>
-                        <input type="number" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')">
+                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')">
                         <button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button>
                     </div>
                 </div>
@@ -355,7 +355,7 @@
                     <span class="input-label">🚗 Подача (км)</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button>
-                        <input type="number" step="0.1" class="counter-value" id="inp-delivery" value="1.2" oninput="syncInputToSlider('delivery')">
+                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="1.2" oninput="syncInputToSlider('delivery')">
                         <button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button>
                     </div>
                 </div>
@@ -369,7 +369,7 @@
                     <span class="input-label">⏳ Очікування (хв)</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('wait', -1)">-</button>
-                        <input type="number" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')">
+                        <input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')">
                         <button class="btn-counter" onclick="changeVal('wait', 1)">+</button>
                     </div>
                 </div>
@@ -383,7 +383,7 @@
                     <span class="input-label">📌 Дод. точки (шт)</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('stops', -1)">-</button>
-                        <input type="number" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')">
+                        <input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')">
                         <button class="btn-counter" onclick="changeVal('stops', 1)">+</button>
                     </div>
                 </div>
@@ -397,7 +397,7 @@
                     <span class="input-label">⚡ Коефіцієнт (x)</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button>
-                        <input type="number" step="0.1" class="counter-value coef-badge" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')">
+                        <input type="number" enterkeyhint="done" step="0.1" class="counter-value coef-badge" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')">
                         <button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button>
                     </div>
                 </div>
@@ -423,9 +423,9 @@
         <div class="card">
             <div class="card-title">Програма лояльності</div>
             <div class="input-block" style="border-bottom:none; padding: 4px 0;">
-                <div class="input-header" style="margin-bottom:10px;"><span>Виконано замовлень:</span><input type="number" class="admin-input" id="brand-done" value="451" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:10px;"><span>Цільовий план:</span><input type="number" class="admin-input" id="brand-target" value="700" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:10px;"><span>Залишилось днів:</span><input type="number" class="admin-input" id="brand-days" value="10" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="451" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="700" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Залишилось днів:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-days" value="10" oninput="calcBranding()"></div>
             </div>
 
             <div class="progress-container">
@@ -448,13 +448,20 @@
     <script>
         const tg = window.Telegram.WebApp;
 
+        // Автоматичне приховування клавіатури при натисканні Enter на мобільному
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                document.activeElement.blur();
+            }
+        });
+
         function haptic() {
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
 
-        // Оновлена тарифна сітка з урахуванням нового класу "За місто"
+        // Оновлена тарифна сітка (4 класи)
         let tariffs = {
             standard: { name: 'Стандарт', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
@@ -464,9 +471,9 @@
 
         let currentClass = 'standard';
 
-        // Новий ключ кешу v6 для коректного оновлення структур даних у пам'яті
-        if(localStorage.getItem('taxi_tariffs_v6')) {
-            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v6'));
+        // Новий ключ кешу v7
+        if(localStorage.getItem('taxi_tariffs_v7')) {
+            tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v7'));
         }
 
         function renderCarSelector() {
@@ -542,12 +549,10 @@
 
             const t = tariffs[currentClass];
 
-            // Розумна логіка вирахування включених км пакета мінімалки
             let remainingMinKm = t.minKm;
             let extraCityKm = 0;
             let extraOutKm = 0;
 
-            // Спочатку списуємо безкоштовні км з міської відстані
             if (distCity >= remainingMinKm) {
                 extraCityKm = distCity - remainingMinKm;
                 remainingMinKm = 0;
@@ -556,7 +561,6 @@
                 extraCityKm = 0;
             }
 
-            // Якщо безкоштовний ліміт ще залишився — списуємо його з загородньої відстані
             if (distOut >= remainingMinKm) {
                 extraOutKm = distOut - remainingMinKm;
                 remainingMinKm = 0;
@@ -630,12 +634,12 @@
                 container.innerHTML += `
                     <div class="card">
                         <h3 style="margin-bottom:10px; font-size:15px;">🚖 ${t.name}</h3>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}"></div>
                     </div>
                 `;
             });
@@ -652,10 +656,18 @@
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value);
             });
 
-            localStorage.setItem('taxi_tariffs_v6', JSON.stringify(tariffs));
-            alert('Усі тарифи успішно оновлено!');
+            localStorage.setItem('taxi_tariffs_v7', JSON.stringify(tariffs));
+            
+            // Нативне повідомлення Telegram замість блокуючого alert
+            if (tg.showAlert) {
+                tg.showAlert('Тарифи успішно збережено та оновлено!');
+            } else {
+                alert('Тарифи успішно збережено!');
+            }
+            
             switchTab('calc');
             renderCarSelector();
+            recalc(); // Примусовий перерахунок після збереження
         }
 
         renderCarSelector();
