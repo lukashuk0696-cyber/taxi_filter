@@ -8,7 +8,7 @@
     <style>
         :root { 
             --bg-color: #eef2f5; 
-            --glass-bg: rgba(255, 255, 255, 0.7); 
+            --glass-bg: rgba(255, 255, 255, 0.75); 
             --glass-border: 1px solid rgba(255, 255, 255, 0.5);
             --text-color: #1a1a1a; 
             --text-muted: #8e8e93;
@@ -18,19 +18,20 @@
         @media (prefers-color-scheme: dark) { 
             :root { 
                 --bg-color: #0f172a; 
-                --glass-bg: rgba(30, 41, 59, 0.6); 
+                --glass-bg: rgba(30, 41, 59, 0.75); 
                 --glass-border: 1px solid rgba(255, 255, 255, 0.1);
                 --text-color: #f8fafc; 
                 --text-muted: #94a3b8;
             } 
         }
-        body[data-theme="dark"] { --bg-color: #0f172a; --glass-bg: rgba(30, 41, 59, 0.6); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --text-color: #f8fafc; --text-muted: #94a3b8; }
-        body[data-theme="light"] { --bg-color: #eef2f5; --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: 1px solid rgba(255, 255, 255, 0.5); --text-color: #1a1a1a; --text-muted: #8e8e93; }
+        body[data-theme="dark"] { --bg-color: #0f172a; --glass-bg: rgba(30, 41, 59, 0.75); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --text-color: #f8fafc; --text-muted: #94a3b8; }
+        body[data-theme="light"] { --bg-color: #eef2f5; --glass-bg: rgba(255, 255, 255, 0.75); --glass-border: 1px solid rgba(255, 255, 255, 0.5); --text-color: #1a1a1a; --text-muted: #8e8e93; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; touch-action: manipulation; }
         button, .car-card, .tab-btn, input[type=range], select { -webkit-user-select: none; user-select: none; }
         
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 80px; transition: background-color 0.3s, color 0.3s; }
+        /* Збільшено відступ знизу, щоб повзунки не ховалися */
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 140px; transition: background-color 0.3s, color 0.3s; }
         
         .app-header { padding: 20px 20px 10px 20px; display: flex; align-items: center; justify-content: space-between; }
         .app-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
@@ -56,7 +57,28 @@
         .card { background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: 24px; padding: 22px; margin-bottom: 16px; border: var(--glass-border); box-shadow: 0 10px 32px rgba(0,0,0,0.05); }
         .card-title { font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; letter-spacing: 0.5px; }
         
-        .sticky-summary { position: sticky; bottom: 15px; z-index: 100; box-shadow: 0 -10px 40px rgba(0,0,0,0.15); border: 2px solid var(--accent-success); }
+        /* ОНОВЛЕНА ШТОРКА (ЗГОРТАНА) */
+        .sticky-summary { 
+            position: fixed; 
+            bottom: 15px; 
+            left: 16px; 
+            right: 16px;
+            z-index: 100; 
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2); 
+            border: 2px solid var(--accent-success); 
+            padding: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 10px;
+        }
+        .summary-mini-title { font-size: 18px; font-weight: 800; }
+        .summary-chevron { font-size: 16px; color: var(--text-muted); transition: transform 0.3s; }
+        .summary-chevron.open { transform: rotate(180deg); }
         
         .input-block { padding: 14px 0; border-bottom: 1px solid rgba(128,128,128,0.1); }
         .input-block:last-child { border-bottom: none; padding-bottom: 0; }
@@ -85,7 +107,7 @@
         .eff-badge { background: var(--accent-success); color: white; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3); }
         
         .admin-input { width: 90px; padding: 10px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); text-align: center; font-size: 15px; font-weight: 700; background: rgba(128,128,128,0.05); color: var(--text-color); }
-        .save-btn { width: 100%; padding: 18px; background: var(--accent-success); color: white; border: none; border-radius: 20px; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 16px; box-shadow: 0 6px 16px rgba(0, 200, 83, 0.3); transition: transform 0.1s; }
+        .save-btn { width: 100%; padding: 16px; background: var(--accent-success); color: white; border: none; border-radius: 16px; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 5px; box-shadow: 0 6px 16px rgba(0, 200, 83, 0.3); transition: transform 0.1s; }
         .save-btn:active { transform: scale(0.98); }
         .reset-btn { width: 100%; padding: 16px; background: #ff3b30; color: white; border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 6px 16px rgba(255, 59, 48, 0.2); }
         .toggle-btn { width: 100%; padding: 14px; background: rgba(128,128,128,0.1); color: var(--text-color); border: none; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
@@ -235,7 +257,7 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Чек Уклону</div>
+            <div class="card-title">🧾 Чек Уклону</div>
             <div class="result-row"><span>База (з коефіцієнтом):</span><span id="res-base">0 ₴</span></div>
             <div class="result-row"><span>Кілометраж:</span><span id="res-extra-dist">0 ₴</span></div>
             <div class="result-row"><span>Очікування та точки:</span><span id="res-addons">0 ₴</span></div>
@@ -243,17 +265,23 @@
             <div class="result-total" style="border-top-style: solid;"><span>Для клієнта:</span><span id="res-total">0 ₴</span></div>
         </div>
 
-        <div class="card sticky-summary">
-            <div class="card-title" style="color: var(--text-color);">💵 Ваш підсумок</div>
-            <div class="result-row" style="color: var(--text-muted);"><span>Комісія служби (<span id="lbl-comm">17</span>%):</span><span id="res-comm">0 ₴</span></div>
-            <div class="result-row" style="color: var(--text-muted);"><span>Пальне (<span id="lbl-fuel-dist">0</span> км разом):</span><span id="res-fuel">0 ₴</span></div>
-            <div class="result-row" style="color: var(--text-muted);" id="row-res-extraExp"><span>Дод. витрати рейсу:</span><span id="res-extraExp">0 ₴</span></div>
-            <div class="result-row" style="color: #ff9500;" id="row-res-rent"><span>План / Оренда парку:</span><span id="res-rent">0 ₴</span></div>
-            <div class="result-total" style="color: var(--accent-success); border-top-style: solid;"><span>В КИШЕНЮ:</span><span id="res-net">0 ₴</span></div>
-            <div class="result-row" style="margin-top: 16px; align-items: center;">
-                <span style="font-size: 15px; color: var(--text-muted); font-weight: 700;">Ефективна ціна км:</span>
-                <span class="eff-badge" id="res-eff">0 ₴/км</span>
+        <div class="card sticky-summary" id="sticky-panel">
+            <div class="summary-header" onclick="toggleSummary()">
+                <div class="summary-mini-title">В кишеню: <span id="res-net" style="color: var(--accent-success);">0 ₴</span></div>
+                <div class="summary-chevron" id="summary-chevron">Деталі 🔼</div>
             </div>
+            
+            <div id="summary-details" style="display: none; padding-top: 10px; border-top: 1px solid rgba(128,128,128,0.2);">
+                <div class="result-row" style="color: var(--text-muted); font-weight: 500;"><span>Комісія (<span id="lbl-comm">17</span>%):</span><span id="res-comm">0 ₴</span></div>
+                <div class="result-row" style="color: var(--text-muted); font-weight: 500;"><span>Пальне (<span id="lbl-fuel-dist">0</span> км):</span><span id="res-fuel">0 ₴</span></div>
+                <div class="result-row" style="color: var(--text-muted); font-weight: 500;" id="row-res-extraExp"><span>Дод. витрати:</span><span id="res-extraExp">0 ₴</span></div>
+                <div class="result-row" style="color: #ff9500; font-weight: 500;" id="row-res-rent"><span>План / Оренда:</span><span id="res-rent">0 ₴</span></div>
+                <div class="result-row" style="margin-top: 10px; align-items: center;">
+                    <span style="font-size: 14px; color: var(--text-muted);">Ефективна ціна:</span>
+                    <span class="eff-badge" id="res-eff">0 ₴/км</span>
+                </div>
+            </div>
+            
             <button class="save-btn" onclick="addToDailyCash()">✅ Зафіксувати в Касу</button>
         </div>
     </div>
@@ -313,8 +341,7 @@
         
         <div class="card">
             <div class="card-title">📜 Історія поїздок</div>
-            <div id="cash-history-list">
-                </div>
+            <div id="cash-history-list"></div>
             <div id="cash-empty-state" style="text-align: center; color: var(--text-muted); font-weight: 600; padding: 10px 0;">
                 Ви ще не додали жодної поїздки сьогодні
             </div>
@@ -350,10 +377,6 @@
             <div id="strat-warning" style="display:none; color: #ff3b30; font-weight: 800; text-align: center; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1); border-radius: 10px;">
                 ⚠️ Фільтр збитковий! Чистий дохід за поїздку менше нуля.
             </div>
-        </div>
-        <div class="info-box">
-            💡 <strong>Підказка для стратегії:</strong><br>
-            Підвищення тарифів у фільтрі (Налаштування ⚙️) навіть на 5 ₴/км дозволяє виконати план за меншу кількість поїздок, зекономити пальне та зберегти ресурс автомобіля!
         </div>
     </div>
 
@@ -453,11 +476,11 @@
             document.getElementById('theme-btn').innerText = '🌙';
         }
 
-        // Оновлено стандартний тариф "Бізнес" під ваші нові параметри (90, 1.8км, 33/35)
+        // Оновлено стандартний тариф "Бізнес" під ваші нові параметри (112, 18.60, 19.20)
         const defaultTariffs = {
             standard: { name: 'Стандарт', icon: '🚗', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', icon: '🚘', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
-            business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 0.8, perKmCity: 18.6, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
+            business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
             intercity: { name: 'За місто', icon: '🚐', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
         };
 
@@ -471,9 +494,9 @@
         let goals = JSON.parse(JSON.stringify(defaultGoals));
         let brandingData = JSON.parse(JSON.stringify(defaultBranding));
         let dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
-        let currentClass = 'business'; // По замовчуванню відкриваємо Бізнес
+        let currentClass = 'business'; 
 
-        // ЗАЛИШИВ КЛЮЧІ v19, ЩОБ ВАШІ ДАНІ НЕ СКИНУЛИСЬ
+        // Залишаємо v19, щоб ваші дані не злетіли
         if(localStorage.getItem('taxi_tariffs_v19')) tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v19'));
         if(localStorage.getItem('taxi_expenses_v19')) expenses = JSON.parse(localStorage.getItem('taxi_expenses_v19'));
         if(localStorage.getItem('taxi_goals_v19')) goals = JSON.parse(localStorage.getItem('taxi_goals_v19'));
@@ -483,24 +506,35 @@
             const savedCash = JSON.parse(localStorage.getItem('taxi_daily_cash_data_v19'));
             if (savedCash.date === new Date().toLocaleDateString()) {
                 dailyCashData = savedCash;
-                // Додаємо масив історії для тих, хто оновився, а історію не мав
                 if(!dailyCashData.history) dailyCashData.history = [];
             } else {
                 dailyCashData.date = new Date().toLocaleDateString();
-                dailyCashData.history = []; // Новий день = нова історія
+                dailyCashData.history = []; 
                 localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
             }
         }
 
-        // --- НОВІ ФУНКЦІЇ ІНТЕРФЕЙСУ ---
-        
+        // Логіка згортання міні-панелі
+        function toggleSummary() {
+            haptic();
+            const details = document.getElementById('summary-details');
+            const chevron = document.getElementById('summary-chevron');
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                chevron.innerText = 'Згорнути 🔽';
+            } else {
+                details.style.display = 'none';
+                chevron.innerText = 'Деталі 🔼';
+            }
+        }
+
         function toggleExtraParams() {
             haptic();
             const panel = document.getElementById('extra-params');
             const btn = document.getElementById('toggle-extra-btn');
             if (panel.style.display === 'none') {
                 panel.style.display = 'block';
-                btn.innerText = '🔼 Менше параметрів';
+                btn.innerText = '🔼 Сховати додаткові параметри';
             } else {
                 panel.style.display = 'none';
                 btn.innerText = '🔽 Більше параметрів (Простій, Точки)';
@@ -514,8 +548,6 @@
             document.getElementById('slider-emptyKm').value = outVal;
             recalc();
         }
-
-        // --- КІНЕЦЬ НОВИХ ФУНКЦІЙ ---
 
         function toggleWorkModeInputs() {
             const mode = document.getElementById('set-work-mode').value;
@@ -717,6 +749,9 @@
             const netIncome = finalTotal - commissionCost - fuelCost - extraExp - rentCost;
             const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
 
+            // Оновлення тексту в Міні-Панелі
+            document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
+            
             document.getElementById('lbl-comm').innerText = expenses.comm;
             document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
             document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
@@ -738,7 +773,6 @@
                 document.getElementById('row-res-rent').style.display = 'none';
             }
 
-            document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
             document.getElementById('res-eff').innerText = `${effPrice.toFixed(2)} ₴/км`;
         }
 
@@ -785,8 +819,6 @@
             document.getElementById('strat-fuel-total').innerText = totalFuelVol.toFixed(1) + ' ' + fuelUnit;
         }
 
-        // --- ЛОГІКА ДОДАВАННЯ ТА ВИДАЛЕННЯ З КАСИ ---
-
         function addToDailyCash() {
             haptic();
             const gross = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(' ₴',''))) || 0;
@@ -810,7 +842,6 @@
             dailyCashData.rent += rentCost;
             dailyCashData.net += net;
             
-            // Зберігаємо запис про конкретну поїздку в історію
             const tripId = Date.now();
             const now = new Date();
             const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
@@ -835,8 +866,8 @@
             updateCashPageUI();
             calcBranding();
 
-            if(tg.showAlert) tg.showAlert('✅ Замовлення збережено!');
-            else alert('✅ Замовлення збережено!');
+            if(tg.showAlert) tg.showAlert('✅ Замовлення збережено в касу!');
+            else alert('✅ Замовлення збережено в касу!');
         }
 
         function removeTrip(id) {
@@ -856,7 +887,6 @@
                     dailyCashData.history.splice(index, 1);
                     localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
 
-                    // Віднімаємо замовлення з лічильника цілей
                     goals.dailyDone = Math.max(0, goals.dailyDone - 1);
                     document.getElementById('inp-daily-done').value = goals.dailyDone;
                     localStorage.setItem('taxi_goals_v19', JSON.stringify(goals));
@@ -889,7 +919,6 @@
 
             document.getElementById('cash-net').innerText = dailyCashData.net.toFixed(1) + ' ₴';
 
-            // Рендер історії
             const historyList = document.getElementById('cash-history-list');
             const emptyState = document.getElementById('cash-empty-state');
             
@@ -918,7 +947,7 @@
 
         function resetDailyCashClick() {
             haptic();
-            if (confirm('🔄 Ви впевнені, що хочете повністю обнулити результати за сьогодні?')) {
+            if (confirm('🔄 Обнулити результати за сьогодні?')) {
                 dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
                 dailyCashData.date = new Date().toLocaleDateString();
                 localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
@@ -1063,8 +1092,8 @@
         function saveTariffsClick() {
             haptic();
             autoSaveSettings();
-            if (tg.showAlert) tg.showAlert('✅ Усі налаштування успішно збережено!');
-            else alert('✅ Усі налаштування успішно збережено!');
+            if (tg.showAlert) tg.showAlert('✅ Налаштування збережено!');
+            else alert('✅ Налаштування збережено!');
             switchTab('calc');
         }
 
@@ -1073,8 +1102,8 @@
             tariffs = JSON.parse(JSON.stringify(defaultTariffs));
             localStorage.setItem('taxi_tariffs_v19', JSON.stringify(tariffs));
             renderSettings();
-            if (tg.showAlert) tg.showAlert('🔄 Усі тарифи скинуто до початкових (оновлених)!');
-            else alert('🔄 Усі тарифи скинуто до початкових (оновлених)!');
+            if (tg.showAlert) tg.showAlert('🔄 Тарифи скинуто до початкових!');
+            else alert('🔄 Тарифи скинуто до початкових!');
         }
 
         loadSavedData();
