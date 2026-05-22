@@ -238,7 +238,7 @@
         </div>
 
         <div class="card">
-            <div class="card-title">🧾 Чек Уклону</div>
+            <div class="card-title">🧾 Чек</div>
             <div class="result-row"><span>База (з коеф.):</span><span id="res-base">0 ₴</span></div>
             <div class="result-row"><span>Кілометраж:</span><span id="res-extra-dist">0 ₴</span></div>
             <div class="result-row"><span>Очікування/точки:</span><span id="res-addons">0 ₴</span></div>
@@ -476,20 +476,21 @@
         let dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
         let currentClass = 'business'; 
 
-        if(localStorage.getItem('taxi_tariffs_v19')) tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v19'));
-        if(localStorage.getItem('taxi_expenses_v19')) expenses = JSON.parse(localStorage.getItem('taxi_expenses_v19'));
-        if(localStorage.getItem('taxi_goals_v19')) goals = JSON.parse(localStorage.getItem('taxi_goals_v19'));
-        if(localStorage.getItem('taxi_branding_v19')) brandingData = JSON.parse(localStorage.getItem('taxi_branding_v19'));
+        // ВЕРСІЯ v20 (ВИПРАВЛЯЄ ВСІ БАГИ І КОНФЛІКТИ)
+        if(localStorage.getItem('taxi_tariffs_v20')) tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v20'));
+        if(localStorage.getItem('taxi_expenses_v20')) expenses = JSON.parse(localStorage.getItem('taxi_expenses_v20'));
+        if(localStorage.getItem('taxi_goals_v20')) goals = JSON.parse(localStorage.getItem('taxi_goals_v20'));
+        if(localStorage.getItem('taxi_branding_v20')) brandingData = JSON.parse(localStorage.getItem('taxi_branding_v20'));
         
-        if(localStorage.getItem('taxi_daily_cash_data_v19')) {
-            const savedCash = JSON.parse(localStorage.getItem('taxi_daily_cash_data_v19'));
+        if(localStorage.getItem('taxi_daily_cash_data_v20')) {
+            const savedCash = JSON.parse(localStorage.getItem('taxi_daily_cash_data_v20'));
             if (savedCash.date === new Date().toLocaleDateString()) {
                 dailyCashData = savedCash;
                 if(!dailyCashData.history) dailyCashData.history = [];
             } else {
                 dailyCashData.date = new Date().toLocaleDateString();
                 dailyCashData.history = []; 
-                localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
+                localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
             }
         }
 
@@ -534,8 +535,8 @@
         }
 
         function loadSavedRouteParams() {
-            if(localStorage.getItem('taxi_route_params_v19')) {
-                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v19'));
+            if(localStorage.getItem('taxi_route_params_v20')) {
+                const saved = JSON.parse(localStorage.getItem('taxi_route_params_v20'));
                 document.getElementById('inp-dist').value = saved.dist || "0.0";
                 document.getElementById('slider-dist').value = saved.dist || "0.0";
                 document.getElementById('inp-distOut').value = saved.distOut || "0.0";
@@ -572,8 +573,8 @@
             document.getElementById('brand-target').value = brandingData.target;
             document.getElementById('brand-days').value = brandingData.days;
 
-            if(localStorage.getItem('taxi_strat_params_v19')) {
-                const strat = JSON.parse(localStorage.getItem('taxi_strat_params_v19'));
+            if(localStorage.getItem('taxi_strat_params_v20')) {
+                const strat = JSON.parse(localStorage.getItem('taxi_strat_params_v20'));
                 document.getElementById('strat-target').value = strat.target || 2000;
                 document.getElementById('strat-km').value = strat.km || 6.5;
             }
@@ -595,7 +596,7 @@
                 coef: document.getElementById('inp-coef').value,
                 clientBonus: document.getElementById('inp-clientBonus').value
             };
-            localStorage.setItem('taxi_route_params_v19', JSON.stringify(params));
+            localStorage.setItem('taxi_route_params_v20', JSON.stringify(params));
         }
 
         function renderCarSelector() {
@@ -646,7 +647,7 @@
         function changeVal(id, step) {
             haptic();
             const input = document.getElementById('inp-' + id);
-            let val = parseFloat(input.value) + step;
+            let val = (parseFloat(input.value) || 0) + step;
             if (id === 'coef' && val < 1.0) val = 1.0;
             else if (val < 0) val = 0;
             if (id === 'dist' || id === 'distOut' || id === 'delivery' || id === 'coef') {
@@ -673,4 +674,433 @@
 
             const t = tariffs[currentClass];
 
-            let remainingMinKm = t
+            let remainingMinKm = t.minKm;
+            let extraCityKm = 0;
+            let extraOutKm = 0;
+
+            if (distCity >= remainingMinKm) {
+                extraCityKm = distCity - remainingMinKm;
+                remainingMinKm = 0;
+            } else {
+                remainingMinKm -= distCity;
+                extraCityKm = 0;
+            }
+
+            if (distOut >= remainingMinKm) {
+                extraOutKm = distOut - remainingMinKm;
+                remainingMinKm = 0;
+            } else {
+                extraOutKm = 0;
+            }
+
+            const costExtraCity = extraCityKm * t.perKmCity;
+            const costOut = extraOutKm * t.perKmOut;
+            const stopsCost = stopsQty * t.stopPrice;
+            const costAddons = (wait * t.perMin) + stopsCost;
+            
+            const baseTotalWithCoef = (t.minPrice + costExtraCity + costOut + costAddons) * coef;
+            const finalTotal = baseTotalWithCoef + clientBonus;
+            const totalKm = distCity + distOut + delivery + emptyKm;
+
+            document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴ (вкл. ${t.minKm} км)`;
+            document.getElementById('res-extra-dist').innerText = `${((costExtraCity + costOut) * coef).toFixed(1)} ₴`;
+            document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
+            
+            if(clientBonus > 0) {
+                document.getElementById('row-res-bonus').style.display = 'flex';
+                document.getElementById('res-bonus').innerText = `+${clientBonus} ₴`;
+            } else {
+                document.getElementById('row-res-bonus').style.display = 'none';
+            }
+
+            document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
+            
+            const commissionCost = finalTotal * (expenses.comm / 100);
+            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
+            
+            let rentCost = 0;
+            if (expenses.workMode === 'rent') {
+                rentCost = expenses.rentVal;
+            } else if (expenses.workMode === 'split') {
+                rentCost = (finalTotal - commissionCost) * (expenses.splitPct / 100);
+            }
+
+            const netIncome = finalTotal - commissionCost - fuelCost - extraExp - rentCost;
+            const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
+
+            document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
+            
+            document.getElementById('lbl-comm').innerText = expenses.comm;
+            document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
+            document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
+            
+            const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
+            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴ (${ (totalKm / 100 * expenses.cons).toFixed(1) } ${fuelUnit})`;
+            
+            if (extraExp > 0) {
+                document.getElementById('row-res-extraExp').style.display = 'flex';
+                document.getElementById('res-extraExp').innerText = `-${extraExp} ₴`;
+            } else {
+                document.getElementById('row-res-extraExp').style.display = 'none';
+            }
+
+            if (rentCost > 0) {
+                document.getElementById('row-res-rent').style.display = 'flex';
+                document.getElementById('res-rent').innerText = `-${rentCost.toFixed(1)} ₴`;
+            } else {
+                document.getElementById('row-res-rent').style.display = 'none';
+            }
+
+            document.getElementById('res-eff').innerText = `${effPrice.toFixed(2)} ₴/км`;
+        }
+
+        function calcStrategy() {
+            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000;
+            const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
+            
+            localStorage.setItem('taxi_strat_params_v20', JSON.stringify({target: targetNet, km: avgKm}));
+
+            const t = tariffs[currentClass];
+            let extraKm = Math.max(0, avgKm - t.minKm);
+            let tripGross = t.minPrice + (extraKm * t.perKmCity);
+            
+            let tripComm = tripGross * (expenses.comm / 100);
+            let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
+            
+            let tripRent = 0;
+            if (expenses.workMode === 'rent') {
+                tripRent = expenses.rentVal;
+            } else if (expenses.workMode === 'split') {
+                tripRent = (tripGross - tripComm) * (expenses.splitPct / 100);
+            }
+
+            let tripNet = tripGross - tripComm - tripFuel - tripRent;
+
+            if (tripNet <= 0) {
+                document.getElementById('strat-result-data').style.display = 'none';
+                document.getElementById('strat-warning').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('strat-result-data').style.display = 'block';
+                document.getElementById('strat-warning').style.display = 'none';
+            }
+
+            let tripsNeeded = Math.ceil(targetNet / tripNet);
+            let totalGross = tripsNeeded * tripGross;
+            let totalKm = tripsNeeded * avgKm;
+            let totalFuelVol = (totalKm / 100) * expenses.cons;
+            let fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
+
+            document.getElementById('strat-trips').innerText = tripsNeeded;
+            document.getElementById('strat-gross').innerText = totalGross.toFixed(0) + ' ₴';
+            document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км';
+            document.getElementById('strat-fuel-total').innerText = totalFuelVol.toFixed(1) + ' ' + fuelUnit;
+        }
+
+        function addToDailyCash() {
+            haptic();
+            const gross = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(' ₴',''))) || 0;
+            const comm = parseFloat(document.getElementById('res-comm').innerText.replace('-','').replace(' ₴','')) || 0;
+            const fuel = parseFloat(document.getElementById('res-fuel').innerText.split(' ')[0].replace('-','')) || 0;
+            const extraExp = parseInt(document.getElementById('inp-extraExp').value) || 0;
+            const net = parseFloat(document.getElementById('res-net').innerText.replace(' ₴','')) || 0;
+            
+            let rentCost = 0;
+            if (expenses.workMode === 'rent') {
+                rentCost = expenses.rentVal;
+            } else if (expenses.workMode === 'split') {
+                rentCost = (gross - comm) * (expenses.splitPct / 100);
+            }
+
+            dailyCashData.orders += 1;
+            dailyCashData.gross += gross;
+            dailyCashData.comm += comm;
+            dailyCashData.fuel += fuel;
+            dailyCashData.extraExp += extraExp;
+            dailyCashData.rent += rentCost;
+            dailyCashData.net += net;
+            
+            const tripId = Date.now();
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            
+            dailyCashData.history.unshift({
+                id: tripId,
+                time: timeStr,
+                gross: gross,
+                net: net,
+                comm: comm,
+                fuel: fuel,
+                extraExp: extraExp,
+                rent: rentCost
+            });
+
+            localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
+            
+            goals.dailyDone += 1;
+            document.getElementById('inp-daily-done').value = goals.dailyDone;
+            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            
+            updateCashPageUI();
+            calcBranding();
+
+            if(tg.showAlert) tg.showAlert('✅ Збережено!');
+            else alert('✅ Збережено!');
+        }
+
+        function removeTrip(id) {
+            haptic();
+            if(confirm('❌ Видалити цю поїздку з каси?')) {
+                const index = dailyCashData.history.findIndex(t => t.id === id);
+                if(index > -1) {
+                    const trip = dailyCashData.history[index];
+                    dailyCashData.orders = Math.max(0, dailyCashData.orders - 1);
+                    dailyCashData.gross -= trip.gross;
+                    dailyCashData.comm -= trip.comm;
+                    dailyCashData.fuel -= trip.fuel;
+                    dailyCashData.extraExp -= trip.extraExp;
+                    dailyCashData.rent -= trip.rent;
+                    dailyCashData.net -= trip.net;
+                    
+                    dailyCashData.history.splice(index, 1);
+                    localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
+
+                    goals.dailyDone = Math.max(0, goals.dailyDone - 1);
+                    document.getElementById('inp-daily-done').value = goals.dailyDone;
+                    localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+
+                    updateCashPageUI();
+                    calcBranding();
+                }
+            }
+        }
+
+        function updateCashPageUI() {
+            document.getElementById('cash-orders-count').innerText = dailyCashData.orders;
+            document.getElementById('cash-gross').innerText = dailyCashData.gross.toFixed(1) + ' ₴';
+            document.getElementById('cash-comm').innerText = '-' + dailyCashData.comm.toFixed(1) + ' ₴';
+            document.getElementById('cash-fuel').innerText = '-' + dailyCashData.fuel.toFixed(1) + ' ₴';
+            
+            if (dailyCashData.extraExp > 0) {
+                document.getElementById('row-cash-extraExp').style.display = 'flex';
+                document.getElementById('cash-extraExp').innerText = '-' + dailyCashData.extraExp.toFixed(1) + ' ₴';
+            } else {
+                document.getElementById('row-cash-extraExp').style.display = 'none';
+            }
+
+            if (dailyCashData.rent > 0) {
+                document.getElementById('row-cash-rent').style.display = 'flex';
+                document.getElementById('cash-rent').innerText = '-' + dailyCashData.rent.toFixed(1) + ' ₴';
+            } else {
+                document.getElementById('row-cash-rent').style.display = 'none';
+            }
+
+            document.getElementById('cash-net').innerText = dailyCashData.net.toFixed(1) + ' ₴';
+
+            const historyList = document.getElementById('cash-history-list');
+            const emptyState = document.getElementById('cash-empty-state');
+            
+            historyList.innerHTML = '';
+            
+            if(dailyCashData.history && dailyCashData.history.length > 0) {
+                emptyState.style.display = 'none';
+                dailyCashData.history.forEach(trip => {
+                    historyList.innerHTML += `
+                        <div class="history-item">
+                            <div>
+                                <strong style="font-size: 14px;">${trip.time}</strong><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Брудними: ${trip.gross} ₴</span>
+                            </div>
+                            <div style="text-align: right; margin-right: 12px;">
+                                <strong style="font-size: 16px; color: var(--accent-success);">+${trip.net.toFixed(0)} ₴</strong>
+                            </div>
+                            <button class="del-btn" onclick="removeTrip(${trip.id})">✕</button>
+                        </div>
+                    `;
+                });
+            } else {
+                emptyState.style.display = 'block';
+            }
+        }
+
+        function resetDailyCashClick() {
+            haptic();
+            if (confirm('🔄 Обнулити результати за сьогодні?')) {
+                dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
+                dailyCashData.date = new Date().toLocaleDateString();
+                localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
+                
+                goals.dailyDone = 0;
+                document.getElementById('inp-daily-done').value = 0;
+                localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+
+                updateCashPageUI();
+                calcBranding();
+            }
+        }
+
+        function changeDailyDone(step) {
+            haptic();
+            const input = document.getElementById('inp-daily-done');
+            let val = (parseInt(input.value) || 0) + step;
+            if (val < 0) val = 0;
+            input.value = val;
+            calcBranding();
+        }
+
+        function calcBranding() {
+            brandingData.done = parseInt(document.getElementById('brand-done').value) || 0;
+            brandingData.target = parseInt(document.getElementById('brand-target').value) || 1;
+            brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
+            localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
+
+            let pct = (brandingData.done / brandingData.target) * 100;
+            if (pct > 100) pct = 100;
+            
+            let remain = brandingData.target - brandingData.done;
+            if (remain < 0) remain = 0;
+
+            let perDayRequired = remain / brandingData.days;
+
+            document.getElementById('brand-progress').style.width = pct + '%';
+            document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%';
+            document.getElementById('brand-remain').innerText = remain;
+            document.getElementById('brand-perday').innerText = perDayRequired.toFixed(1) + ' замовл.';
+            
+            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
+            const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
+            
+            goals.dailyGoal = dailyGoal;
+            goals.dailyDone = dailyDone;
+            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            
+            document.getElementById('brand-daily-goal-val').innerText = dailyGoal;
+            
+            let dailyPct = (dailyDone / dailyGoal) * 100;
+            if (dailyPct > 100) dailyPct = 100;
+            document.getElementById('brand-daily-progress').style.width = dailyPct + '%';
+            document.getElementById('brand-daily-pct').innerText = dailyPct.toFixed(1) + '%';
+            document.getElementById('brand-perday-required').innerText = perDayRequired.toFixed(1) + ' замовл.';
+            
+            let daysToGoal = "∞";
+            if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
+            
+            if (dailyGoal >= perDayRequired) {
+                document.getElementById('brand-daily-comment').innerHTML = `🔥 Ви йдете з випередженням! Залишилось <strong>${daysToGoal} дн</strong>.`;
+            } else {
+                document.getElementById('brand-daily-comment').innerHTML = `⚠️ Піднатисніть! Треба мінімум <strong>${perDayRequired.toFixed(1)} зам/день</strong>.`;
+            }
+        }
+
+        function updateFuelLabels(type) {
+            const consLabel = document.getElementById('set-fuel-cons-label');
+            const priceLabel = document.getElementById('set-fuel-price-label');
+            if (type === 'electro') {
+                consLabel.innerText = "Розхід kWt (на 100км):";
+                priceLabel.innerText = "Ціна за 1 kWt (₴):";
+            } else {
+                consLabel.innerText = "Розхід (на 100км):";
+                priceLabel.innerText = "Ціна за 1 од. (₴):";
+            }
+        }
+
+        function switchTab(tab) {
+            haptic();
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            
+            const tabsMap = { 'calc': 0, 'branding': 1, 'cash': 2, 'strategy': 3, 'settings': 4 };
+            document.querySelectorAll('.tab-btn')[tabsMap[tab]].classList.add('active');
+            document.getElementById('page-' + tab).classList.add('active');
+
+            if(tab === 'calc') {
+                renderCarSelector();
+                recalc();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if(tab === 'branding') {
+                calcBranding();
+            } else if(tab === 'cash') {
+                updateCashPageUI();
+            } else if(tab === 'strategy') {
+                renderCarSelector();
+                calcStrategy();
+            } else if(tab === 'settings') {
+                renderSettings();
+            }
+        }
+
+        function renderSettings() {
+            const container = document.getElementById('settings-container');
+            container.innerHTML = '';
+
+            Object.keys(tariffs).forEach(key => {
+                const t = tariffs[key];
+                container.innerHTML += `
+                    <div class="card">
+                        <h3 style="margin-bottom:12px; font-size:14px;">${t.icon} ${t.name}</h3>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
+                    </div>
+                `;
+            });
+        }
+
+        function autoSaveSettings() {
+            Object.keys(tariffs).forEach(key => {
+                tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0;
+                tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0;
+                tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0;
+                tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0;
+                tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
+                tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
+            });
+            localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
+
+            expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
+            expenses.type = document.getElementById('set-fuel-type').value;
+            expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
+            expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0;
+            expenses.workMode = document.getElementById('set-work-mode').value;
+            expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0;
+            expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
+            localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses));
+            
+            goals.dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
+            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
+            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            
+            updateFuelLabels(expenses.type);
+        }
+
+        function saveTariffsClick() {
+            haptic();
+            autoSaveSettings();
+            if (tg.showAlert) tg.showAlert('✅ Збережено!');
+            else alert('✅ Збережено!');
+            switchTab('calc');
+        }
+
+        function resetToFactoryTariffs() {
+            haptic();
+            tariffs = JSON.parse(JSON.stringify(defaultTariffs));
+            localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
+            renderSettings();
+            if (tg.showAlert) tg.showAlert('🔄 Скинуто!');
+            else alert('🔄 Скинуто!');
+        }
+
+        loadSavedData();
+        renderCarSelector();
+        recalc();
+        calcBranding();
+
+        function loadSavedData() {
+            loadSavedRouteParams();
+        }
+    </script>
+</body>
+</html>
