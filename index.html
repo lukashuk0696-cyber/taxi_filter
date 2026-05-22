@@ -8,8 +8,8 @@
     <style>
         :root { 
             --bg-color: #eef2f5; 
-            --glass-bg: rgba(255, 255, 255, 0.75); 
-            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.85); 
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
             --text-color: #1a1a1a; 
             --text-muted: #8e8e93;
             --accent-color: #ffd700; 
@@ -18,107 +18,88 @@
         @media (prefers-color-scheme: dark) { 
             :root { 
                 --bg-color: #0f172a; 
-                --glass-bg: rgba(30, 41, 59, 0.75); 
+                --glass-bg: rgba(30, 41, 59, 0.85); 
                 --glass-border: 1px solid rgba(255, 255, 255, 0.1);
                 --text-color: #f8fafc; 
                 --text-muted: #94a3b8;
             } 
         }
-        body[data-theme="dark"] { --bg-color: #0f172a; --glass-bg: rgba(30, 41, 59, 0.75); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --text-color: #f8fafc; --text-muted: #94a3b8; }
-        body[data-theme="light"] { --bg-color: #eef2f5; --glass-bg: rgba(255, 255, 255, 0.75); --glass-border: 1px solid rgba(255, 255, 255, 0.5); --text-color: #1a1a1a; --text-muted: #8e8e93; }
+        body[data-theme="dark"] { --bg-color: #0f172a; --glass-bg: rgba(30, 41, 59, 0.85); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --text-color: #f8fafc; --text-muted: #94a3b8; }
+        body[data-theme="light"] { --bg-color: #eef2f5; --glass-bg: rgba(255, 255, 255, 0.85); --glass-border: 1px solid rgba(255, 255, 255, 0.6); --text-color: #1a1a1a; --text-muted: #8e8e93; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; touch-action: manipulation; }
         button, .car-card, .tab-btn, input[type=range], select { -webkit-user-select: none; user-select: none; }
         
-        /* Збільшено відступ знизу, щоб повзунки не ховалися */
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 140px; transition: background-color 0.3s, color 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 110px; transition: background-color 0.3s, color 0.3s; }
         
-        .app-header { padding: 20px 20px 10px 20px; display: flex; align-items: center; justify-content: space-between; }
-        .app-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
-        .theme-toggle { font-size: 24px; cursor: pointer; padding: 8px; background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: var(--glass-border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .app-header { padding: 16px 16px 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+        .app-title { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+        .theme-toggle { font-size: 20px; cursor: pointer; padding: 6px; background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: var(--glass-border); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         
-        .tabs { display: flex; background: var(--glass-bg); backdrop-filter: blur(12px); padding: 8px; margin: 10px 16px 20px 16px; border-radius: 20px; border: var(--glass-border); overflow-x: auto; scrollbar-width: none; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+        .tabs { display: flex; background: var(--glass-bg); backdrop-filter: blur(12px); padding: 6px; margin: 8px 12px 16px 12px; border-radius: 16px; border: var(--glass-border); overflow-x: auto; scrollbar-width: none; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { flex: 1; min-width: 65px; padding: 10px 4px; border: none; background: none; color: var(--text-muted); font-weight: 700; font-size: 11px; cursor: pointer; border-radius: 14px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .tab-icon { font-size: 20px; }
-        .tab-btn.active { background: var(--accent-color); color: #000000; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4); }
+        .tab-btn { flex: 1; min-width: 60px; padding: 8px 2px; border: none; background: none; color: var(--text-muted); font-weight: 700; font-size: 10px; cursor: pointer; border-radius: 12px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .tab-icon { font-size: 18px; }
+        .tab-btn.active { background: var(--accent-color); color: #000000; box-shadow: 0 4px 8px rgba(255, 215, 0, 0.4); }
         
-        .page { display: none; padding: 0 16px; }
+        .page { display: none; padding: 0 12px; }
         .page.active { display: block; }
         
-        .car-selector { display: flex; gap: 12px; overflow-x: auto; padding: 4px 4px 20px 4px; scrollbar-width: none; }
+        .car-selector { display: flex; gap: 10px; overflow-x: auto; padding: 4px 4px 16px 4px; scrollbar-width: none; }
         .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { flex: 0 0 110px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 16px 8px; border-radius: 20px; text-align: center; border: var(--glass-border); box-shadow: 0 8px 24px rgba(0,0,0,0.04); cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.25s; }
-        .car-card.active { border-color: var(--accent-color); background: linear-gradient(145deg, rgba(255,221,0,0.2) 0%, rgba(255,255,255,0) 100%); transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 24px rgba(255, 221, 0, 0.15); }
-        .car-emoji { font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.15)); }
-        .car-name { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
-        .car-price-info { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .car-card { flex: 0 0 95px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 12px 6px; border-radius: 16px; text-align: center; border: var(--glass-border); box-shadow: 0 4px 16px rgba(0,0,0,0.04); cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.25s; }
+        .car-card.active { border-color: var(--accent-color); background: linear-gradient(145deg, rgba(255,221,0,0.15) 0%, rgba(255,255,255,0) 100%); transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 16px rgba(255, 221, 0, 0.15); }
+        .car-emoji { font-size: 32px; margin-bottom: 8px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.15)); }
+        .car-name { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+        .car-price-info { font-size: 11px; color: var(--text-muted); font-weight: 600; }
         
-        .card { background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: 24px; padding: 22px; margin-bottom: 16px; border: var(--glass-border); box-shadow: 0 10px 32px rgba(0,0,0,0.05); }
-        .card-title { font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; letter-spacing: 0.5px; }
+        .card { background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; margin-bottom: 12px; border: var(--glass-border); box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+        .card-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; letter-spacing: 0.5px; }
         
-        /* ОНОВЛЕНА ШТОРКА (ЗГОРТАНА) */
-        .sticky-summary { 
-            position: fixed; 
-            bottom: 15px; 
-            left: 16px; 
-            right: 16px;
-            z-index: 100; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2); 
-            border: 2px solid var(--accent-success); 
-            padding: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .summary-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            padding-bottom: 10px;
-        }
-        .summary-mini-title { font-size: 18px; font-weight: 800; }
-        .summary-chevron { font-size: 16px; color: var(--text-muted); transition: transform 0.3s; }
-        .summary-chevron.open { transform: rotate(180deg); }
+        .sticky-summary { position: fixed; bottom: 12px; left: 12px; right: 12px; z-index: 100; box-shadow: 0 -8px 24px rgba(0,0,0,0.15); border: 2px solid var(--accent-success); padding: 14px; transition: all 0.3s; border-radius: 20px; }
+        .summary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 6px; }
+        .summary-mini-title { font-size: 16px; font-weight: 800; }
+        .summary-chevron { font-size: 14px; color: var(--text-muted); }
         
-        .input-block { padding: 14px 0; border-bottom: 1px solid rgba(128,128,128,0.1); }
+        .input-block { padding: 10px 0; border-bottom: 1px solid rgba(128,128,128,0.1); }
         .input-block:last-child { border-bottom: none; padding-bottom: 0; }
         .input-header { display: flex; justify-content: space-between; align-items: center; }
         
-        .icon-wrap { display: flex; align-items: center; gap: 12px; }
-        .icon-box { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
+        .icon-wrap { display: flex; align-items: center; gap: 10px; }
+        .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
         .bg-blue { background: rgba(0, 122, 255, 0.15); } .bg-green { background: rgba(52, 199, 89, 0.15); } .bg-orange { background: rgba(255, 149, 0, 0.15); } .bg-purple { background: rgba(175, 82, 222, 0.15); } .bg-red { background: rgba(255, 59, 48, 0.15); } .bg-yellow { background: rgba(255, 204, 0, 0.25); } .bg-cyan { background: rgba(0, 199, 190, 0.15); } .bg-pink { background: rgba(255, 45, 85, 0.15); } .bg-emerald { background: rgba(52, 199, 137, 0.15); }
         
-        .input-label { font-size: 16px; font-weight: 700; }
+        .input-label { font-size: 14px; font-weight: 700; }
         
-        .counter { display: flex; align-items: center; gap: 8px; }
-        .btn-counter { width: 42px; height: 42px; border-radius: 14px; border: none; background: rgba(128,128,128,0.1); color: var(--text-color); font-size: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; backdrop-filter: blur(5px); }
+        .counter { display: flex; align-items: center; gap: 6px; }
+        .btn-counter { width: 36px; height: 36px; border-radius: 10px; border: none; background: rgba(128,128,128,0.1); color: var(--text-color); font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
         .btn-counter:active { transform: scale(0.9); background: rgba(128,128,128,0.2); }
-        .btn-x2 { font-size: 14px; width: auto; padding: 0 12px; background: rgba(0, 122, 255, 0.1); color: #007aff; font-weight: 800; }
-        .counter-value { font-size: 19px; font-weight: 800; width: 64px; text-align: center; background: none; border: none; color: var(--text-color); }
+        .btn-x2 { font-size: 12px; width: auto; padding: 0 10px; background: rgba(0, 122, 255, 0.1); color: #007aff; font-weight: 800; }
+        .counter-value { font-size: 16px; font-weight: 800; width: 50px; text-align: center; background: none; border: none; color: var(--text-color); }
         
-        .slider-container { padding-top: 16px; width: 100%; }
+        .slider-container { padding-top: 10px; width: 100%; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; background: #fff; border: 3px solid var(--accent-success); box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; margin-top: -10px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--accent-success); box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; margin-top: -8px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(128,128,128,0.15); border-radius: 4px; }
         
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
-        .result-total { border-top: 2px dashed rgba(128,128,128,0.2); padding-top: 16px; margin-top: 16px; font-size: 24px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
-        .eff-badge { background: var(--accent-success); color: white; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3); }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
+        .result-total { border-top: 2px dashed rgba(128,128,128,0.2); padding-top: 12px; margin-top: 12px; font-size: 20px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        .eff-badge { background: var(--accent-success); color: white; padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: 800; box-shadow: 0 2px 8px rgba(0, 200, 83, 0.3); }
         
-        .admin-input { width: 90px; padding: 10px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); text-align: center; font-size: 15px; font-weight: 700; background: rgba(128,128,128,0.05); color: var(--text-color); }
-        .save-btn { width: 100%; padding: 16px; background: var(--accent-success); color: white; border: none; border-radius: 16px; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 5px; box-shadow: 0 6px 16px rgba(0, 200, 83, 0.3); transition: transform 0.1s; }
+        .admin-input { width: 80px; padding: 8px; border-radius: 10px; border: 1px solid rgba(128,128,128,0.2); text-align: center; font-size: 14px; font-weight: 700; background: rgba(128,128,128,0.05); color: var(--text-color); }
+        .save-btn { width: 100%; padding: 14px; background: var(--accent-success); color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3); transition: transform 0.1s; }
         .save-btn:active { transform: scale(0.98); }
-        .reset-btn { width: 100%; padding: 16px; background: #ff3b30; color: white; border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 6px 16px rgba(255, 59, 48, 0.2); }
-        .toggle-btn { width: 100%; padding: 14px; background: rgba(128,128,128,0.1); color: var(--text-color); border: none; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .reset-btn { width: 100%; padding: 14px; background: #ff3b30; color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.2); }
+        .toggle-btn { width: 100%; padding: 12px; background: rgba(128,128,128,0.1); color: var(--text-color); border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         
-        .progress-container { width: 100%; background-color: rgba(128,128,128,0.1); border-radius: 12px; margin: 16px 0; overflow: hidden; height: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-        .progress-bar { height: 100%; background-color: var(--accent-success); width: 0%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 12px; box-shadow: 0 0 10px rgba(0,200,83,0.5); }
+        .progress-container { width: 100%; background-color: rgba(128,128,128,0.1); border-radius: 10px; margin: 12px 0; overflow: hidden; height: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .progress-bar { height: 100%; background-color: var(--accent-success); width: 0%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; box-shadow: 0 0 8px rgba(0,200,83,0.5); }
         
-        .info-box { background: rgba(0, 122, 255, 0.08); border-left: 4px solid #007aff; padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--text-color); margin-top: 16px; border: var(--glass-border); }
+        .info-box { background: rgba(0, 122, 255, 0.08); border-left: 4px solid #007aff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text-color); margin-top: 12px; border: var(--glass-border); }
         
-        .history-item { background: rgba(128,128,128,0.05); border-radius: 14px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(128,128,128,0.1); }
-        .del-btn { background: #ff3b30; color: white; border: none; border-radius: 10px; width: 34px; height: 34px; font-weight: bold; cursor: pointer; }
+        .history-item { background: rgba(128,128,128,0.05); border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(128,128,128,0.1); }
+        .del-btn { background: #ff3b30; color: white; border: none; border-radius: 8px; width: 30px; height: 30px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -203,7 +184,7 @@
                 <div class="slider-container"><input type="range" id="slider-coef" min="1.0" max="4.0" step="0.1" value="1.0" oninput="syncSliderToInput('coef')"></div>
             </div>
 
-            <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">🔽 Більше параметрів (Простій, Точки)</button>
+            <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">🔽 Більше параметрів</button>
             
             <div id="extra-params" style="display: none; margin-top: 10px; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 10px;">
                 <div class="input-block">
@@ -244,7 +225,7 @@
 
                 <div class="input-block" style="border-bottom:none;">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box bg-emerald">💸</div><span class="input-label">Доплата / Чайові</span></div>
+                        <div class="icon-wrap"><div class="icon-box bg-emerald">💸</div><span class="input-label">Чайові / Доплата</span></div>
                         <div class="counter">
                             <button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button>
                             <input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')">
@@ -258,10 +239,10 @@
 
         <div class="card">
             <div class="card-title">🧾 Чек Уклону</div>
-            <div class="result-row"><span>База (з коефіцієнтом):</span><span id="res-base">0 ₴</span></div>
+            <div class="result-row"><span>База (з коеф.):</span><span id="res-base">0 ₴</span></div>
             <div class="result-row"><span>Кілометраж:</span><span id="res-extra-dist">0 ₴</span></div>
-            <div class="result-row"><span>Очікування та точки:</span><span id="res-addons">0 ₴</span></div>
-            <div class="result-row" style="color:var(--accent-success);" id="row-res-bonus"><span>Фікс. доплата клієнта:</span><span id="res-bonus">0 ₴</span></div>
+            <div class="result-row"><span>Очікування/точки:</span><span id="res-addons">0 ₴</span></div>
+            <div class="result-row" style="color:var(--accent-success);" id="row-res-bonus"><span>Доплата клієнта:</span><span id="res-bonus">0 ₴</span></div>
             <div class="result-total" style="border-top-style: solid;"><span>Для клієнта:</span><span id="res-total">0 ₴</span></div>
         </div>
 
@@ -271,42 +252,42 @@
                 <div class="summary-chevron" id="summary-chevron">Деталі 🔼</div>
             </div>
             
-            <div id="summary-details" style="display: none; padding-top: 10px; border-top: 1px solid rgba(128,128,128,0.2);">
-                <div class="result-row" style="color: var(--text-muted); font-weight: 500;"><span>Комісія (<span id="lbl-comm">17</span>%):</span><span id="res-comm">0 ₴</span></div>
-                <div class="result-row" style="color: var(--text-muted); font-weight: 500;"><span>Пальне (<span id="lbl-fuel-dist">0</span> км):</span><span id="res-fuel">0 ₴</span></div>
-                <div class="result-row" style="color: var(--text-muted); font-weight: 500;" id="row-res-extraExp"><span>Дод. витрати:</span><span id="res-extraExp">0 ₴</span></div>
-                <div class="result-row" style="color: #ff9500; font-weight: 500;" id="row-res-rent"><span>План / Оренда:</span><span id="res-rent">0 ₴</span></div>
-                <div class="result-row" style="margin-top: 10px; align-items: center;">
-                    <span style="font-size: 14px; color: var(--text-muted);">Ефективна ціна:</span>
+            <div id="summary-details" style="display: none; padding-top: 8px; border-top: 1px solid rgba(128,128,128,0.2);">
+                <div class="result-row" style="color: var(--text-muted);"><span>Комісія (<span id="lbl-comm">17</span>%):</span><span id="res-comm">0 ₴</span></div>
+                <div class="result-row" style="color: var(--text-muted);"><span>Пальне (<span id="lbl-fuel-dist">0</span> км):</span><span id="res-fuel">0 ₴</span></div>
+                <div class="result-row" style="color: var(--text-muted);" id="row-res-extraExp"><span>Дод. витрати:</span><span id="res-extraExp">0 ₴</span></div>
+                <div class="result-row" style="color: #ff9500;" id="row-res-rent"><span>Оренда:</span><span id="res-rent">0 ₴</span></div>
+                <div class="result-row" style="margin-top: 8px; align-items: center;">
+                    <span style="font-size: 13px; color: var(--text-muted);">Ефективна ціна:</span>
                     <span class="eff-badge" id="res-eff">0 ₴/км</span>
                 </div>
             </div>
             
-            <button class="save-btn" onclick="addToDailyCash()">✅ Зафіксувати в Касу</button>
+            <button class="save-btn" onclick="addToDailyCash()">✅ В Касу</button>
         </div>
     </div>
 
     <div id="page-branding" class="page">
         <div class="card">
             <div class="card-title">🏆 Програма лояльності</div>
-            <div class="input-block" style="border-bottom:none; padding: 4px 0;">
-                <div class="input-header" style="margin-bottom:12px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:12px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:12px;"><span>Залишилось днів:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-days" value="0" oninput="calcBranding()"></div>
+            <div class="input-block" style="border-bottom:none; padding: 2px 0;">
+                <div class="input-header" style="margin-bottom:10px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Залишилось днів:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-days" value="0" oninput="calcBranding()"></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-progress"></div></div>
-            <div style="margin-top: 15px; font-size: 15px; font-weight: 600; line-height: 1.6;">
+            <div style="margin-top: 12px; font-size: 14px; font-weight: 600; line-height: 1.5;">
                 📌 Прогрес: <strong id="brand-pct">0%</strong><br>
                 📉 Залишилось: <strong id="brand-remain">0</strong><br>
-                🚖 Потрібний темп: <strong id="brand-perday" style="color:var(--accent-success); font-size: 17px;">0 зам/день</strong>
+                🚖 Потрібний темп: <strong id="brand-perday" style="color:var(--accent-success); font-size: 16px;">0 зам/день</strong>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">🎯 Щоденна Ціль та Прогноз</div>
-            <div class="input-block" style="border-bottom:none; padding: 4px 0;">
-                <div class="input-header" style="margin-bottom:12px;"><span>Ціль на сьогодні:</span><strong id="brand-daily-goal-val" style="font-size: 20px;">0</strong></div>
-                <div class="input-header" style="margin-bottom:12px;"><span>Виконано сьогодні:</span>
+            <div class="card-title">🎯 Щоденна Ціль</div>
+            <div class="input-block" style="border-bottom:none; padding: 2px 0;">
+                <div class="input-header" style="margin-bottom:10px;"><span>Ціль на сьогодні:</span><strong id="brand-daily-goal-val" style="font-size: 18px;">0</strong></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Виконано сьогодні:</span>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeDailyDone(-1)">-</button>
                         <input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="calcBranding()">
@@ -314,9 +295,9 @@
                     </div>
                 </div>
             </div>
-            <div class="progress-container" style="height: 14px;"><div class="progress-bar" id="brand-daily-progress" style="background: linear-gradient(90deg, #ffdd00, #ff9500);"></div></div>
-            <div style="margin-top: 15px; font-size: 14px; line-height: 1.6; background: rgba(128,128,128,0.05); padding: 14px; border-radius: 16px; border: var(--glass-border);">
-                📌 Прогрес за сьогодні: <strong id="brand-daily-pct">0%</strong><br>
+            <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: linear-gradient(90deg, #ffdd00, #ff9500);"></div></div>
+            <div style="margin-top: 12px; font-size: 13px; line-height: 1.5; background: rgba(128,128,128,0.05); padding: 12px; border-radius: 12px; border: var(--glass-border);">
+                📌 Прогрес сьогодні: <strong id="brand-daily-pct">0%</strong><br>
                 📉 Необхідний темп: <strong id="brand-perday-required" style="color:var(--accent-success)">0 зам/день</strong><br><br>
                 🔮 <span id="brand-daily-comment" style="font-weight: 600;">Введіть дані</span>
             </div>
@@ -325,9 +306,9 @@
 
     <div id="page-cash" class="page">
         <div class="card">
-            <div class="card-title">💰 Фінансовий підсумок зміни</div>
-            <div class="result-row"><span>Виконано замовлень:</span><strong id="cash-orders-count" style="font-size:18px;">0</strong></div>
-            <div style="border-top: 1px solid rgba(128,128,128,0.15); margin: 16px 0;"></div>
+            <div class="card-title">💰 Підсумок зміни</div>
+            <div class="result-row"><span>Виконано замовлень:</span><strong id="cash-orders-count" style="font-size:16px;">0</strong></div>
+            <div style="border-top: 1px solid rgba(128,128,128,0.15); margin: 12px 0;"></div>
             <div class="result-row"><span>Загальний оборот:</span><span id="cash-gross" style="font-weight:800;">0.0 ₴</span></div>
             <div class="result-row" style="color:#ff3b30;"><span>Комісія служби:</span><span id="cash-comm">-0.0 ₴</span></div>
             <div class="result-row" style="color:#ff9500;"><span>Витрати на пальне:</span><span id="cash-fuel">-0.0 ₴</span></div>
@@ -342,12 +323,12 @@
         <div class="card">
             <div class="card-title">📜 Історія поїздок</div>
             <div id="cash-history-list"></div>
-            <div id="cash-empty-state" style="text-align: center; color: var(--text-muted); font-weight: 600; padding: 10px 0;">
-                Ви ще не додали жодної поїздки сьогодні
+            <div id="cash-empty-state" style="text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600; padding: 10px 0;">
+                Ви ще не додали жодної поїздки
             </div>
         </div>
         
-        <button class="reset-btn" onclick="resetDailyCashClick()">🔄 Скинути всю касу дня</button>
+        <button class="reset-btn" onclick="resetDailyCashClick()">🔄 Скинути касу дня</button>
     </div>
 
     <div id="page-strategy" class="page">
@@ -355,13 +336,13 @@
         <div class="card">
             <div class="card-title">📊 Симулятор (План зміни)</div>
             <div class="input-block">
-                <div class="input-header" style="margin-bottom: 15px;">
-                    <span style="font-weight: 700;">Хочу чистими на руки (₴):</span>
-                    <input type="number" enterkeyhint="done" class="admin-input" style="width: 100px; border: 2px solid var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
+                <div class="input-header" style="margin-bottom: 12px;">
+                    <span style="font-weight: 700; font-size: 14px;">Хочу чистими (₴):</span>
+                    <input type="number" enterkeyhint="done" class="admin-input" style="width: 90px; border: 2px solid var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
                 </div>
                 <div class="input-header">
-                    <span style="font-weight: 700;">Середня поїздка (км):</span>
-                    <input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 100px;" id="strat-km" value="6.5" oninput="calcStrategy()">
+                    <span style="font-weight: 700; font-size: 14px;">Середня поїздка (км):</span>
+                    <input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 90px;" id="strat-km" value="6.5" oninput="calcStrategy()">
                 </div>
             </div>
         </div>
@@ -369,74 +350,74 @@
         <div class="card" id="strat-result-container">
             <div class="card-title" style="color: var(--text-color);">Що для цього потрібно:</div>
             <div id="strat-result-data">
-                <div class="result-row"><span>Кількість поїздок:</span><strong id="strat-trips" style="font-size: 22px; color: var(--accent-success);">0</strong></div>
-                <div class="result-row"><span>Треба набити "брудними":</span><span id="strat-gross" style="font-weight: 800;">0 ₴</span></div>
+                <div class="result-row"><span>Кількість поїздок:</span><strong id="strat-trips" style="font-size: 20px; color: var(--accent-success);">0</strong></div>
+                <div class="result-row"><span>Набити "брудними":</span><span id="strat-gross" style="font-weight: 800;">0 ₴</span></div>
                 <div class="result-row"><span>Пробіг з клієнтами:</span><span id="strat-km-total">0 км</span></div>
                 <div class="result-row"><span>Піде пального:</span><span id="strat-fuel-total">0</span></div>
             </div>
-            <div id="strat-warning" style="display:none; color: #ff3b30; font-weight: 800; text-align: center; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1); border-radius: 10px;">
-                ⚠️ Фільтр збитковий! Чистий дохід за поїздку менше нуля.
+            <div id="strat-warning" style="display:none; color: #ff3b30; font-weight: 800; font-size: 13px; text-align: center; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1); border-radius: 10px;">
+                ⚠️ Фільтр збитковий!
             </div>
         </div>
     </div>
 
     <div id="page-settings" class="page">
         <div class="card">
-            <h3 style="margin-bottom:16px; font-size:17px;">📊 Витрати (Комісія та Пальне)</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items: center;">
-                <span style="font-weight: 600;">Комісія служби (%):</span>
+            <h3 style="margin-bottom:12px; font-size:15px;">📊 Витрати</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;">
+                <span style="font-weight: 600; font-size: 13px;">Комісія служби (%):</span>
                 <input type="number" step="0.1" class="admin-input" id="set-comm" value="17" oninput="autoSaveSettings()">
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items: center;">
-                <span style="font-weight: 600;">Тип пального:</span>
-                <select class="admin-input" style="width:125px; padding: 10px;" id="set-fuel-type" onchange="autoSaveSettings()">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;">
+                <span style="font-weight: 600; font-size: 13px;">Тип пального:</span>
+                <select class="admin-input" style="width:110px;" id="set-fuel-type" onchange="autoSaveSettings()">
                     <option value="gas">Газ</option>
                     <option value="petrol">Бензин</option>
                     <option value="diesel">Дизель</option>
                     <option value="electro">Електро</option>
                 </select>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items: center;">
-                <span id="set-fuel-cons-label" style="font-weight: 600;">Розхід (на 100км):</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;">
+                <span id="set-fuel-cons-label" style="font-weight: 600; font-size: 13px;">Розхід (на 100км):</span>
                 <input type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="10" oninput="autoSaveSettings()">
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items: center;">
-                <span id="set-fuel-price-label" style="font-weight: 600;">Ціна за 1 од. (₴):</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;">
+                <span id="set-fuel-price-label" style="font-weight: 600; font-size: 13px;">Ціна за 1 од. (₴):</span>
                 <input type="number" step="0.1" class="admin-input" id="set-fuel-price" value="28" oninput="autoSaveSettings()">
             </div>
         </div>
 
         <div class="card">
-            <h3 style="margin-bottom:16px; font-size:17px;">🤝 Режим роботи (Оренда / Парк)</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items: center;">
-                <span style="font-weight: 600;">Режим:</span>
-                <select class="admin-input" style="width:160px; padding: 10px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();">
+            <h3 style="margin-bottom:12px; font-size:15px;">🤝 Режим роботи</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;">
+                <span style="font-weight: 600; font-size: 13px;">Режим:</span>
+                <select class="admin-input" style="width:130px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();">
                     <option value="solo">Сам на собі</option>
-                    <option value="rent">Фікс. план (за поїздку)</option>
+                    <option value="rent">Фікс. план</option>
                     <option value="split">Відсоток парку</option>
                 </select>
             </div>
-            <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:14px; align-items: center;">
-                <span style="font-weight: 600;">Сума плану з поїздки (₴):</span>
+            <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:10px; align-items: center;">
+                <span style="font-weight: 600; font-size: 13px;">Сума плану (₴):</span>
                 <input type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()">
             </div>
-            <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:14px; align-items: center;">
-                <span style="font-weight: 600;">Який % віддаєте парку:</span>
+            <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:10px; align-items: center;">
+                <span style="font-weight: 600; font-size: 13px;">Відсоток парку:</span>
                 <input type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()">
             </div>
         </div>
 
         <div class="card">
-            <h3 style="margin-bottom:16px; font-size:17px;">🎯 Налаштування Цілі</h3>
+            <h3 style="margin-bottom:12px; font-size:15px;">🎯 Цілі</h3>
             <div style="display:flex; justify-content:space-between; align-items: center;">
-                <span style="font-weight: 600;">Щоденна ціль (замовл.):</span>
+                <span style="font-weight: 600; font-size: 13px;">Щоденна ціль:</span>
                 <input type="number" step="1" class="admin-input" id="set-daily-goal" value="12" oninput="autoSaveSettings()">
             </div>
         </div>
 
         <div id="settings-container"></div>
-        <button class="save-btn" onclick="saveTariffsClick()">💾 Зберегти сітку примусово</button>
-        <button class="reset-btn" style="background: var(--text-muted);" onclick="resetToFactoryTariffs()">🔄 Повернутись до початкових тарифів</button>
+        <button class="save-btn" onclick="saveTariffsClick()">💾 Зберегти сітку</button>
+        <button class="reset-btn" style="background: var(--text-muted);" onclick="resetToFactoryTariffs()">🔄 Відновити стандартні</button>
     </div>
 
     <script>
@@ -476,7 +457,6 @@
             document.getElementById('theme-btn').innerText = '🌙';
         }
 
-        // Оновлено стандартний тариф "Бізнес" під ваші нові параметри (112, 18.60, 19.20)
         const defaultTariffs = {
             standard: { name: 'Стандарт', icon: '🚗', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', icon: '🚘', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
@@ -496,7 +476,6 @@
         let dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
         let currentClass = 'business'; 
 
-        // Залишаємо v19, щоб ваші дані не злетіли
         if(localStorage.getItem('taxi_tariffs_v19')) tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v19'));
         if(localStorage.getItem('taxi_expenses_v19')) expenses = JSON.parse(localStorage.getItem('taxi_expenses_v19'));
         if(localStorage.getItem('taxi_goals_v19')) goals = JSON.parse(localStorage.getItem('taxi_goals_v19'));
@@ -514,7 +493,6 @@
             }
         }
 
-        // Логіка згортання міні-панелі
         function toggleSummary() {
             haptic();
             const details = document.getElementById('summary-details');
@@ -537,7 +515,7 @@
                 btn.innerText = '🔼 Сховати додаткові параметри';
             } else {
                 panel.style.display = 'none';
-                btn.innerText = '🔽 Більше параметрів (Простій, Точки)';
+                btn.innerText = '🔽 Більше параметрів';
             }
         }
 
@@ -695,425 +673,4 @@
 
             const t = tariffs[currentClass];
 
-            let remainingMinKm = t.minKm;
-            let extraCityKm = 0;
-            let extraOutKm = 0;
-
-            if (distCity >= remainingMinKm) {
-                extraCityKm = distCity - remainingMinKm;
-                remainingMinKm = 0;
-            } else {
-                remainingMinKm -= distCity;
-                extraCityKm = 0;
-            }
-
-            if (distOut >= remainingMinKm) {
-                extraOutKm = distOut - remainingMinKm;
-                remainingMinKm = 0;
-            } else {
-                extraOutKm = 0;
-            }
-
-            const costExtraCity = extraCityKm * t.perKmCity;
-            const costOut = extraOutKm * t.perKmOut;
-            const stopsCost = stopsQty * t.stopPrice;
-            const costAddons = (wait * t.perMin) + stopsCost;
-            
-            const baseTotalWithCoef = (t.minPrice + costExtraCity + costOut + costAddons) * coef;
-            const finalTotal = baseTotalWithCoef + clientBonus;
-            const totalKm = distCity + distOut + delivery + emptyKm;
-
-            document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴ (вкл. ${t.minKm} км)`;
-            document.getElementById('res-extra-dist').innerText = `${((costExtraCity + costOut) * coef).toFixed(1)} ₴`;
-            document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
-            
-            if(clientBonus > 0) {
-                document.getElementById('row-res-bonus').style.display = 'flex';
-                document.getElementById('res-bonus').innerText = `+${clientBonus} ₴`;
-            } else {
-                document.getElementById('row-res-bonus').style.display = 'none';
-            }
-
-            document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
-            
-            const commissionCost = finalTotal * (expenses.comm / 100);
-            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-            
-            let rentCost = 0;
-            if (expenses.workMode === 'rent') {
-                rentCost = expenses.rentVal;
-            } else if (expenses.workMode === 'split') {
-                rentCost = (finalTotal - commissionCost) * (expenses.splitPct / 100);
-            }
-
-            const netIncome = finalTotal - commissionCost - fuelCost - extraExp - rentCost;
-            const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
-
-            // Оновлення тексту в Міні-Панелі
-            document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
-            
-            document.getElementById('lbl-comm').innerText = expenses.comm;
-            document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
-            document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
-            
-            const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
-            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴ (${ (totalKm / 100 * expenses.cons).toFixed(1) } ${fuelUnit})`;
-            
-            if (extraExp > 0) {
-                document.getElementById('row-res-extraExp').style.display = 'flex';
-                document.getElementById('res-extraExp').innerText = `-${extraExp} ₴`;
-            } else {
-                document.getElementById('row-res-extraExp').style.display = 'none';
-            }
-
-            if (rentCost > 0) {
-                document.getElementById('row-res-rent').style.display = 'flex';
-                document.getElementById('res-rent').innerText = `-${rentCost.toFixed(1)} ₴`;
-            } else {
-                document.getElementById('row-res-rent').style.display = 'none';
-            }
-
-            document.getElementById('res-eff').innerText = `${effPrice.toFixed(2)} ₴/км`;
-        }
-
-        function calcStrategy() {
-            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000;
-            const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
-            
-            localStorage.setItem('taxi_strat_params_v19', JSON.stringify({target: targetNet, km: avgKm}));
-
-            const t = tariffs[currentClass];
-            let extraKm = Math.max(0, avgKm - t.minKm);
-            let tripGross = t.minPrice + (extraKm * t.perKmCity);
-            
-            let tripComm = tripGross * (expenses.comm / 100);
-            let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
-            
-            let tripRent = 0;
-            if (expenses.workMode === 'rent') {
-                tripRent = expenses.rentVal;
-            } else if (expenses.workMode === 'split') {
-                tripRent = (tripGross - tripComm) * (expenses.splitPct / 100);
-            }
-
-            let tripNet = tripGross - tripComm - tripFuel - tripRent;
-
-            if (tripNet <= 0) {
-                document.getElementById('strat-result-data').style.display = 'none';
-                document.getElementById('strat-warning').style.display = 'block';
-                return;
-            } else {
-                document.getElementById('strat-result-data').style.display = 'block';
-                document.getElementById('strat-warning').style.display = 'none';
-            }
-
-            let tripsNeeded = Math.ceil(targetNet / tripNet);
-            let totalGross = tripsNeeded * tripGross;
-            let totalKm = tripsNeeded * avgKm;
-            let totalFuelVol = (totalKm / 100) * expenses.cons;
-            let fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
-
-            document.getElementById('strat-trips').innerText = tripsNeeded;
-            document.getElementById('strat-gross').innerText = totalGross.toFixed(0) + ' ₴';
-            document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км';
-            document.getElementById('strat-fuel-total').innerText = totalFuelVol.toFixed(1) + ' ' + fuelUnit;
-        }
-
-        function addToDailyCash() {
-            haptic();
-            const gross = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(' ₴',''))) || 0;
-            const comm = parseFloat(document.getElementById('res-comm').innerText.replace('-','').replace(' ₴','')) || 0;
-            const fuel = parseFloat(document.getElementById('res-fuel').innerText.split(' ')[0].replace('-','')) || 0;
-            const extraExp = parseInt(document.getElementById('inp-extraExp').value) || 0;
-            const net = parseFloat(document.getElementById('res-net').innerText.replace(' ₴','')) || 0;
-            
-            let rentCost = 0;
-            if (expenses.workMode === 'rent') {
-                rentCost = expenses.rentVal;
-            } else if (expenses.workMode === 'split') {
-                rentCost = (gross - comm) * (expenses.splitPct / 100);
-            }
-
-            dailyCashData.orders += 1;
-            dailyCashData.gross += gross;
-            dailyCashData.comm += comm;
-            dailyCashData.fuel += fuel;
-            dailyCashData.extraExp += extraExp;
-            dailyCashData.rent += rentCost;
-            dailyCashData.net += net;
-            
-            const tripId = Date.now();
-            const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            
-            dailyCashData.history.unshift({
-                id: tripId,
-                time: timeStr,
-                gross: gross,
-                net: net,
-                comm: comm,
-                fuel: fuel,
-                extraExp: extraExp,
-                rent: rentCost
-            });
-
-            localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
-            
-            goals.dailyDone += 1;
-            document.getElementById('inp-daily-done').value = goals.dailyDone;
-            localStorage.setItem('taxi_goals_v19', JSON.stringify(goals));
-            
-            updateCashPageUI();
-            calcBranding();
-
-            if(tg.showAlert) tg.showAlert('✅ Замовлення збережено в касу!');
-            else alert('✅ Замовлення збережено в касу!');
-        }
-
-        function removeTrip(id) {
-            haptic();
-            if(confirm('❌ Видалити цю поїздку з каси?')) {
-                const index = dailyCashData.history.findIndex(t => t.id === id);
-                if(index > -1) {
-                    const trip = dailyCashData.history[index];
-                    dailyCashData.orders = Math.max(0, dailyCashData.orders - 1);
-                    dailyCashData.gross -= trip.gross;
-                    dailyCashData.comm -= trip.comm;
-                    dailyCashData.fuel -= trip.fuel;
-                    dailyCashData.extraExp -= trip.extraExp;
-                    dailyCashData.rent -= trip.rent;
-                    dailyCashData.net -= trip.net;
-                    
-                    dailyCashData.history.splice(index, 1);
-                    localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
-
-                    goals.dailyDone = Math.max(0, goals.dailyDone - 1);
-                    document.getElementById('inp-daily-done').value = goals.dailyDone;
-                    localStorage.setItem('taxi_goals_v19', JSON.stringify(goals));
-
-                    updateCashPageUI();
-                    calcBranding();
-                }
-            }
-        }
-
-        function updateCashPageUI() {
-            document.getElementById('cash-orders-count').innerText = dailyCashData.orders;
-            document.getElementById('cash-gross').innerText = dailyCashData.gross.toFixed(1) + ' ₴';
-            document.getElementById('cash-comm').innerText = '-' + dailyCashData.comm.toFixed(1) + ' ₴';
-            document.getElementById('cash-fuel').innerText = '-' + dailyCashData.fuel.toFixed(1) + ' ₴';
-            
-            if (dailyCashData.extraExp > 0) {
-                document.getElementById('row-cash-extraExp').style.display = 'flex';
-                document.getElementById('cash-extraExp').innerText = '-' + dailyCashData.extraExp.toFixed(1) + ' ₴';
-            } else {
-                document.getElementById('row-cash-extraExp').style.display = 'none';
-            }
-
-            if (dailyCashData.rent > 0) {
-                document.getElementById('row-cash-rent').style.display = 'flex';
-                document.getElementById('cash-rent').innerText = '-' + dailyCashData.rent.toFixed(1) + ' ₴';
-            } else {
-                document.getElementById('row-cash-rent').style.display = 'none';
-            }
-
-            document.getElementById('cash-net').innerText = dailyCashData.net.toFixed(1) + ' ₴';
-
-            const historyList = document.getElementById('cash-history-list');
-            const emptyState = document.getElementById('cash-empty-state');
-            
-            historyList.innerHTML = '';
-            
-            if(dailyCashData.history && dailyCashData.history.length > 0) {
-                emptyState.style.display = 'none';
-                dailyCashData.history.forEach(trip => {
-                    historyList.innerHTML += `
-                        <div class="history-item">
-                            <div>
-                                <strong style="font-size: 16px;">${trip.time}</strong><br>
-                                <span style="font-size: 12px; color: var(--text-muted);">Брудними: ${trip.gross} ₴</span>
-                            </div>
-                            <div style="text-align: right; margin-right: 15px;">
-                                <strong style="font-size: 18px; color: var(--accent-success);">+${trip.net.toFixed(0)} ₴</strong>
-                            </div>
-                            <button class="del-btn" onclick="removeTrip(${trip.id})">✕</button>
-                        </div>
-                    `;
-                });
-            } else {
-                emptyState.style.display = 'block';
-            }
-        }
-
-        function resetDailyCashClick() {
-            haptic();
-            if (confirm('🔄 Обнулити результати за сьогодні?')) {
-                dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
-                dailyCashData.date = new Date().toLocaleDateString();
-                localStorage.setItem('taxi_daily_cash_data_v19', JSON.stringify(dailyCashData));
-                
-                goals.dailyDone = 0;
-                document.getElementById('inp-daily-done').value = 0;
-                localStorage.setItem('taxi_goals_v19', JSON.stringify(goals));
-
-                updateCashPageUI();
-                calcBranding();
-            }
-        }
-
-        function calcBranding() {
-            brandingData.done = parseInt(document.getElementById('brand-done').value) || 0;
-            brandingData.target = parseInt(document.getElementById('brand-target').value) || 1;
-            brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
-            localStorage.setItem('taxi_branding_v19', JSON.stringify(brandingData));
-
-            let pct = (brandingData.done / brandingData.target) * 100;
-            if (pct > 100) pct = 100;
-            
-            let remain = brandingData.target - brandingData.done;
-            if (remain < 0) remain = 0;
-
-            let perDayRequired = remain / brandingData.days;
-
-            document.getElementById('brand-progress').style.width = pct + '%';
-            document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%';
-            document.getElementById('brand-remain').innerText = remain;
-            document.getElementById('brand-perday').innerText = perDayRequired.toFixed(1) + ' замовл.';
-            
-            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
-            const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
-            
-            goals.dailyGoal = dailyGoal;
-            goals.dailyDone = dailyDone;
-            localStorage.setItem('taxi_goals_v19', JSON.stringify(goals));
-            
-            document.getElementById('brand-daily-goal-val').innerText = dailyGoal;
-            
-            let dailyPct = (dailyDone / dailyGoal) * 100;
-            if (dailyPct > 100) dailyPct = 100;
-            document.getElementById('brand-daily-progress').style.width = dailyPct + '%';
-            document.getElementById('brand-daily-pct').innerText = dailyPct.toFixed(1) + '%';
-            document.getElementById('brand-perday-required').innerText = perDayRequired.toFixed(1) + ' замовл.';
-            
-            let daysToGoal = "∞";
-            if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
-            
-            if (dailyGoal >= perDayRequired) {
-                document.getElementById('brand-daily-comment').innerHTML = `🔥 Ви йдете з випередженням! З вашим темпом ви закриєте план за <strong>${daysToGoal} дн</strong>.`;
-            } else {
-                document.getElementById('brand-daily-comment').innerHTML = `⚠️ Щоб не злетіти з плану, треба робити мінімум <strong>${perDayRequired.toFixed(1)} зам/день</strong>. Піднатисніть!`;
-            }
-        }
-
-        function updateFuelLabels(type) {
-            const consLabel = document.getElementById('set-fuel-cons-label');
-            const priceLabel = document.getElementById('set-fuel-price-label');
-            if (type === 'electro') {
-                consLabel.innerText = "Розхід kWt (на 100км):";
-                priceLabel.innerText = "Ціна за 1 kWt (₴):";
-            } else {
-                consLabel.innerText = "Розхід (на 100км):";
-                priceLabel.innerText = "Ціна за 1 од. (₴):";
-            }
-        }
-
-        function switchTab(tab) {
-            haptic();
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            
-            const tabsMap = { 'calc': 0, 'branding': 1, 'cash': 2, 'strategy': 3, 'settings': 4 };
-            document.querySelectorAll('.tab-btn')[tabsMap[tab]].classList.add('active');
-            document.getElementById('page-' + tab).classList.add('active');
-
-            if(tab === 'calc') {
-                renderCarSelector();
-                recalc();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else if(tab === 'branding') {
-                calcBranding();
-            } else if(tab === 'cash') {
-                updateCashPageUI();
-            } else if(tab === 'strategy') {
-                renderCarSelector();
-                calcStrategy();
-            } else if(tab === 'settings') {
-                renderSettings();
-            }
-        }
-
-        function renderSettings() {
-            const container = document.getElementById('settings-container');
-            container.innerHTML = '';
-
-            Object.keys(tariffs).forEach(key => {
-                const t = tariffs[key];
-                container.innerHTML += `
-                    <div class="card">
-                        <h3 style="margin-bottom:16px; font-size:16px;">${t.icon} ${t.name}</h3>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span>Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
-                    </div>
-                `;
-            });
-        }
-
-        function autoSaveSettings() {
-            Object.keys(tariffs).forEach(key => {
-                tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0;
-                tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0;
-                tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0;
-                tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0;
-                tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
-                tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
-            });
-            localStorage.setItem('taxi_tariffs_v19', JSON.stringify(tariffs));
-
-            expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
-            expenses.type = document.getElementById('set-fuel-type').value;
-            expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
-            expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0;
-            expenses.workMode = document.getElementById('set-work-mode').value;
-            expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0;
-            expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
-            localStorage.setItem('taxi_expenses_v19', JSON.stringify(expenses));
-            
-            goals.dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
-            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
-            localStorage.setItem('taxi_goals_v19', JSON.stringify(goals));
-            
-            updateFuelLabels(expenses.type);
-        }
-
-        function saveTariffsClick() {
-            haptic();
-            autoSaveSettings();
-            if (tg.showAlert) tg.showAlert('✅ Налаштування збережено!');
-            else alert('✅ Налаштування збережено!');
-            switchTab('calc');
-        }
-
-        function resetToFactoryTariffs() {
-            haptic();
-            tariffs = JSON.parse(JSON.stringify(defaultTariffs));
-            localStorage.setItem('taxi_tariffs_v19', JSON.stringify(tariffs));
-            renderSettings();
-            if (tg.showAlert) tg.showAlert('🔄 Тарифи скинуто до початкових!');
-            else alert('🔄 Тарифи скинуто до початкових!');
-        }
-
-        loadSavedData();
-        renderCarSelector();
-        recalc();
-        calcBranding();
-
-        function loadSavedData() {
-            loadSavedRouteParams();
-        }
-    </script>
-</body>
-</html>
+            let remainingMinKm = t
