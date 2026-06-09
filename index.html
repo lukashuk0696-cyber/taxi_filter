@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vinntax PRO</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Taxi_Icon.svg/1024px-Taxi_Icon.svg.png">
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* ПРЕМІАЛЬНИЙ НАТИВНИЙ СТИЛЬ */
@@ -16,6 +22,7 @@
             --accent-color: #FFD60A; 
             --accent-success: #34C759; 
             --accent-danger: #FF3B30; 
+            --accent-blue: #007AFF;
         }
         @media (prefers-color-scheme: dark) { 
             :root { 
@@ -56,13 +63,16 @@
         .car-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
         .car-price-info { font-size: 11px; font-weight: 500; opacity: 0.8; }
         
-        .route-selector { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 16px 0; scrollbar-width: none; }
-        .route-selector::-webkit-scrollbar { display: none; }
-        .route-btn { flex: 0 0 auto; background: var(--card-bg); padding: 8px 14px; border-radius: 20px; font-weight: 600; font-size: 13px; color: var(--text-color); border: 1px solid var(--border-color); cursor: pointer; transition: 0.1s; }
-        .route-btn:active { transform: scale(0.95); opacity: 0.7; }
-        
         .card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); }
         .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+        
+        /* БЛОК КАРТ ТА МАРШРУТІВ */
+        .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .map-input { flex: 1; background: transparent; border: none; font-size: 15px; color: var(--text-color); outline: none; font-weight: 500; }
+        .map-input::placeholder { color: var(--text-muted); }
+        .gps-btn { background: transparent; border: none; font-size: 18px; cursor: pointer; color: var(--accent-blue); padding-left: 8px; border-left: 1px solid var(--border-color); }
+        .nav-btn-group { display: none; gap: 8px; margin-top: 12px; }
+        .nav-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 6px; }
         
         /* ШТОРКА */
         .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 16px 20px 30px 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); border: none; border-top: 1px solid var(--border-color); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -82,7 +92,7 @@
         .counter { display: flex; align-items: center; gap: 4px; }
         .btn-counter { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--bg-color); color: var(--text-color); font-size: 18px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-counter:active { background: var(--border-color); }
-        .btn-x2 { font-size: 12px; width: auto; padding: 0 10px; background: rgba(0, 122, 255, 0.1); color: #007aff; font-weight: 700; }
+        .btn-x2 { font-size: 12px; width: auto; padding: 0 10px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-weight: 700; }
         .counter-value { font-size: 17px; font-weight: 700; width: 56px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; }
         
         .slider-container { padding-top: 12px; width: 100%; }
@@ -103,7 +113,7 @@
         .save-btn { width: 100%; padding: 16px; background: var(--text-color); color: var(--bg-color); border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
         .save-btn:active { opacity: 0.8; }
         .reset-btn { width: 100%; padding: 16px; background: var(--bg-color); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
-        .toggle-btn { width: 100%; padding: 14px; background: transparent; color: #007aff; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+        .toggle-btn { width: 100%; padding: 14px; background: transparent; color: var(--accent-blue); border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; }
         
         .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 12px 0; overflow: hidden; height: 8px; }
         .progress-bar { height: 100%; background-color: var(--text-color); width: 0%; transition: 0.4s; border-radius: 6px; }
@@ -137,7 +147,28 @@
 
     <div id="page-calc" class="page active">
         <div class="car-selector" id="car-list-calc"></div>
-        <div class="route-selector" id="route-list"></div>
+
+        <div class="card" style="border: 2px solid var(--accent-blue);">
+            <div class="card-title" style="color: var(--accent-blue);">🗺️ Смарт-Навігатор (Міжмісто)</div>
+            
+            <div class="map-input-group">
+                <span style="margin-right: 8px;">🟢</span>
+                <input type="text" id="route-from" class="map-input" placeholder="Звідки (Місто, Вулиця)">
+                <button class="gps-btn" onclick="getGPSLocation()" title="Моя локація">📍</button>
+            </div>
+            
+            <div class="map-input-group">
+                <span style="margin-right: 8px;">🔴</span>
+                <input type="text" id="route-to" class="map-input" placeholder="Куди (Напр: Київ, Хрещатик)">
+            </div>
+            
+            <button class="save-btn" id="btn-calc-route" style="background: var(--accent-blue); color: #fff;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
+            
+            <div class="nav-btn-group" id="nav-btn-group">
+                <button class="nav-btn" style="background: #33CCFF; color: #fff;" onclick="openWaze()">🚀 Waze</button>
+                <button class="nav-btn" style="background: #34A853; color: #fff;" onclick="openGmaps()">🗺️ G-Maps</button>
+            </div>
+        </div>
 
         <div class="card">
             <div class="card-title">Параметри маршруту</div>
@@ -163,7 +194,7 @@
                         <button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button>
                     </div>
                 </div>
-                <div class="slider-container"><input type="range" id="slider-distOut" min="0" max="100" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')"></div>
+                <div class="slider-container"><input type="range" id="slider-distOut" min="0" max="250" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')"></div>
             </div>
 
             <div class="input-block">
@@ -176,7 +207,7 @@
                         <button class="btn-counter" onclick="changeVal('emptyKm', 1)">+</button>
                     </div>
                 </div>
-                <div class="slider-container"><input type="range" id="slider-emptyKm" min="0" max="100" step="1" value="0" oninput="syncSliderToInput('emptyKm')"></div>
+                <div class="slider-container"><input type="range" id="slider-emptyKm" min="0" max="250" step="1" value="0" oninput="syncSliderToInput('emptyKm')"></div>
             </div>
 
             <div class="input-block">
@@ -325,7 +356,7 @@
     </div>
 
     <div id="page-cash" class="page">
-        <button class="save-btn" style="background: rgba(0, 122, 255, 0.1); color: #007aff; margin-bottom: 16px; margin-top: 0;" onclick="shareReport()">📤 Поділитися звітом</button>
+        <button class="save-btn" style="background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); margin-bottom: 16px; margin-top: 0;" onclick="shareReport()">📤 Поділитися звітом</button>
         
         <div class="card">
             <div class="card-title">Підсумок зміни</div>
@@ -341,7 +372,7 @@
             </div>
 
             <div style="border-top: 1px solid var(--border-color); margin: 12px 0;"></div>
-            <div class="result-row"><span style="color: var(--text-muted);">Загальний пробіг:</span><strong id="cash-total-km">0 км</strong></div>
+            <div class="result-row"><span style="color: var(--text-muted);">Загальний пробіг:</span><strong id="cash-total-km" style="color: var(--text-color);">0 км</strong></div>
             <div class="result-row"><span style="color: var(--text-muted);">Загальний оборот:</span><span id="cash-gross" style="font-weight:700;">0.0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Комісія служби:</span><span id="cash-comm" style="color: var(--accent-danger);">-0.0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Пальне:</span><span id="cash-fuel" style="color: #ff9500;">-0.0 ₴</span></div>
@@ -460,11 +491,12 @@
         <div class="modal-content">
             <div class="modal-title">Посібник Водія</div>
             <div class="modal-text">
-                <strong>🧮 ТАРИФ:</strong> Введіть дистанцію. Якщо поїздка за місто — тисніть на "Швидкі маршрути". Кнопка "Зафіксувати" додає поїздку в статистику.<br><br>
-                <strong>🏆 ЦІЛІ:</strong> Внесіть свої дані програми лояльності, бот сам вирахує, скільки замовлень на день треба робити, щоб не злетіти.<br><br>
-                <strong>💰 КАСА:</strong> Повна аналітика за день (Оборот, Комісія, Пальне, Пробіг). Якщо додали випадково — просто видаліть рядок хрестиком.<br><br>
+                <strong>🗺️ СМАРТ-МАРШРУТИ:</strong> Введіть початкову та кінцеву точку, щоб автоматично розрахувати дистанцію через GPS.<br><br>
+                <strong>🧮 ТАРИФ:</strong> Розрахунок замовлення. Кнопка "Зафіксувати" додає поїздку в статистику та зберігає пробіг.<br><br>
+                <strong>🏆 ЦІЛІ:</strong> Внесіть свої дані програми лояльності, бот сам вирахує темп роботи на день.<br><br>
+                <strong>💰 КАСА:</strong> Повна аналітика за день (Оборот, Пальне, Пробіг). Якщо додали випадково — видаліть рядок хрестиком.<br><br>
                 <strong>📊 АНАЛІЗ:</strong> Вкажіть, скільки грошей хочете принести додому. Калькулятор підкаже, скільки поїздок доведеться виконати.<br><br>
-                <strong>⚙️ ОПЦІЇ:</strong> Редагуйте ціни кілометрів під свої реальні фільтри (або скиньте до заводських налаштувань Уклону).
+                <strong>⚙️ ОПЦІЇ:</strong> Редагуйте ціни кілометрів під свої реальні фільтри Уклону.
             </div>
             <button class="save-btn" style="margin-top:0;" onclick="closeManual()">Зрозуміло</button>
         </div>
@@ -472,21 +504,17 @@
 
     <script>
         const tg = window.Telegram.WebApp;
+        let routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null };
 
-        const defaultRoutes = [
-            {name: 'Київ', km: 265}, {name: 'Хмельницький', km: 120},
-            {name: 'Житомир', km: 130}, {name: 'Умань', km: 160},
-            {name: 'Одеса', km: 430}, {name: 'Тернопіль', km: 240}
-        ];
-
+        // Ховаємо шторку при клавіатурі
         document.addEventListener('focusin', function(e) {
-            if(e.target.tagName === 'INPUT' && e.target.type === 'number') {
+            if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) {
                 const panel = document.getElementById('sticky-panel');
                 if(panel) panel.style.transform = 'translateY(150%)';
             }
         });
         document.addEventListener('focusout', function(e) {
-            if(e.target.tagName === 'INPUT' && e.target.type === 'number') {
+            if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) {
                 const panel = document.getElementById('sticky-panel');
                 if(panel) panel.style.transform = 'translateY(0)';
             }
@@ -519,6 +547,120 @@
         function openManual() { haptic(); document.getElementById('manual-modal').style.display = 'flex'; }
         function closeManual() { haptic(); document.getElementById('manual-modal').style.display = 'none'; }
 
+        // --- ЛОГІКА АВТО-МАРШРУТІВ (GPS ТА OSRM API) ---
+        async function getGPSLocation() {
+            haptic();
+            const fromInput = document.getElementById('route-from');
+            fromInput.value = "📍 Визначаю координати...";
+            
+            if (!navigator.geolocation) {
+                fromInput.value = "";
+                alert("Ваш пристрій не підтримує геолокацію");
+                return;
+            }
+            
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                routeCoords.lat1 = position.coords.latitude;
+                routeCoords.lon1 = position.coords.longitude;
+                fromInput.value = "📍 Моя поточна локація";
+            }, () => {
+                fromInput.value = "";
+                alert("Не вдалося отримати локацію. Перевірте дозволи в налаштуваннях браузера/Telegram.");
+            }, { timeout: 10000 });
+        }
+
+        async function geocodeAddress(address) {
+            // Додаємо контекст для кращого пошуку
+            const query = encodeURIComponent(address + ", Україна");
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
+                const data = await res.json();
+                if (data && data.length > 0) return { lat: data[0].lat, lon: data[0].lon };
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function calculateSmartRoute() {
+            haptic();
+            const fromStr = document.getElementById('route-from').value;
+            const toStr = document.getElementById('route-to').value;
+            const btn = document.getElementById('btn-calc-route');
+            
+            if(!fromStr || !toStr) {
+                alert("Будь ласка, заповніть обидва поля (Звідки і Куди)");
+                return;
+            }
+
+            btn.innerText = "⏳ Рахую маршрут...";
+            btn.style.opacity = "0.7";
+
+            try {
+                // Якщо не використовували GPS, шукаємо першу адресу
+                if(fromStr !== "📍 Моя поточна локація") {
+                    const coords1 = await geocodeAddress(fromStr);
+                    if(!coords1) throw new Error("Не знайдено адресу 'Звідки'");
+                    routeCoords.lat1 = coords1.lat;
+                    routeCoords.lon1 = coords1.lon;
+                }
+
+                const coords2 = await geocodeAddress(toStr);
+                if(!coords2) throw new Error("Не знайдено адресу 'Куди'");
+                routeCoords.lat2 = coords2.lat;
+                routeCoords.lon2 = coords2.lon;
+
+                // Запит до OSRM для прокладання маршруту
+                const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${routeCoords.lon1},${routeCoords.lat1};${routeCoords.lon2},${routeCoords.lat2}?overview=false`;
+                const res = await fetch(osrmUrl);
+                const routeData = await res.json();
+
+                if(routeData.routes && routeData.routes.length > 0) {
+                    const totalKm = (routeData.routes[0].distance / 1000);
+                    
+                    // Логіка розбиття: припускаємо, що перші 5 км - це виїзд по місту (можна змінити вручну)
+                    let cityKm = Math.min(5.0, totalKm).toFixed(1);
+                    let outKm = Math.max(0, totalKm - 5.0).toFixed(1);
+
+                    document.getElementById('inp-dist').value = cityKm;
+                    document.getElementById('slider-dist').value = cityKm;
+                    document.getElementById('inp-distOut').value = outKm;
+                    document.getElementById('slider-distOut').value = outKm;
+                    
+                    recalc();
+                    
+                    document.getElementById('nav-btn-group').style.display = 'flex';
+                    if(tg.showAlert) tg.showAlert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
+                    else alert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
+                } else {
+                    throw new Error("Неможливо прокласти маршрут автошляхами.");
+                }
+
+            } catch (err) {
+                alert(err.message || "Помилка мережі при розрахунку.");
+            } finally {
+                btn.innerText = "Прокласти маршрут";
+                btn.style.opacity = "1";
+            }
+        }
+
+        function openWaze() {
+            haptic();
+            if(routeCoords.lat2 && routeCoords.lon2) {
+                window.open(`https://waze.com/ul?ll=${routeCoords.lat2},${routeCoords.lon2}&navigate=yes`, '_blank');
+            }
+        }
+
+        function openGmaps() {
+            haptic();
+            if(routeCoords.lat2 && routeCoords.lon2) {
+                const origin = (routeCoords.lat1 && routeCoords.lon1) ? `&origin=${routeCoords.lat1},${routeCoords.lon1}` : "";
+                window.open(`https://www.google.com/maps/dir/?api=1${origin}&destination=${routeCoords.lat2},${routeCoords.lon2}`, '_blank');
+            }
+        }
+
+        // --- БАЗОВА ЛОГІКА ДОДАТКУ ---
+
         const defaultTariffs = {
             standard: { name: 'Стандарт', icon: '🚙', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', icon: '🚘', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
@@ -548,7 +690,7 @@
             const savedCash = JSON.parse(localStorage.getItem('taxi_daily_cash_data_v20'));
             if (savedCash.date === new Date().toLocaleDateString()) {
                 dailyCashData = savedCash;
-                if(dailyCashData.totalKm === undefined) dailyCashData.totalKm = 0; // Для існуючих користувачів
+                if(dailyCashData.totalKm === undefined) dailyCashData.totalKm = 0; 
                 if(!dailyCashData.history) dailyCashData.history = [];
             } else {
                 dailyCashData.date = new Date().toLocaleDateString();
@@ -686,24 +828,6 @@
             });
         }
         
-        function renderRoutes() {
-            const container = document.getElementById('route-list');
-            if(!container) return;
-            container.innerHTML = '';
-            defaultRoutes.forEach(route => {
-                container.innerHTML += `<button class="route-btn" onclick="applyRoute(${route.km})">${route.name}</button>`;
-            });
-        }
-        
-        function applyRoute(km) {
-            haptic();
-            document.getElementById('inp-dist').value = 5.0;
-            document.getElementById('slider-dist').value = 5.0;
-            document.getElementById('inp-distOut').value = km;
-            document.getElementById('slider-distOut').value = km;
-            recalc();
-        }
-
         function selectClass(key) {
             haptic();
             currentClass = key;
@@ -948,8 +1072,8 @@
             updateCashPageUI();
             calcBranding();
 
-            if(tg.showAlert) tg.showAlert('Додано в касу!');
-            else alert('Додано в касу!');
+            if(tg.showAlert) tg.showAlert('Зафіксовано!');
+            else alert('Зафіксовано!');
         }
 
         function removeTrip(id) {
@@ -1142,7 +1266,6 @@
 
             if(tab === 'calc') {
                 renderCarSelector();
-                renderRoutes();
                 recalc();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else if(tab === 'branding') {
@@ -1223,7 +1346,6 @@
 
         loadSavedData();
         renderCarSelector();
-        renderRoutes();
         recalc();
         calcBranding();
 
