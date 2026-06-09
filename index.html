@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vinntax PRO</title>
+    <title>DriverHub</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -55,11 +55,14 @@
         .page { display: none; padding: 0 16px; }
         .page.active { display: block; }
         
+        /* ОНОВЛЕНІ КАРТКИ ТАРИФІВ */
         .car-selector { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px 0; scrollbar-width: none; }
         .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { flex: 0 0 100px; background: var(--card-bg); padding: 12px 8px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.15s; }
-        .car-card.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
-        .car-emoji { font-size: 24px; margin-bottom: 6px; }
+        .car-card { flex: 0 0 95px; background: var(--card-bg); padding: 10px 6px; border-radius: 14px; text-align: center; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: all 0.2s ease; }
+        .car-card.active { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .car-card.active .car-price-info { color: var(--bg-color); opacity: 0.9; }
+        .car-emoji { font-size: 22px; margin-bottom: 4px; transition: transform 0.2s; }
+        .car-card.active .car-emoji { transform: scale(1.15); }
         .car-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
         .car-price-info { font-size: 11px; font-weight: 500; opacity: 0.8; }
         
@@ -133,7 +136,7 @@
 <body>
 
     <div class="app-header">
-        <div class="app-title">Vinntax PRO</div>
+        <div class="app-title">DriverHub</div>
         <div class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙</div>
     </div>
 
@@ -570,7 +573,6 @@
         }
 
         async function geocodeAddress(address) {
-            // Додаємо контекст для кращого пошуку
             const query = encodeURIComponent(address + ", Україна");
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
@@ -597,7 +599,6 @@
             btn.style.opacity = "0.7";
 
             try {
-                // Якщо не використовували GPS, шукаємо першу адресу
                 if(fromStr !== "📍 Моя поточна локація") {
                     const coords1 = await geocodeAddress(fromStr);
                     if(!coords1) throw new Error("Не знайдено адресу 'Звідки'");
@@ -610,7 +611,6 @@
                 routeCoords.lat2 = coords2.lat;
                 routeCoords.lon2 = coords2.lon;
 
-                // Запит до OSRM для прокладання маршруту
                 const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${routeCoords.lon1},${routeCoords.lat1};${routeCoords.lon2},${routeCoords.lat2}?overview=false`;
                 const res = await fetch(osrmUrl);
                 const routeData = await res.json();
@@ -618,7 +618,6 @@
                 if(routeData.routes && routeData.routes.length > 0) {
                     const totalKm = (routeData.routes[0].distance / 1000);
                     
-                    // Логіка розбиття: припускаємо, що перші 5 км - це виїзд по місту (можна змінити вручну)
                     let cityKm = Math.min(5.0, totalKm).toFixed(1);
                     let outKm = Math.max(0, totalKm - 5.0).toFixed(1);
 
@@ -659,13 +658,12 @@
             }
         }
 
-        // --- БАЗОВА ЛОГІКА ДОДАТКУ ---
-
+        // ОНОВЛЕНІ ІКОНКИ
         const defaultTariffs = {
-            standard: { name: 'Стандарт', icon: '🚙', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
-            comfort: { name: 'Комфорт', icon: '🚘', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
-            business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
-            intercity: { name: 'За місто', icon: '🗺️', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
+            standard: { name: 'Стандарт', icon: '🚕', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
+            comfort: { name: 'Комфорт', icon: '🛋️', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
+            business: { name: 'Бізнес', icon: '💼', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
+            intercity: { name: 'За місто', icon: '🛣️', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
         };
 
         const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28, workMode: 'solo', rentVal: 30, splitPct: 10 };
@@ -680,7 +678,6 @@
         let dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
         let currentClass = 'business'; 
 
-        // Завантаження пам'яті
         if(localStorage.getItem('taxi_tariffs_v20')) tariffs = JSON.parse(localStorage.getItem('taxi_tariffs_v20'));
         if(localStorage.getItem('taxi_expenses_v20')) expenses = JSON.parse(localStorage.getItem('taxi_expenses_v20'));
         if(localStorage.getItem('taxi_goals_v20')) goals = JSON.parse(localStorage.getItem('taxi_goals_v20'));
