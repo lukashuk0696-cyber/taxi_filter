@@ -47,45 +47,47 @@
         
         .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 8px 16px 20px 16px; border-radius: 12px; overflow-x: auto; scrollbar-width: none; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { flex: 1; min-width: 60px; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 11px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .tab-icon { font-size: 18px; filter: grayscale(100%); opacity: 0.7; transition: 0.2s; }
-        .tab-btn.active { background: var(--text-color); color: var(--bg-color); }
-        .tab-btn.active .tab-icon { filter: none; opacity: 1; }
+        .tab-btn { flex: 1; min-width: 60px; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 11px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; }
+        .tab-icon { font-size: 18px; transition: 0.2s; margin-bottom: 2px; }
+        .tab-btn.active { background: var(--text-color); color: var(--bg-color); opacity: 1; }
         
         .page { display: none; padding: 0 16px; }
         .page.active { display: block; }
         
-        /* --- ОНОВЛЕНИЙ ДИЗАЙН КАРТОК ТАРИФІВ --- */
+        /* --- НОВІ КОМПАКТНІ КАРТКИ ТАРИФІВ (PILL STYLE) --- */
         .car-selector { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px 0; scrollbar-width: none; }
         .car-selector::-webkit-scrollbar { display: none; }
         .car-card { 
-            flex: 0 0 80px; /* Зменшили ширину */
-            background: var(--bg-color); /* Зробили фон трохи темнішим за картку для контрасту */
-            padding: 8px 4px; /* Зменшили відступи */
-            border-radius: 14px; 
-            text-align: center; 
+            flex: 0 0 auto; 
+            background: var(--bg-color); 
+            padding: 8px 16px; 
+            border-radius: 24px; /* Круглі краї */
             border: 1px solid var(--border-color); 
             cursor: pointer; 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: row; /* Горизонтальне розташування */
             align-items: center; 
+            gap: 6px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            white-space: nowrap;
         }
         .car-card.active { 
-            background: var(--accent-color); /* Повернули яскравий жовтий */
-            color: #000000; /* Чорний текст для контрасту на жовтому */
+            background: var(--accent-color); 
+            color: #000000; 
             border-color: var(--accent-color); 
-            transform: scale(1.05); /* Легке збільшення замість підстрибування */
-            box-shadow: 0 4px 12px rgba(255, 214, 10, 0.3); /* Жовте світіння */
+            box-shadow: 0 4px 12px rgba(255, 214, 10, 0.25); 
         }
-        .car-emoji { font-size: 20px; margin-bottom: 4px; }
-        .car-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
-        .car-price-info { font-size: 10px; font-weight: 600; opacity: 0.8; }
+        .car-emoji { font-size: 18px; line-height: 1; }
+        .car-name { font-size: 14px; font-weight: 700; }
+        .car-price-info { font-size: 12px; font-weight: 600; opacity: 0.7; }
+        .car-price-info::before { content: "• "; margin-right: 2px; }
+        .car-card.active .car-price-info { opacity: 0.9; color: #000; }
         
-        /* ШВИДКІ КНОПКИ КЕФІВ */
+        /* ШВИДКІ КНОПКИ */
         .quick-coef-container { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; }
         .quick-coef-btn { flex: 1; padding: 8px 0; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.15s; }
         .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
+        .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); flex: 0 0 40px; }
 
         .card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); }
         .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px; }
@@ -107,8 +109,17 @@
         .input-block:last-child { border-bottom: none; padding-bottom: 0; }
         .input-header { display: flex; justify-content: space-between; align-items: center; }
         
+        /* --- НОВІ КОЛЬОРОВІ ІКОНКИ APPLE STYLE --- */
         .icon-wrap { display: flex; align-items: center; gap: 12px; }
-        .icon-box { font-size: 18px; opacity: 0.8; filter: grayscale(50%); width: 24px; text-align: center; }
+        .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ib-blue { background: rgba(0, 122, 255, 0.15); }
+        .ib-purple { background: rgba(175, 82, 222, 0.15); }
+        .ib-gray { background: rgba(142, 142, 147, 0.15); }
+        .ib-orange { background: rgba(255, 149, 0, 0.15); }
+        .ib-yellow { background: rgba(255, 204, 0, 0.2); }
+        .ib-red { background: rgba(255, 59, 48, 0.15); }
+        .ib-green { background: rgba(52, 199, 89, 0.15); }
+        
         .input-label { font-size: 15px; font-weight: 600; }
         
         .counter { display: flex; align-items: center; gap: 4px; }
@@ -196,7 +207,7 @@
             
             <div class="input-block">
                 <div class="input-header">
-                    <div class="icon-wrap"><div class="icon-box">📍</div><span class="input-label">Км місто</span></div>
+                    <div class="icon-wrap"><div class="icon-box ib-blue">📍</div><span class="input-label">Км місто</span></div>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button>
                         <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')">
@@ -208,7 +219,7 @@
 
             <div class="input-block">
                 <div class="input-header">
-                    <div class="icon-wrap"><div class="icon-box">🛣️</div><span class="input-label">Км за містом</span></div>
+                    <div class="icon-wrap"><div class="icon-box ib-purple">🛣️</div><span class="input-label">Км за містом</span></div>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button>
                         <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')">
@@ -220,7 +231,7 @@
 
             <div class="input-block">
                 <div class="input-header">
-                    <div class="icon-wrap"><div class="icon-box">🔄</div><span class="input-label">Порожній пробіг</span></div>
+                    <div class="icon-wrap"><div class="icon-box ib-gray">🔄</div><span class="input-label">Порожній пробіг</span></div>
                     <div class="counter">
                         <button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button>
                         <button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button>
@@ -233,7 +244,7 @@
 
             <div class="input-block">
                 <div class="input-header">
-                    <div class="icon-wrap"><div class="icon-box">🚗</div><span class="input-label">Подача (км)</span></div>
+                    <div class="icon-wrap"><div class="icon-box ib-orange">🚗</div><span class="input-label">Подача (км)</span></div>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button>
                         <input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')">
@@ -245,7 +256,7 @@
 
             <div class="input-block" style="border-bottom:none;">
                 <div class="input-header">
-                    <div class="icon-wrap"><div class="icon-box">⚡</div><span class="input-label">Коефіцієнт</span></div>
+                    <div class="icon-wrap"><div class="icon-box ib-yellow">⚡</div><span class="input-label">Коефіцієнт</span></div>
                     <div class="counter">
                         <button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button>
                         <input type="number" enterkeyhint="done" step="0.1" class="counter-value" style="color:var(--accent-success)" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')">
@@ -266,7 +277,7 @@
             <div id="extra-params" style="display: none; margin-top: 4px; border-top: 1px solid var(--border-color); padding-top: 4px;">
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box">⏳</div><span class="input-label">Очікування (хв)</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-orange">⏳</div><span class="input-label">Очікування (хв)</span></div>
                         <div class="counter">
                             <button class="btn-counter" onclick="changeVal('wait', -1)">-</button>
                             <input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')">
@@ -278,7 +289,7 @@
 
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box">📌</div><span class="input-label">Дод. точки</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-red">📌</div><span class="input-label">Дод. точки</span></div>
                         <div class="counter">
                             <button class="btn-counter" onclick="changeVal('stops', -1)">-</button>
                             <input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')">
@@ -290,7 +301,7 @@
                 
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box">☕</div><span class="input-label">Витрати (₴)</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-gray">☕</div><span class="input-label">Витрати (₴)</span></div>
                         <div class="counter">
                             <button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button>
                             <input type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')">
@@ -302,12 +313,18 @@
 
                 <div class="input-block" style="border-bottom:none;">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box">💸</div><span class="input-label">Доплата клієнта</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-green">💸</div><span class="input-label">Доплата (Чайові)</span></div>
                         <div class="counter">
                             <button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button>
                             <input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')">
                             <button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button>
                         </div>
+                    </div>
+                    <div class="quick-coef-container">
+                        <button class="quick-coef-btn" onclick="addTip(10)">+10 ₴</button>
+                        <button class="quick-coef-btn" onclick="addTip(20)">+20 ₴</button>
+                        <button class="quick-coef-btn" onclick="addTip(50)">+50 ₴</button>
+                        <button class="quick-coef-btn btn-clear" onclick="clearTip()">✕</button>
                     </div>
                     <div class="slider-container"><input type="range" id="slider-clientBonus" min="0" max="100" step="1" value="0" oninput="syncSliderToInput('clientBonus')"></div>
                 </div>
@@ -319,7 +336,7 @@
             <div class="result-row"><span style="color: var(--text-muted);">База (з коеф.):</span><span id="res-base">0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Кілометраж:</span><span id="res-extra-dist">0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Очікування/точки:</span><span id="res-addons">0 ₴</span></div>
-            <div class="result-row" style="color:var(--accent-success);" id="row-res-bonus"><span>Доплата клієнта:</span><span id="res-bonus">0 ₴</span></div>
+            <div class="result-row" style="color:var(--accent-success);" id="row-res-bonus"><span>Чайові/Доплата:</span><span id="res-bonus">0 ₴</span></div>
             <div class="result-total"><span>До сплати:</span><span id="res-total">0 ₴</span></div>
         </div>
 
@@ -839,8 +856,10 @@
                 const html = `
                     <div class="car-card ${active}" onclick="selectClass('${key}')">
                         <div class="car-emoji">${t.icon}</div>
-                        <div class="car-name">${t.name}</div>
-                        <div class="car-price-info">${t.minPrice} ₴</div>
+                        <div>
+                            <div class="car-name">${t.name}</div>
+                            <div class="car-price-info">${t.minPrice} ₴</div>
+                        </div>
                     </div>
                 `;
                 if(container) container.innerHTML += html;
@@ -890,11 +909,26 @@
             recalc();
         }
 
-        // --- НОВА ФУНКЦІЯ ШВИДКОГО КЕФУ ---
         function setQuickCoef(val) {
             haptic();
             document.getElementById('inp-coef').value = val.toFixed(1);
             document.getElementById('slider-coef').value = val;
+            recalc();
+        }
+
+        function addTip(val) {
+            haptic();
+            const input = document.getElementById('inp-clientBonus');
+            let current = parseInt(input.value) || 0;
+            input.value = current + val;
+            document.getElementById('slider-clientBonus').value = input.value;
+            recalc();
+        }
+
+        function clearTip() {
+            haptic();
+            document.getElementById('inp-clientBonus').value = 0;
+            document.getElementById('slider-clientBonus').value = 0;
             recalc();
         }
 
