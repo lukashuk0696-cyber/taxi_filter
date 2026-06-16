@@ -8,11 +8,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Taxi_Icon.svg/1024px-Taxi_Icon.svg.png">
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ПРЕМІАЛЬНИЙ НАТИВНИЙ СТИЛЬ */
         :root { 
             --bg-color: #F2F2F7; 
             --card-bg: #FFFFFF; 
@@ -39,7 +37,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         button, .car-card, .tab-btn, input[type=range], select { -webkit-user-select: none; user-select: none; }
         
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 110px; transition: 0.2s; }
+        /* Додано overscroll-behavior для запобігання випадковому закриттю додатку */
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 110px; transition: 0.2s; overscroll-behavior-y: none; touch-action: pan-y; }
         
         .app-header { padding: 16px 16px 8px 16px; display: flex; align-items: center; justify-content: space-between; }
         .app-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
@@ -54,36 +53,16 @@
         .page { display: none; padding: 0 16px; }
         .page.active { display: block; }
         
-        /* --- НОВІ КОМПАКТНІ КАРТКИ ТАРИФІВ (PILL STYLE) --- */
         .car-selector { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px 0; scrollbar-width: none; }
         .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { 
-            flex: 0 0 auto; 
-            background: var(--bg-color); 
-            padding: 8px 16px; 
-            border-radius: 24px; /* Круглі краї */
-            border: 1px solid var(--border-color); 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* Горизонтальне розташування */
-            align-items: center; 
-            gap: 6px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            white-space: nowrap;
-        }
-        .car-card.active { 
-            background: var(--accent-color); 
-            color: #000000; 
-            border-color: var(--accent-color); 
-            box-shadow: 0 4px 12px rgba(255, 214, 10, 0.25); 
-        }
+        .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 8px 16px; border-radius: 24px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: row; align-items: center; gap: 6px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        .car-card.active { background: var(--accent-color); color: #000000; border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(255, 214, 10, 0.25); }
         .car-emoji { font-size: 18px; line-height: 1; }
         .car-name { font-size: 14px; font-weight: 700; }
         .car-price-info { font-size: 12px; font-weight: 600; opacity: 0.7; }
         .car-price-info::before { content: "• "; margin-right: 2px; }
         .car-card.active .car-price-info { opacity: 0.9; color: #000; }
         
-        /* ШВИДКІ КНОПКИ */
         .quick-coef-container { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; }
         .quick-coef-btn { flex: 1; padding: 8px 0; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.15s; }
         .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
@@ -109,7 +88,6 @@
         .input-block:last-child { border-bottom: none; padding-bottom: 0; }
         .input-header { display: flex; justify-content: space-between; align-items: center; }
         
-        /* --- НОВІ КОЛЬОРОВІ ІКОНКИ APPLE STYLE --- */
         .icon-wrap { display: flex; align-items: center; gap: 12px; }
         .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .ib-blue { background: rgba(0, 122, 255, 0.15); }
@@ -549,8 +527,18 @@
     <script>
         const tg = window.Telegram.WebApp;
         let routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null };
+        let saveRouteTimeout = null;
+        let saveSettingsTimeout = null;
 
-        // Ховаємо шторку при клавіатурі
+        // Ініціалізація та захист від випадкового закриття
+        if (tg) {
+            tg.expand();
+            tg.ready();
+            if (tg.enableClosingConfirmation) {
+                tg.enableClosingConfirmation();
+            }
+        }
+
         document.addEventListener('focusin', function(e) {
             if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) {
                 const panel = document.getElementById('sticky-panel');
@@ -569,7 +557,9 @@
         });
 
         function haptic() {
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg && tg.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+            }
         }
 
         function toggleTheme() {
@@ -591,7 +581,6 @@
         function openManual() { haptic(); document.getElementById('manual-modal').style.display = 'flex'; }
         function closeManual() { haptic(); document.getElementById('manual-modal').style.display = 'none'; }
 
-        // --- ЛОГІКА АВТО-МАРШРУТІВ (GPS ТА OSRM API) ---
         async function getGPSLocation() {
             haptic();
             const fromInput = document.getElementById('route-from');
@@ -670,7 +659,7 @@
                     recalc();
                     
                     document.getElementById('nav-btn-group').style.display = 'flex';
-                    if(tg.showAlert) tg.showAlert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
+                    if(tg && tg.showAlert) tg.showAlert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
                     else alert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
                 } else {
                     throw new Error("Неможливо прокласти маршрут автошляхами.");
@@ -837,11 +826,15 @@
         }
 
         function saveCurrentRouteParams() {
-            const params = {};
-            ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => {
-                params[id] = document.getElementById('inp-'+id).value;
-            });
-            localStorage.setItem('taxi_route_params_v20', JSON.stringify(params));
+            // Оптимізація: зберігаємо в LocalStorage із затримкою, щоб не вішати браузер
+            clearTimeout(saveRouteTimeout);
+            saveRouteTimeout = setTimeout(() => {
+                const params = {};
+                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => {
+                    params[id] = document.getElementById('inp-'+id).value;
+                });
+                localStorage.setItem('taxi_route_params_v20', JSON.stringify(params));
+            }, 500);
         }
 
         function renderCarSelector() {
@@ -876,7 +869,7 @@
         }
 
         function syncSliderToInput(id) {
-            haptic();
+            // Прибрано haptic() для слайдерів, щоб не перевантажувати Telegram API
             const val = document.getElementById('slider-' + id).value;
             const input = document.getElementById('inp-' + id);
             if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) {
@@ -1040,7 +1033,11 @@
             const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000;
             const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
             
-            localStorage.setItem('taxi_strat_params_v20', JSON.stringify({target: targetNet, km: avgKm}));
+            // Оптимізація зберігання
+            clearTimeout(saveSettingsTimeout);
+            saveSettingsTimeout = setTimeout(() => {
+                localStorage.setItem('taxi_strat_params_v20', JSON.stringify({target: targetNet, km: avgKm}));
+            }, 500);
 
             const t = tariffs[currentClass];
             let extraKm = Math.max(0, avgKm - t.minKm);
@@ -1134,7 +1131,7 @@
             updateCashPageUI();
             calcBranding();
 
-            if(tg.showAlert) tg.showAlert('Зафіксовано!');
+            if(tg && tg.showAlert) tg.showAlert('Зафіксовано!');
             else alert('Зафіксовано!');
         }
 
@@ -1230,7 +1227,7 @@
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(() => {
-                    if(tg.showAlert) tg.showAlert('Звіт скопійовано!');
+                    if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!');
                     else alert('Звіт скопійовано!');
                 });
             }
@@ -1265,7 +1262,12 @@
             brandingData.done = parseInt(document.getElementById('brand-done').value) || 0;
             brandingData.target = parseInt(document.getElementById('brand-target').value) || 1;
             brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
-            localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
+            
+            // Оптимізація зберігання
+            clearTimeout(saveSettingsTimeout);
+            saveSettingsTimeout = setTimeout(() => {
+                localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
+            }, 500);
 
             let pct = (brandingData.done / brandingData.target) * 100;
             if (pct > 100) pct = 100;
@@ -1285,7 +1287,12 @@
             
             goals.dailyGoal = dailyGoal;
             goals.dailyDone = dailyDone;
-            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            
+            // Оптимізація зберігання
+            clearTimeout(saveSettingsTimeout);
+            saveSettingsTimeout = setTimeout(() => {
+                localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            }, 500);
             
             document.getElementById('brand-daily-goal-val').innerText = dailyGoal;
             
@@ -1371,8 +1378,6 @@
                 tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
                 tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
             });
-            localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
-
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
             expenses.type = document.getElementById('set-fuel-type').value;
             expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
@@ -1380,19 +1385,24 @@
             expenses.workMode = document.getElementById('set-work-mode').value;
             expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0;
             expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
-            localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses));
-            
             goals.dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
-            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
-            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+
+            // Оптимізація зберігання
+            clearTimeout(saveSettingsTimeout);
+            saveSettingsTimeout = setTimeout(() => {
+                localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
+                localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses));
+                localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            }, 500);
             
+            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
             updateFuelLabels(expenses.type);
         }
 
         function saveTariffsClick() {
             haptic();
             autoSaveSettings();
-            if (tg.showAlert) tg.showAlert('Збережено!');
+            if (tg && tg.showAlert) tg.showAlert('Збережено!');
             else alert('Збережено!');
             switchTab('calc');
         }
