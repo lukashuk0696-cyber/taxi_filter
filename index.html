@@ -11,42 +11,44 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* ПРЕМІАЛЬНИЙ НАТИВНИЙ СТИЛЬ (Більше кольорів) */
         :root { 
             --bg-color: #F2F2F7; 
             --card-bg: #FFFFFF; 
             --border-color: rgba(60, 60, 67, 0.1);
-            --text-color: #000000; 
+            --text-color: #1C1C1E; 
             --text-muted: #8E8E93;
-            --accent-color: #FFD60A; 
-            --accent-success: #34C759; 
+            --accent-color: #FFCC00; /* Яскравіший жовтий */
+            --accent-success: #34C759; /* Соковитий зелений */
             --accent-danger: #FF3B30; 
             --accent-blue: #007AFF;
+            --uklon-green: #00D369; /* Фірмовий колір */
         }
         @media (prefers-color-scheme: dark) { 
             :root { 
                 --bg-color: #000000; 
                 --card-bg: #1C1C1E; 
-                --border-color: rgba(84, 84, 88, 0.3);
+                --border-color: rgba(255, 255, 255, 0.1);
                 --text-color: #FFFFFF; 
                 --text-muted: #EBEBF5;
             } 
         }
-        body[data-theme="dark"] { --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(84, 84, 88, 0.3); --text-color: #FFFFFF; --text-muted: #EBEBF5; }
-        body[data-theme="light"] { --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.1); --text-color: #000000; --text-muted: #8E8E93; }
+        body[data-theme="dark"] { --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(255, 255, 255, 0.1); --text-color: #FFFFFF; --text-muted: #EBEBF5; }
+        body[data-theme="light"] { --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.1); --text-color: #1C1C1E; --text-muted: #8E8E93; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         button, .car-card, .tab-btn, input[type=range], select { -webkit-user-select: none; user-select: none; }
         
-        /* Додано overscroll-behavior для запобігання випадковому закриттю додатку */
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 110px; transition: 0.2s; overscroll-behavior-y: none; touch-action: pan-y; }
+        /* ЗБІЛЬШЕНИЙ ВІДСТУП ЗНИЗУ, ЩОБ ШТОРКА НЕ ПЕРЕКРИВАЛА ЧЕК */
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 160px; transition: 0.2s; overscroll-behavior-y: none; }
         
         .app-header { padding: 16px 16px 8px 16px; display: flex; align-items: center; justify-content: space-between; }
-        .app-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-        .theme-toggle { font-size: 22px; cursor: pointer; padding: 8px; background: var(--card-bg); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .app-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, var(--text-color), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .theme-toggle { font-size: 22px; cursor: pointer; padding: 8px; background: var(--card-bg); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         
-        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 8px 16px 20px 16px; border-radius: 12px; overflow-x: auto; scrollbar-width: none; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 8px 16px 20px 16px; border-radius: 12px; overflow-x: auto; scrollbar-width: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { flex: 1; min-width: 60px; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 11px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; }
+        .tab-btn { flex: 1; min-width: 60px; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 11px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.7; }
         .tab-icon { font-size: 18px; transition: 0.2s; margin-bottom: 2px; }
         .tab-btn.active { background: var(--text-color); color: var(--bg-color); opacity: 1; }
         
@@ -55,44 +57,44 @@
         
         .car-selector { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px 0; scrollbar-width: none; }
         .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 8px 16px; border-radius: 24px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: row; align-items: center; gap: 6px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
-        .car-card.active { background: var(--accent-color); color: #000000; border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(255, 214, 10, 0.25); }
-        .car-emoji { font-size: 18px; line-height: 1; }
+        .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: row; align-items: center; gap: 8px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        .car-card.active { background: var(--accent-color); color: #000000; border-color: var(--accent-color); box-shadow: 0 6px 16px rgba(255, 204, 0, 0.3); transform: scale(1.03); }
+        .car-emoji { font-size: 20px; line-height: 1; }
         .car-name { font-size: 14px; font-weight: 700; }
         .car-price-info { font-size: 12px; font-weight: 600; opacity: 0.7; }
         .car-price-info::before { content: "• "; margin-right: 2px; }
         .car-card.active .car-price-info { opacity: 0.9; color: #000; }
         
-        .quick-coef-container { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; }
-        .quick-coef-btn { flex: 1; padding: 8px 0; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.15s; }
-        .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
-        .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); flex: 0 0 40px; }
-
-        .card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); }
-        .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .card-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; letter-spacing: 0.8px; }
         
-        .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid var(--border-color); }
         .map-input { flex: 1; background: transparent; border: none; font-size: 15px; color: var(--text-color); outline: none; font-weight: 500; }
         .map-input::placeholder { color: var(--text-muted); }
-        .gps-btn { background: transparent; border: none; font-size: 18px; cursor: pointer; color: var(--accent-blue); padding-left: 8px; border-left: 1px solid var(--border-color); }
+        .gps-btn { background: transparent; border: none; font-size: 18px; cursor: pointer; color: var(--accent-blue); padding-left: 10px; border-left: 1px solid var(--border-color); }
         .nav-btn-group { display: none; gap: 8px; margin-top: 12px; }
         .nav-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 6px; }
         
-        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 16px 20px 30px 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); border: none; border-top: 1px solid var(--border-color); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        /* ШТОРКА (Glassmorphism) */
+        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 28px 28px 0 0; padding: 16px 20px 30px 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @supports (backdrop-filter: blur(10px)) {
+            .sticky-summary { background: rgba(var(--card-bg-rgb, 255,255,255), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
+            body[data-theme="dark"] .sticky-summary { background: rgba(28,28,30, 0.85); }
+        }
         .drag-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 3px; margin: 0 auto 12px auto; }
         .summary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 8px; }
         .summary-mini-title { font-size: 18px; font-weight: 800; }
-        .summary-chevron { font-size: 13px; font-weight: 600; color: var(--accent-success); background: rgba(52, 199, 89, 0.1); padding: 4px 10px; border-radius: 12px; }
+        .summary-chevron { font-size: 13px; font-weight: 700; color: var(--accent-success); background: rgba(52, 199, 89, 0.15); padding: 6px 12px; border-radius: 14px; }
         
         .input-block { padding: 12px 0; border-bottom: 1px solid var(--border-color); }
         .input-block:last-child { border-bottom: none; padding-bottom: 0; }
         .input-header { display: flex; justify-content: space-between; align-items: center; }
         
         .icon-wrap { display: flex; align-items: center; gap: 12px; }
-        .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .icon-box { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .ib-blue { background: rgba(0, 122, 255, 0.15); }
         .ib-purple { background: rgba(175, 82, 222, 0.15); }
-        .ib-gray { background: rgba(142, 142, 147, 0.15); }
+        .ib-cyan { background: rgba(50, 173, 230, 0.15); }
         .ib-orange { background: rgba(255, 149, 0, 0.15); }
         .ib-yellow { background: rgba(255, 204, 0, 0.2); }
         .ib-red { background: rgba(255, 59, 48, 0.15); }
@@ -101,43 +103,52 @@
         .input-label { font-size: 15px; font-weight: 600; }
         
         .counter { display: flex; align-items: center; gap: 4px; }
-        .btn-counter { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--bg-color); color: var(--text-color); font-size: 18px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .btn-counter:active { background: var(--border-color); }
-        .btn-x2 { font-size: 12px; width: auto; padding: 0 10px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-weight: 700; }
-        .counter-value { font-size: 17px; font-weight: 700; width: 56px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; }
+        .btn-counter { width: 36px; height: 36px; border-radius: 10px; border: none; background: var(--bg-color); color: var(--text-color); font-size: 20px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
+        .btn-counter:active { background: var(--border-color); transform: scale(0.95); }
+        .btn-x2 { font-size: 13px; width: auto; padding: 0 12px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-weight: 800; }
+        .counter-value { font-size: 18px; font-weight: 800; width: 60px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; }
         
         .slider-container { padding-top: 12px; width: 100%; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; margin-top: -10px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 3px 8px rgba(0,0,0,0.2); cursor: pointer; margin-top: -11px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; background: var(--border-color); border-radius: 3px; }
         
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: 500; }
-        .result-total { border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px; font-size: 20px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .quick-coef-container { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; }
+        .quick-coef-btn { flex: 1; padding: 10px 0; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.15s; }
+        .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); transform: scale(0.97); }
+        .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); flex: 0 0 45px; border: none; }
+
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
+        .result-total { border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 14px; font-size: 24px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--accent-success); }
         
-        .eff-badge { color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
-        .eff-green { background-color: var(--accent-success); }
+        .eff-badge { color: white; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; }
+        .eff-green { background-color: var(--uklon-green); }
         .eff-yellow { background-color: #FF9500; }
         .eff-red { background-color: var(--accent-danger); }
         
-        .admin-input { width: 80px; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; font-size: 14px; font-weight: 600; background: var(--bg-color); color: var(--text-color); }
-        .save-btn { width: 100%; padding: 16px; background: var(--text-color); color: var(--bg-color); border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
-        .save-btn:active { opacity: 0.8; }
-        .reset-btn { width: 100%; padding: 16px; background: var(--bg-color); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
-        .toggle-btn { width: 100%; padding: 14px; background: transparent; color: var(--accent-blue); border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+        .admin-input { width: 80px; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; font-size: 15px; font-weight: 700; background: var(--bg-color); color: var(--text-color); }
         
-        .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 12px 0; overflow: hidden; height: 8px; }
-        .progress-bar { height: 100%; background-color: var(--text-color); width: 0%; transition: 0.4s; border-radius: 6px; }
+        /* ЗЕЛЕНА КНОПКА ФІКСАЦІЇ */
+        .save-btn { width: 100%; padding: 16px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 16px; box-shadow: 0 4px 15px rgba(0, 211, 105, 0.3); transition: 0.2s; }
+        .save-btn:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0, 211, 105, 0.2); }
+        .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        .history-item { padding: 12px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .reset-btn { width: 100%; padding: 16px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; }
+        .toggle-btn { width: 100%; padding: 14px; background: transparent; color: var(--accent-blue); border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+        
+        .progress-container { width: 100%; background-color: var(--border-color); border-radius: 8px; margin: 12px 0; overflow: hidden; height: 10px; }
+        .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
+        
+        .history-item { padding: 14px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .history-item:last-child { border-bottom: none; }
-        .del-btn { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .del-btn { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 10px; width: 36px; height: 36px; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 20px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
-        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 16px; text-align: center; }
-        .modal-text { font-size: 14px; line-height: 1.6; color: var(--text-color); margin-bottom: 20px; }
-        .modal-text strong { color: var(--accent-success); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto; }
+        .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 16px; text-align: center; color: var(--uklon-green); }
+        .modal-text { font-size: 15px; line-height: 1.6; color: var(--text-color); margin-bottom: 24px; }
+        .modal-text strong { color: var(--text-color); }
     </style>
 </head>
 <body>
@@ -159,20 +170,20 @@
         <div class="car-selector" id="car-list-calc"></div>
 
         <div class="card" style="border: 2px solid var(--accent-blue);">
-            <div class="card-title" style="color: var(--accent-blue);">🗺️ Смарт-Навігатор (Міжмісто)</div>
+            <div class="card-title" style="color: var(--accent-blue);">🗺️ Смарт-Навігатор</div>
             
             <div class="map-input-group">
-                <span style="margin-right: 8px;">🟢</span>
-                <input type="text" id="route-from" class="map-input" placeholder="Звідки (Місто, Вулиця)">
+                <span style="margin-right: 10px; font-size: 18px;">🟢</span>
+                <input type="text" id="route-from" class="map-input" placeholder="Звідки (напр: Вінниця, Келецька)">
                 <button class="gps-btn" onclick="getGPSLocation()" title="Моя локація">📍</button>
             </div>
             
             <div class="map-input-group">
-                <span style="margin-right: 8px;">🔴</span>
+                <span style="margin-right: 10px; font-size: 18px;">🔴</span>
                 <input type="text" id="route-to" class="map-input" placeholder="Куди (Напр: Київ, Хрещатик)">
             </div>
             
-            <button class="save-btn" id="btn-calc-route" style="background: var(--accent-blue); color: #fff;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
+            <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue);" onclick="calculateSmartRoute()">Прокласти маршрут</button>
             
             <div class="nav-btn-group" id="nav-btn-group">
                 <button class="nav-btn" style="background: #33CCFF; color: #fff;" onclick="openWaze()">🚀 Waze</button>
@@ -209,7 +220,7 @@
 
             <div class="input-block">
                 <div class="input-header">
-                    <div class="icon-wrap"><div class="icon-box ib-gray">🔄</div><span class="input-label">Порожній пробіг</span></div>
+                    <div class="icon-wrap"><div class="icon-box ib-cyan">🔄</div><span class="input-label">Порожній пробіг</span></div>
                     <div class="counter">
                         <button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button>
                         <button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button>
@@ -309,20 +320,20 @@
             </div>
         </div>
 
-        <div class="card" style="margin-bottom: 20px;">
+        <div class="card">
             <div class="card-title">Чек клієнта</div>
             <div class="result-row"><span style="color: var(--text-muted);">База (з коеф.):</span><span id="res-base">0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Кілометраж:</span><span id="res-extra-dist">0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Очікування/точки:</span><span id="res-addons">0 ₴</span></div>
-            <div class="result-row" style="color:var(--accent-success);" id="row-res-bonus"><span>Чайові/Доплата:</span><span id="res-bonus">0 ₴</span></div>
+            <div class="result-row" style="color:var(--uklon-green);" id="row-res-bonus"><span>Чайові/Доплата:</span><span id="res-bonus">0 ₴</span></div>
             <div class="result-total"><span>До сплати:</span><span id="res-total">0 ₴</span></div>
         </div>
 
         <div class="sticky-summary" id="sticky-panel">
             <div class="drag-handle"></div>
             <div class="summary-header" onclick="toggleSummary()">
-                <div class="summary-mini-title">Прибуток: <span id="res-net" style="color: var(--accent-success);">0 ₴</span></div>
-                <div class="summary-chevron" id="summary-chevron">Розгорнути</div>
+                <div class="summary-mini-title">Прибуток: <span id="res-net" style="color: var(--uklon-green);">0 ₴</span></div>
+                <div class="summary-chevron" id="summary-chevron">Деталі</div>
             </div>
             
             <div id="summary-details" style="display: none; padding-top: 12px; margin-top: 8px; border-top: 1px solid var(--border-color);">
@@ -344,41 +355,62 @@
         <div class="card">
             <div class="card-title">Програма лояльності</div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
-                <div class="input-header" style="margin-bottom:12px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:12px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:12px;"><span>Залишилось днів:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-days" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:12px;">
+                    <span>Виконано замовлень:</span>
+                    <input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()">
+                </div>
+                <div class="input-header" style="margin-bottom:12px;">
+                    <span>Цільовий план:</span>
+                    <input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()">
+                </div>
+                <div class="input-header" style="margin-bottom:12px;">
+                    <span>Залишилось днів:</span>
+                    <div style="display:flex; gap:8px;">
+                        <button class="quick-coef-btn" style="padding:4px 8px; font-size:11px; flex: 0 0 auto;" onclick="setDaysToEndOfMonth()">Місяць</button>
+                        <input type="number" enterkeyhint="done" class="admin-input" style="width: 60px;" id="brand-days" value="0" oninput="calcBranding()">
+                    </div>
+                </div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-progress"></div></div>
-            <div style="margin-top: 12px; font-size: 14px; font-weight: 500; line-height: 1.6;">
+            <div style="margin-top: 12px; font-size: 15px; font-weight: 600; line-height: 1.6;">
                 Прогрес: <strong id="brand-pct">0%</strong><br>
                 Залишилось: <strong id="brand-remain">0</strong><br>
-                Темп: <strong id="brand-perday" style="color:var(--accent-success);">0 зам/день</strong>
+                Темп: <strong id="brand-perday" style="color:var(--uklon-green);">0 зам/день</strong>
             </div>
         </div>
 
         <div class="card">
             <div class="card-title">Щоденна Ціль</div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
-                <div class="input-header" style="margin-bottom:12px;"><span>Ціль на сьогодні:</span><strong id="brand-daily-goal-val" style="font-size: 18px;">0</strong></div>
-                <div class="input-header" style="margin-bottom:12px;"><span>Виконано сьогодні:</span>
+                
+                <div class="input-header" style="margin-bottom:8px;">
+                    <span>Ціль на сьогодні: <strong id="brand-daily-goal-val" style="font-size: 18px; color: var(--accent-blue);">0</strong></span>
+                </div>
+                <div class="slider-container" style="margin-bottom:20px;">
+                    <input type="range" id="set-daily-goal" min="1" max="40" step="1" value="12" oninput="updateDailyGoalSlider(this.value)">
+                </div>
+
+                <div class="input-header" style="margin-bottom:12px;">
+                    <span>Виконано сьогодні:</span>
                     <div class="counter">
+                        <button class="btn-counter" style="color:var(--accent-danger); font-size:14px;" onclick="resetDailyDone()">🔄</button>
                         <button class="btn-counter" onclick="changeDailyDone(-1)">-</button>
                         <input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="calcBranding()">
                         <button class="btn-counter" onclick="changeDailyDone(1)">+</button>
                     </div>
                 </div>
             </div>
-            <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: var(--text-color);"></div></div>
-            <div style="margin-top: 12px; font-size: 13px; line-height: 1.5; color: var(--text-muted);">
+            <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: var(--accent-blue);"></div></div>
+            <div style="margin-top: 12px; font-size: 14px; line-height: 1.5; color: var(--text-muted);">
                 Прогрес: <strong id="brand-daily-pct" style="color:var(--text-color);">0%</strong><br>
-                Темп: <strong id="brand-perday-required" style="color:var(--accent-success)">0 зам/день</strong><br><br>
-                <span id="brand-daily-comment" style="font-weight: 600; color:var(--text-color);"></span>
+                Темп: <strong id="brand-perday-required" style="color:var(--uklon-green)">0 зам/день</strong><br><br>
+                <span id="brand-daily-comment" style="font-weight: 700; color:var(--text-color);"></span>
             </div>
         </div>
     </div>
 
     <div id="page-cash" class="page">
-        <button class="save-btn" style="background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); margin-bottom: 16px; margin-top: 0;" onclick="shareReport()">📤 Поділитися звітом</button>
+        <button class="save-btn save-btn-alt" style="margin-bottom: 16px; margin-top: 0;" onclick="shareReport()">📤 Поділитися звітом</button>
         
         <div class="card">
             <div class="card-title">Підсумок зміни</div>
@@ -400,7 +432,7 @@
             <div class="result-row"><span style="color: var(--text-muted);">Пальне:</span><span id="cash-fuel" style="color: #ff9500;">-0.0 ₴</span></div>
             <div class="result-row" id="row-cash-extraExp"><span style="color: var(--text-muted);">Витрати:</span><span id="cash-extraExp" style="color: var(--accent-danger);">-0.0 ₴</span></div>
             <div class="result-row" id="row-cash-rent"><span style="color: var(--text-muted);">Оренда:</span><span id="cash-rent" style="color: var(--accent-danger);">-0.0 ₴</span></div>
-            <div class="result-total" style="color: var(--accent-success);">
+            <div class="result-total" style="color: var(--uklon-green);">
                 <span>Чистий прибуток:</span>
                 <span id="cash-net">0.0 ₴</span>
             </div>
@@ -436,7 +468,7 @@
         <div class="card" id="strat-result-container">
             <div class="card-title">Що для цього потрібно:</div>
             <div id="strat-result-data">
-                <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 20px; color: var(--text-color);">0</strong></div>
+                <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 24px; color: var(--accent-blue);">0</strong></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Брудними:</span><span id="strat-gross" style="font-weight: 700;">0 ₴</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Пробіг:</span><span id="strat-km-total" style="font-weight: 700;">0 км</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Пальне:</span><span id="strat-fuel-total" style="font-weight: 700;">0</span></div>
@@ -493,14 +525,6 @@
             </div>
         </div>
 
-        <div class="card">
-            <h3 style="margin-bottom:12px; font-size:14px; text-transform: uppercase; color: var(--text-muted);">Цілі</h3>
-            <div style="display:flex; justify-content:space-between; align-items: center;">
-                <span style="font-weight: 600; font-size: 14px;">Щоденна ціль:</span>
-                <input type="number" step="1" class="admin-input" id="set-daily-goal" value="12" oninput="autoSaveSettings()">
-            </div>
-        </div>
-
         <div id="settings-container"></div>
         <button class="save-btn" onclick="saveTariffsClick()">Зберегти налаштування</button>
         <button class="reset-btn" onclick="resetToFactoryTariffs()">Відновити стандартні</button>
@@ -530,13 +554,10 @@
         let saveRouteTimeout = null;
         let saveSettingsTimeout = null;
 
-        // Ініціалізація та захист від випадкового закриття
         if (tg) {
             tg.expand();
             tg.ready();
-            if (tg.enableClosingConfirmation) {
-                tg.enableClosingConfirmation();
-            }
+            if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
         }
 
         document.addEventListener('focusin', function(e) {
@@ -609,9 +630,7 @@
                 const data = await res.json();
                 if (data && data.length > 0) return { lat: data[0].lat, lon: data[0].lon };
                 return null;
-            } catch (e) {
-                return null;
-            }
+            } catch (e) { return null; }
         }
 
         async function calculateSmartRoute() {
@@ -647,7 +666,6 @@
 
                 if(routeData.routes && routeData.routes.length > 0) {
                     const totalKm = (routeData.routes[0].distance / 1000);
-                    
                     let cityKm = Math.min(5.0, totalKm).toFixed(1);
                     let outKm = Math.max(0, totalKm - 5.0).toFixed(1);
 
@@ -657,27 +675,16 @@
                     document.getElementById('slider-distOut').value = outKm;
                     
                     recalc();
-                    
                     document.getElementById('nav-btn-group').style.display = 'flex';
                     if(tg && tg.showAlert) tg.showAlert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
                     else alert(`✅ Знайдено! Загальна дистанція: ${totalKm.toFixed(1)} км.`);
-                } else {
-                    throw new Error("Неможливо прокласти маршрут автошляхами.");
-                }
-
-            } catch (err) {
-                alert(err.message || "Помилка мережі при розрахунку.");
-            } finally {
-                btn.innerText = "Прокласти маршрут";
-                btn.style.opacity = "1";
-            }
+                } else { throw new Error("Неможливо прокласти маршрут автошляхами."); }
+            } catch (err) { alert(err.message || "Помилка мережі при розрахунку."); } finally { btn.innerText = "Прокласти маршрут"; btn.style.opacity = "1"; }
         }
 
         function openWaze() {
             haptic();
-            if(routeCoords.lat2 && routeCoords.lon2) {
-                window.open(`https://waze.com/ul?ll=${routeCoords.lat2},${routeCoords.lon2}&navigate=yes`, '_blank');
-            }
+            if(routeCoords.lat2 && routeCoords.lon2) window.open(`https://waze.com/ul?ll=${routeCoords.lat2},${routeCoords.lon2}&navigate=yes`, '_blank');
         }
 
         function openGmaps() {
@@ -691,13 +698,13 @@
         const defaultTariffs = {
             standard: { name: 'Стандарт', icon: '🚕', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 },
             comfort: { name: 'Комфорт', icon: '🛋️', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 },
-            business: { name: 'Бізнес', icon: '💼', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
+            business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 },
             intercity: { name: 'За місто', icon: '🛣️', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 }
         };
 
         const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28, workMode: 'solo', rentVal: 30, splitPct: 10 };
         const defaultGoals = { dailyGoal: 12, dailyDone: 0 };
-        const defaultBranding = { done: 451, target: 700, days: 10 };
+        const defaultBranding = { done: 451, target: 700, days: 0 };
         const defaultDailyCash = { orders: 0, gross: 0, comm: 0, fuel: 0, extraExp: 0, rent: 0, net: 0, totalKm: 0, date: new Date().toLocaleDateString(), history: [] };
 
         let tariffs = JSON.parse(JSON.stringify(defaultTariffs));
@@ -733,14 +740,13 @@
                     dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
                     dailyCashData.date = new Date().toLocaleDateString();
                     localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
-                    
                     goals.dailyDone = 0;
                     document.getElementById('inp-daily-done').value = 0;
                     localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-                    
                     updateCashPageUI();
                 }
             }
+            if(brandingData.days === 0) setDaysToEndOfMonth(); // Авто-підрахунок днів, якщо 0
         };
 
         function toggleSummary() {
@@ -749,13 +755,13 @@
             const chevron = document.getElementById('summary-chevron');
             if (details.style.display === 'none') {
                 details.style.display = 'block';
-                chevron.innerText = 'Згорнути';
+                chevron.innerText = 'Приховати';
                 chevron.style.background = 'transparent';
                 chevron.style.color = 'var(--text-muted)';
             } else {
                 details.style.display = 'none';
-                chevron.innerText = 'Розгорнути';
-                chevron.style.background = 'rgba(52, 199, 89, 0.1)';
+                chevron.innerText = 'Деталі';
+                chevron.style.background = 'rgba(52, 199, 89, 0.15)';
                 chevron.style.color = 'var(--accent-success)';
             }
         }
@@ -764,47 +770,21 @@
             haptic();
             const panel = document.getElementById('extra-params');
             const btn = document.getElementById('toggle-extra-btn');
-            if (panel.style.display === 'none') {
-                panel.style.display = 'block';
-                btn.innerText = 'Сховати додаткові налаштування';
-            } else {
-                panel.style.display = 'none';
-                btn.innerText = 'Показати додаткові налаштування';
-            }
+            if (panel.style.display === 'none') { panel.style.display = 'block'; btn.innerText = 'Сховати додаткові налаштування';
+            } else { panel.style.display = 'none'; btn.innerText = 'Показати додаткові налаштування'; }
         }
 
-        function copyOutToEmpty() {
-            haptic();
-            const outVal = document.getElementById('inp-distOut').value;
-            document.getElementById('inp-emptyKm').value = outVal;
-            document.getElementById('slider-emptyKm').value = outVal;
-            recalc();
-        }
-
-        function toggleWorkModeInputs() {
-            const mode = document.getElementById('set-work-mode').value;
-            document.getElementById('box-set-rent').style.display = (mode === 'rent') ? 'flex' : 'none';
-            document.getElementById('box-set-split').style.display = (mode === 'split') ? 'flex' : 'none';
-        }
+        function copyOutToEmpty() { haptic(); const outVal = document.getElementById('inp-distOut').value; document.getElementById('inp-emptyKm').value = outVal; document.getElementById('slider-emptyKm').value = outVal; recalc(); }
+        function toggleWorkModeInputs() { const mode = document.getElementById('set-work-mode').value; document.getElementById('box-set-rent').style.display = (mode === 'rent') ? 'flex' : 'none'; document.getElementById('box-set-split').style.display = (mode === 'split') ? 'flex' : 'none'; }
 
         function loadSavedRouteParams() {
             if(localStorage.getItem('taxi_route_params_v20')) {
                 const saved = JSON.parse(localStorage.getItem('taxi_route_params_v20'));
                 ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => {
-                    if(saved[id] !== undefined) {
-                        document.getElementById('inp-'+id).value = saved[id];
-                        document.getElementById('slider-'+id).value = saved[id];
-                    }
+                    if(saved[id] !== undefined) { document.getElementById('inp-'+id).value = saved[id]; document.getElementById('slider-'+id).value = saved[id]; }
                 });
             }
-            
-            document.getElementById('set-comm').value = expenses.comm;
-            document.getElementById('set-fuel-type').value = expenses.type;
-            document.getElementById('set-fuel-cons').value = expenses.cons;
-            document.getElementById('set-fuel-price').value = expenses.price;
-            document.getElementById('set-work-mode').value = expenses.workMode || 'solo';
-            document.getElementById('set-rent-val').value = expenses.rentVal || 30;
-            document.getElementById('set-split-pct').value = expenses.splitPct || 10;
+            document.getElementById('set-comm').value = expenses.comm; document.getElementById('set-fuel-type').value = expenses.type; document.getElementById('set-fuel-cons').value = expenses.cons; document.getElementById('set-fuel-price').value = expenses.price; document.getElementById('set-work-mode').value = expenses.workMode || 'solo'; document.getElementById('set-rent-val').value = expenses.rentVal || 30; document.getElementById('set-split-pct').value = expenses.splitPct || 10;
             
             document.getElementById('inp-daily-done').value = goals.dailyDone;
             document.getElementById('set-daily-goal').value = goals.dailyGoal;
@@ -814,25 +794,16 @@
             document.getElementById('brand-target').value = brandingData.target;
             document.getElementById('brand-days').value = brandingData.days;
 
-            if(localStorage.getItem('taxi_strat_params_v20')) {
-                const strat = JSON.parse(localStorage.getItem('taxi_strat_params_v20'));
-                document.getElementById('strat-target').value = strat.target || 2000;
-                document.getElementById('strat-km').value = strat.km || 6.5;
-            }
+            if(localStorage.getItem('taxi_strat_params_v20')) { const strat = JSON.parse(localStorage.getItem('taxi_strat_params_v20')); document.getElementById('strat-target').value = strat.target || 2000; document.getElementById('strat-km').value = strat.km || 6.5; }
 
-            toggleWorkModeInputs();
-            updateFuelLabels(expenses.type);
-            updateCashPageUI();
+            toggleWorkModeInputs(); updateFuelLabels(expenses.type); updateCashPageUI();
         }
 
         function saveCurrentRouteParams() {
-            // Оптимізація: зберігаємо в LocalStorage із затримкою, щоб не вішати браузер
             clearTimeout(saveRouteTimeout);
             saveRouteTimeout = setTimeout(() => {
                 const params = {};
-                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => {
-                    params[id] = document.getElementById('inp-'+id).value;
-                });
+                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { params[id] = document.getElementById('inp-'+id).value; });
                 localStorage.setItem('taxi_route_params_v20', JSON.stringify(params));
             }, 500);
         }
@@ -840,90 +811,34 @@
         function renderCarSelector() {
             const container = document.getElementById('car-list-calc');
             const container2 = document.getElementById('car-list-strat');
-            if(container) container.innerHTML = '';
-            if(container2) container2.innerHTML = '';
-            
+            if(container) container.innerHTML = ''; if(container2) container2.innerHTML = '';
             Object.keys(tariffs).forEach(key => {
-                const t = tariffs[key];
-                const active = key === currentClass ? 'active' : '';
-                const html = `
-                    <div class="car-card ${active}" onclick="selectClass('${key}')">
-                        <div class="car-emoji">${t.icon}</div>
-                        <div>
-                            <div class="car-name">${t.name}</div>
-                            <div class="car-price-info">${t.minPrice} ₴</div>
-                        </div>
-                    </div>
-                `;
-                if(container) container.innerHTML += html;
-                if(container2) container2.innerHTML += html;
+                const t = tariffs[key]; const active = key === currentClass ? 'active' : '';
+                const html = `<div class="car-card ${active}" onclick="selectClass('${key}')"><div class="car-emoji">${t.icon}</div><div><div class="car-name">${t.name}</div><div class="car-price-info">${t.minPrice} ₴</div></div></div>`;
+                if(container) container.innerHTML += html; if(container2) container2.innerHTML += html;
             });
         }
         
-        function selectClass(key) {
-            haptic();
-            currentClass = key;
-            renderCarSelector();
-            recalc();
-            calcStrategy();
-        }
+        function selectClass(key) { haptic(); currentClass = key; renderCarSelector(); recalc(); calcStrategy(); }
 
         function syncSliderToInput(id) {
-            // Прибрано haptic() для слайдерів, щоб не перевантажувати Telegram API
-            const val = document.getElementById('slider-' + id).value;
-            const input = document.getElementById('inp-' + id);
-            if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) {
-                input.value = parseFloat(val).toFixed(1);
-            } else {
-                input.value = Math.round(val);
-            }
+            const val = document.getElementById('slider-' + id).value; const input = document.getElementById('inp-' + id);
+            if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) { input.value = parseFloat(val).toFixed(1); } else { input.value = Math.round(val); }
             recalc();
         }
 
-        function syncInputToSlider(id) {
-            const val = document.getElementById('inp-' + id).value;
-            document.getElementById('slider-' + id).value = val;
-            recalc();
-        }
+        function syncInputToSlider(id) { const val = document.getElementById('inp-' + id).value; document.getElementById('slider-' + id).value = val; recalc(); }
 
         function changeVal(id, step) {
-            haptic();
-            const input = document.getElementById('inp-' + id);
-            let val = (parseFloat(input.value) || 0) + step;
-            if (id === 'coef' && val < 1.0) val = 1.0;
-            else if (val < 0) val = 0;
-            
-            if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) {
-                input.value = val.toFixed(1);
-            } else {
-                input.value = Math.round(val);
-            }
-            document.getElementById('slider-' + id).value = val;
-            recalc();
+            haptic(); const input = document.getElementById('inp-' + id); let val = (parseFloat(input.value) || 0) + step;
+            if (id === 'coef' && val < 1.0) val = 1.0; else if (val < 0) val = 0;
+            if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) { input.value = val.toFixed(1); } else { input.value = Math.round(val); }
+            document.getElementById('slider-' + id).value = val; recalc();
         }
 
-        function setQuickCoef(val) {
-            haptic();
-            document.getElementById('inp-coef').value = val.toFixed(1);
-            document.getElementById('slider-coef').value = val;
-            recalc();
-        }
-
-        function addTip(val) {
-            haptic();
-            const input = document.getElementById('inp-clientBonus');
-            let current = parseInt(input.value) || 0;
-            input.value = current + val;
-            document.getElementById('slider-clientBonus').value = input.value;
-            recalc();
-        }
-
-        function clearTip() {
-            haptic();
-            document.getElementById('inp-clientBonus').value = 0;
-            document.getElementById('slider-clientBonus').value = 0;
-            recalc();
-        }
+        function setQuickCoef(val) { haptic(); document.getElementById('inp-coef').value = val.toFixed(1); document.getElementById('slider-coef').value = val; recalc(); }
+        function addTip(val) { haptic(); const input = document.getElementById('inp-clientBonus'); let current = parseInt(input.value) || 0; input.value = current + val; document.getElementById('slider-clientBonus').value = input.value; recalc(); }
+        function clearTip() { haptic(); document.getElementById('inp-clientBonus').value = 0; document.getElementById('slider-clientBonus').value = 0; recalc(); }
 
         function recalc() {
             const distCity = parseFloat(document.getElementById('inp-dist').value) || 0;
@@ -936,203 +851,66 @@
             const coef = parseFloat(document.getElementById('inp-coef').value) || 1.0;
             const clientBonus = parseInt(document.getElementById('inp-clientBonus').value) || 0;
 
-            saveCurrentRouteParams();
+            saveCurrentRouteParams(); const t = tariffs[currentClass];
 
-            const t = tariffs[currentClass];
+            let remainingMinKm = t.minKm; let extraCityKm = 0; let extraOutKm = 0;
+            if (distCity >= remainingMinKm) { extraCityKm = distCity - remainingMinKm; remainingMinKm = 0; } else { remainingMinKm -= distCity; extraCityKm = 0; }
+            if (distOut >= remainingMinKm) { extraOutKm = distOut - remainingMinKm; remainingMinKm = 0; } else { extraOutKm = 0; }
 
-            let remainingMinKm = t.minKm;
-            let extraCityKm = 0;
-            let extraOutKm = 0;
+            const costExtraCity = extraCityKm * t.perKmCity; const costOut = extraOutKm * t.perKmOut; const stopsCost = stopsQty * t.stopPrice; const costAddons = (wait * t.perMin) + stopsCost;
+            const baseTotalWithCoef = (t.minPrice + costExtraCity + costOut + costAddons) * coef; const finalTotal = baseTotalWithCoef + clientBonus; const totalKm = distCity + distOut + delivery + emptyKm;
 
-            if (distCity >= remainingMinKm) {
-                extraCityKm = distCity - remainingMinKm;
-                remainingMinKm = 0;
-            } else {
-                remainingMinKm -= distCity;
-                extraCityKm = 0;
-            }
-
-            if (distOut >= remainingMinKm) {
-                extraOutKm = distOut - remainingMinKm;
-                remainingMinKm = 0;
-            } else {
-                extraOutKm = 0;
-            }
-
-            const costExtraCity = extraCityKm * t.perKmCity;
-            const costOut = extraOutKm * t.perKmOut;
-            const stopsCost = stopsQty * t.stopPrice;
-            const costAddons = (wait * t.perMin) + stopsCost;
-            
-            const baseTotalWithCoef = (t.minPrice + costExtraCity + costOut + costAddons) * coef;
-            const finalTotal = baseTotalWithCoef + clientBonus;
-            const totalKm = distCity + distOut + delivery + emptyKm;
-
-            document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴`;
-            document.getElementById('res-extra-dist').innerText = `${((costExtraCity + costOut) * coef).toFixed(1)} ₴`;
-            document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
-            
-            if(clientBonus > 0) {
-                document.getElementById('row-res-bonus').style.display = 'flex';
-                document.getElementById('res-bonus').innerText = `+${clientBonus} ₴`;
-            } else {
-                document.getElementById('row-res-bonus').style.display = 'none';
-            }
-
+            document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴`; document.getElementById('res-extra-dist').innerText = `${((costExtraCity + costOut) * coef).toFixed(1)} ₴`; document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
+            if(clientBonus > 0) { document.getElementById('row-res-bonus').style.display = 'flex'; document.getElementById('res-bonus').innerText = `+${clientBonus} ₴`; } else { document.getElementById('row-res-bonus').style.display = 'none'; }
             document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
             
-            const commissionCost = finalTotal * (expenses.comm / 100);
-            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-            
-            let rentCost = 0;
-            if (expenses.workMode === 'rent') {
-                rentCost = expenses.rentVal;
-            } else if (expenses.workMode === 'split') {
-                rentCost = (finalTotal - commissionCost) * (expenses.splitPct / 100);
-            }
+            const commissionCost = finalTotal * (expenses.comm / 100); const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
+            let rentCost = 0; if (expenses.workMode === 'rent') { rentCost = expenses.rentVal; } else if (expenses.workMode === 'split') { rentCost = (finalTotal - commissionCost) * (expenses.splitPct / 100); }
 
-            const netIncome = finalTotal - commissionCost - fuelCost - extraExp - rentCost;
-            const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
+            const netIncome = finalTotal - commissionCost - fuelCost - extraExp - rentCost; const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
 
             document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`;
+            document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
             
-            document.getElementById('lbl-comm').innerText = expenses.comm;
-            document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1);
-            document.getElementById('res-comm').innerText = `-${commissionCost.toFixed(1)} ₴`;
+            const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л'; document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴`;
             
-            const fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
-            document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴`;
-            
-            if (extraExp > 0) {
-                document.getElementById('row-res-extraExp').style.display = 'flex';
-                document.getElementById('res-extraExp').innerText = `-${extraExp} ₴`;
-            } else {
-                document.getElementById('row-res-extraExp').style.display = 'none';
-            }
+            if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${extraExp} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
+            if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${rentCost.toFixed(1)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
 
-            if (rentCost > 0) {
-                document.getElementById('row-res-rent').style.display = 'flex';
-                document.getElementById('res-rent').innerText = `-${rentCost.toFixed(1)} ₴`;
-            } else {
-                document.getElementById('row-res-rent').style.display = 'none';
-            }
-
-            const effBadge = document.getElementById('res-eff');
-            effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`;
-            effBadge.className = 'eff-badge'; 
-            if (effPrice >= 12) {
-                effBadge.classList.add('eff-green');
-            } else if (effPrice >= 8) {
-                effBadge.classList.add('eff-yellow');
-            } else {
-                effBadge.classList.add('eff-red');
-            }
+            const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; 
+            if (effPrice >= 12) { effBadge.classList.add('eff-green'); } else if (effPrice >= 8) { effBadge.classList.add('eff-yellow'); } else { effBadge.classList.add('eff-red'); }
         }
 
         function calcStrategy() {
-            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000;
-            const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
-            
-            // Оптимізація зберігання
-            clearTimeout(saveSettingsTimeout);
-            saveSettingsTimeout = setTimeout(() => {
-                localStorage.setItem('taxi_strat_params_v20', JSON.stringify({target: targetNet, km: avgKm}));
-            }, 500);
+            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_strat_params_v20', JSON.stringify({target: targetNet, km: avgKm})); }, 500);
 
-            const t = tariffs[currentClass];
-            let extraKm = Math.max(0, avgKm - t.minKm);
-            let tripGross = t.minPrice + (extraKm * t.perKmCity);
-            
-            let tripComm = tripGross * (expenses.comm / 100);
-            let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
-            
-            let tripRent = 0;
-            if (expenses.workMode === 'rent') {
-                tripRent = expenses.rentVal;
-            } else if (expenses.workMode === 'split') {
-                tripRent = (tripGross - tripComm) * (expenses.splitPct / 100);
-            }
+            const t = tariffs[currentClass]; let extraKm = Math.max(0, avgKm - t.minKm); let tripGross = t.minPrice + (extraKm * t.perKmCity); let tripComm = tripGross * (expenses.comm / 100); let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
+            let tripRent = 0; if (expenses.workMode === 'rent') { tripRent = expenses.rentVal; } else if (expenses.workMode === 'split') { tripRent = (tripGross - tripComm) * (expenses.splitPct / 100); } let tripNet = tripGross - tripComm - tripFuel - tripRent;
 
-            let tripNet = tripGross - tripComm - tripFuel - tripRent;
+            if (tripNet <= 0) { document.getElementById('strat-result-data').style.display = 'none'; document.getElementById('strat-warning').style.display = 'block'; return; } else { document.getElementById('strat-result-data').style.display = 'block'; document.getElementById('strat-warning').style.display = 'none'; }
 
-            if (tripNet <= 0) {
-                document.getElementById('strat-result-data').style.display = 'none';
-                document.getElementById('strat-warning').style.display = 'block';
-                return;
-            } else {
-                document.getElementById('strat-result-data').style.display = 'block';
-                document.getElementById('strat-warning').style.display = 'none';
-            }
-
-            let tripsNeeded = Math.ceil(targetNet / tripNet);
-            let totalGross = tripsNeeded * tripGross;
-            let totalKm = tripsNeeded * avgKm;
-            let totalFuelVol = (totalKm / 100) * expenses.cons;
-            let fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
-
-            document.getElementById('strat-trips').innerText = tripsNeeded;
-            document.getElementById('strat-gross').innerText = totalGross.toFixed(0) + ' ₴';
-            document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км';
-            document.getElementById('strat-fuel-total').innerText = totalFuelVol.toFixed(1) + ' ' + fuelUnit;
+            let tripsNeeded = Math.ceil(targetNet / tripNet); let totalGross = tripsNeeded * tripGross; let totalKm = tripsNeeded * avgKm; let totalFuelVol = (totalKm / 100) * expenses.cons; let fuelUnit = (expenses.type === 'electro') ? 'kWt' : 'л';
+            document.getElementById('strat-trips').innerText = tripsNeeded; document.getElementById('strat-gross').innerText = totalGross.toFixed(0) + ' ₴'; document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; document.getElementById('strat-fuel-total').innerText = totalFuelVol.toFixed(1) + ' ' + fuelUnit;
         }
 
         function addToDailyCash() {
             haptic();
-            const gross = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(' ₴',''))) || 0;
-            const comm = parseFloat(document.getElementById('res-comm').innerText.replace('-','').replace(' ₴','')) || 0;
-            const fuel = parseFloat(document.getElementById('res-fuel').innerText.split(' ')[0].replace('-','')) || 0;
-            const extraExp = parseInt(document.getElementById('inp-extraExp').value) || 0;
-            const net = parseFloat(document.getElementById('res-net').innerText.replace(' ₴','')) || 0;
+            const gross = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(' ₴',''))) || 0; const comm = parseFloat(document.getElementById('res-comm').innerText.replace('-','').replace(' ₴','')) || 0; const fuel = parseFloat(document.getElementById('res-fuel').innerText.split(' ')[0].replace('-','')) || 0; const extraExp = parseInt(document.getElementById('inp-extraExp').value) || 0; const net = parseFloat(document.getElementById('res-net').innerText.replace(' ₴','')) || 0;
+            const tripKm = parseFloat(document.getElementById('inp-dist').value) + parseFloat(document.getElementById('inp-distOut').value) + parseFloat(document.getElementById('inp-emptyKm').value) + parseFloat(document.getElementById('inp-delivery').value);
             
-            const tripKm = parseFloat(document.getElementById('inp-dist').value) + 
-                           parseFloat(document.getElementById('inp-distOut').value) + 
-                           parseFloat(document.getElementById('inp-emptyKm').value) + 
-                           parseFloat(document.getElementById('inp-delivery').value);
-            
-            let rentCost = 0;
-            if (expenses.workMode === 'rent') {
-                rentCost = expenses.rentVal;
-            } else if (expenses.workMode === 'split') {
-                rentCost = (gross - comm) * (expenses.splitPct / 100);
-            }
+            let rentCost = 0; if (expenses.workMode === 'rent') { rentCost = expenses.rentVal; } else if (expenses.workMode === 'split') { rentCost = (gross - comm) * (expenses.splitPct / 100); }
 
-            dailyCashData.orders += 1;
-            dailyCashData.gross += gross;
-            dailyCashData.comm += comm;
-            dailyCashData.fuel += fuel;
-            dailyCashData.extraExp += extraExp;
-            dailyCashData.rent += rentCost;
-            dailyCashData.net += net;
-            if(dailyCashData.totalKm === undefined) dailyCashData.totalKm = 0;
-            dailyCashData.totalKm += tripKm;
+            dailyCashData.orders += 1; dailyCashData.gross += gross; dailyCashData.comm += comm; dailyCashData.fuel += fuel; dailyCashData.extraExp += extraExp; dailyCashData.rent += rentCost; dailyCashData.net += net;
+            if(dailyCashData.totalKm === undefined) dailyCashData.totalKm = 0; dailyCashData.totalKm += tripKm;
             
-            const tripId = Date.now();
-            const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            
-            dailyCashData.history.unshift({
-                id: tripId,
-                time: timeStr,
-                gross: gross,
-                net: net,
-                comm: comm,
-                fuel: fuel,
-                extraExp: extraExp,
-                rent: rentCost,
-                km: tripKm
-            });
-
+            const tripId = Date.now(); const now = new Date(); const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            dailyCashData.history.unshift({ id: tripId, time: timeStr, gross: gross, net: net, comm: comm, fuel: fuel, extraExp: extraExp, rent: rentCost, km: tripKm });
             localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
             
-            goals.dailyDone += 1;
-            document.getElementById('inp-daily-done').value = goals.dailyDone;
-            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-            
-            updateCashPageUI();
-            calcBranding();
-
-            if(tg && tg.showAlert) tg.showAlert('Зафіксовано!');
-            else alert('Зафіксовано!');
+            goals.dailyDone += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+            updateCashPageUI(); calcBranding();
+            if(tg && tg.showAlert) tg.showAlert('✅ Додано в касу!'); else alert('✅ Додано в касу!');
         }
 
         function removeTrip(id) {
@@ -1141,289 +919,120 @@
                 const index = dailyCashData.history.findIndex(t => t.id === id);
                 if(index > -1) {
                     const trip = dailyCashData.history[index];
-                    dailyCashData.orders = Math.max(0, dailyCashData.orders - 1);
-                    dailyCashData.gross -= trip.gross;
-                    dailyCashData.comm -= trip.comm;
-                    dailyCashData.fuel -= trip.fuel;
-                    dailyCashData.extraExp -= trip.extraExp;
-                    dailyCashData.rent -= trip.rent;
-                    dailyCashData.net -= trip.net;
+                    dailyCashData.orders = Math.max(0, dailyCashData.orders - 1); dailyCashData.gross -= trip.gross; dailyCashData.comm -= trip.comm; dailyCashData.fuel -= trip.fuel; dailyCashData.extraExp -= trip.extraExp; dailyCashData.rent -= trip.rent; dailyCashData.net -= trip.net;
                     if(trip.km) dailyCashData.totalKm = Math.max(0, dailyCashData.totalKm - trip.km);
-                    
-                    dailyCashData.history.splice(index, 1);
-                    localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
-
-                    goals.dailyDone = Math.max(0, goals.dailyDone - 1);
-                    document.getElementById('inp-daily-done').value = goals.dailyDone;
-                    localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-
-                    updateCashPageUI();
-                    calcBranding();
+                    dailyCashData.history.splice(index, 1); localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
+                    goals.dailyDone = Math.max(0, goals.dailyDone - 1); document.getElementById('inp-daily-done').value = goals.dailyDone; localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
+                    updateCashPageUI(); calcBranding();
                 }
             }
         }
 
         function updateCashPageUI() {
-            document.getElementById('cash-orders-count').innerText = dailyCashData.orders;
-            document.getElementById('cash-gross').innerText = dailyCashData.gross.toFixed(1) + ' ₴';
-            document.getElementById('cash-comm').innerText = '-' + dailyCashData.comm.toFixed(1) + ' ₴';
-            document.getElementById('cash-fuel').innerText = '-' + dailyCashData.fuel.toFixed(1) + ' ₴';
-            document.getElementById('cash-total-km').innerText = (dailyCashData.totalKm || 0).toFixed(1) + ' км';
-            
-            if (dailyCashData.extraExp > 0) {
-                document.getElementById('row-cash-extraExp').style.display = 'flex';
-                document.getElementById('cash-extraExp').innerText = '-' + dailyCashData.extraExp.toFixed(1) + ' ₴';
-            } else {
-                document.getElementById('row-cash-extraExp').style.display = 'none';
-            }
-
-            if (dailyCashData.rent > 0) {
-                document.getElementById('row-cash-rent').style.display = 'flex';
-                document.getElementById('cash-rent').innerText = '-' + dailyCashData.rent.toFixed(1) + ' ₴';
-            } else {
-                document.getElementById('row-cash-rent').style.display = 'none';
-            }
-
+            document.getElementById('cash-orders-count').innerText = dailyCashData.orders; document.getElementById('cash-gross').innerText = dailyCashData.gross.toFixed(1) + ' ₴'; document.getElementById('cash-comm').innerText = '-' + dailyCashData.comm.toFixed(1) + ' ₴'; document.getElementById('cash-fuel').innerText = '-' + dailyCashData.fuel.toFixed(1) + ' ₴'; document.getElementById('cash-total-km').innerText = (dailyCashData.totalKm || 0).toFixed(1) + ' км';
+            if (dailyCashData.extraExp > 0) { document.getElementById('row-cash-extraExp').style.display = 'flex'; document.getElementById('cash-extraExp').innerText = '-' + dailyCashData.extraExp.toFixed(1) + ' ₴'; } else { document.getElementById('row-cash-extraExp').style.display = 'none'; }
+            if (dailyCashData.rent > 0) { document.getElementById('row-cash-rent').style.display = 'flex'; document.getElementById('cash-rent').innerText = '-' + dailyCashData.rent.toFixed(1) + ' ₴'; } else { document.getElementById('row-cash-rent').style.display = 'none'; }
             document.getElementById('cash-net').innerText = dailyCashData.net.toFixed(1) + ' ₴';
 
-            const hours = parseFloat(document.getElementById('cash-hours').value) || 1;
-            const hourlyRate = dailyCashData.net / hours;
-            document.getElementById('cash-hourly-rate').innerText = hourlyRate.toFixed(0) + ' ₴/год';
-
-            const historyList = document.getElementById('cash-history-list');
-            const emptyState = document.getElementById('cash-empty-state');
-            
-            historyList.innerHTML = '';
+            const hours = parseFloat(document.getElementById('cash-hours').value) || 1; const hourlyRate = dailyCashData.net / hours; document.getElementById('cash-hourly-rate').innerText = hourlyRate.toFixed(0) + ' ₴/год';
+            const historyList = document.getElementById('cash-history-list'); const emptyState = document.getElementById('cash-empty-state'); historyList.innerHTML = '';
             
             if(dailyCashData.history && dailyCashData.history.length > 0) {
                 emptyState.style.display = 'none';
                 dailyCashData.history.forEach(trip => {
                     const tKm = trip.km ? trip.km.toFixed(1) : '0';
-                    historyList.innerHTML += `
-                        <div class="history-item">
-                            <div>
-                                <strong style="font-size: 15px;">${trip.time}</strong><br>
-                                <span style="font-size: 12px; color: var(--text-muted);">Пробіг: ${tKm} км | Оборот: ${trip.gross} ₴</span>
-                            </div>
-                            <div style="text-align: right; margin-right: 12px;">
-                                <strong style="font-size: 16px; color: var(--accent-success);">+${trip.net.toFixed(0)} ₴</strong>
-                            </div>
-                            <button class="del-btn" onclick="removeTrip(${trip.id})">✕</button>
-                        </div>
-                    `;
+                    historyList.innerHTML += `<div class="history-item"><div><strong style="font-size: 15px;">${trip.time}</strong><br><span style="font-size: 12px; color: var(--text-muted);">Пробіг: ${tKm} км | Оборот: ${trip.gross} ₴</span></div><div style="text-align: right; margin-right: 12px;"><strong style="font-size: 16px; color: var(--accent-success);">+${trip.net.toFixed(0)} ₴</strong></div><button class="del-btn" onclick="removeTrip(${trip.id})">✕</button></div>`;
                 });
-            } else {
-                emptyState.style.display = 'block';
-            }
+            } else { emptyState.style.display = 'block'; }
         }
 
         function shareReport() {
-            haptic();
-            const hours = parseFloat(document.getElementById('cash-hours').value) || 1;
-            const hourlyRate = dailyCashData.net / hours;
-            const totKm = (dailyCashData.totalKm || 0).toFixed(1);
-            
+            haptic(); const hours = parseFloat(document.getElementById('cash-hours').value) || 1; const hourlyRate = dailyCashData.net / hours; const totKm = (dailyCashData.totalKm || 0).toFixed(1);
             const text = `Підсумок зміни (${dailyCashData.date}):\n\n✅ Замовлень: ${dailyCashData.orders}\n⏱ Годин: ${hours}\n📍 Пробіг: ${totKm} км\n\n💵 Оборот: ${dailyCashData.gross.toFixed(0)} ₴\n🟡 Комісія: -${dailyCashData.comm.toFixed(0)} ₴\n⛽ Пальне: -${dailyCashData.fuel.toFixed(0)} ₴\n\n💰 ЧИСТИМИ: ${dailyCashData.net.toFixed(0)} ₴\n📈 Ставка: ${hourlyRate.toFixed(0)} ₴/год`;
-            
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!');
-                    else alert('Звіт скопійовано!');
-                });
-            }
+            if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); else alert('Звіт скопійовано!'); }); }
         }
 
-        function resetDailyCashClick() {
+        function resetDailyCashClick() { haptic(); if (confirm('Розпочати нову зміну? Каса буде обнулена.')) { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData)); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v20', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); } }
+        
+        // --- НОВІ ФУНКЦІЇ ДЛЯ ВКЛАДКИ ЦІЛІ ---
+        function setDaysToEndOfMonth() {
             haptic();
-            if (confirm('Розпочати нову зміну? Каса буде обнулена.')) {
-                dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash));
-                dailyCashData.date = new Date().toLocaleDateString();
-                localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
-                
-                goals.dailyDone = 0;
-                document.getElementById('inp-daily-done').value = 0;
-                localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-
-                updateCashPageUI();
-                calcBranding();
-            }
-        }
-
-        function changeDailyDone(step) {
-            haptic();
-            const input = document.getElementById('inp-daily-done');
-            let val = (parseInt(input.value) || 0) + step;
-            if (val < 0) val = 0;
-            input.value = val;
+            const now = new Date();
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const daysLeft = lastDay.getDate() - now.getDate() + 1; // +1 щоб врахувати сьогодні
+            document.getElementById('brand-days').value = daysLeft;
             calcBranding();
         }
 
+        function updateDailyGoalSlider(val) {
+            document.getElementById('brand-daily-goal-val').innerText = val;
+            document.getElementById('set-daily-goal').value = val;
+            autoSaveSettings(); 
+            calcBranding();
+        }
+
+        function resetDailyDone() {
+            haptic();
+            if(confirm("Скинути сьогоднішній прогрес замовлень?")) {
+                document.getElementById('inp-daily-done').value = 0;
+                calcBranding();
+            }
+        }
+
+        function changeDailyDone(step) { haptic(); const input = document.getElementById('inp-daily-done'); let val = (parseInt(input.value) || 0) + step; if (val < 0) val = 0; input.value = val; calcBranding(); }
+
         function calcBranding() {
-            brandingData.done = parseInt(document.getElementById('brand-done').value) || 0;
-            brandingData.target = parseInt(document.getElementById('brand-target').value) || 1;
-            brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
-            
-            // Оптимізація зберігання
-            clearTimeout(saveSettingsTimeout);
-            saveSettingsTimeout = setTimeout(() => {
-                localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
-            }, 500);
+            brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData)); }, 500);
 
-            let pct = (brandingData.done / brandingData.target) * 100;
-            if (pct > 100) pct = 100;
-            
-            let remain = brandingData.target - brandingData.done;
-            if (remain < 0) remain = 0;
-
+            let pct = (brandingData.done / brandingData.target) * 100; if (pct > 100) pct = 100;
+            let remain = brandingData.target - brandingData.done; if (remain < 0) remain = 0;
             let perDayRequired = remain / brandingData.days;
 
-            document.getElementById('brand-progress').style.width = pct + '%';
-            document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%';
-            document.getElementById('brand-remain').innerText = remain;
-            document.getElementById('brand-perday').innerText = perDayRequired.toFixed(1) + ' зам/день';
+            document.getElementById('brand-progress').style.width = pct + '%'; document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; document.getElementById('brand-remain').innerText = remain; document.getElementById('brand-perday').innerText = perDayRequired.toFixed(1) + ' зам/день';
             
-            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
-            const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
-            
-            goals.dailyGoal = dailyGoal;
-            goals.dailyDone = dailyDone;
-            
-            // Оптимізація зберігання
-            clearTimeout(saveSettingsTimeout);
-            saveSettingsTimeout = setTimeout(() => {
-                localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-            }, 500);
+            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12; const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
+            goals.dailyGoal = dailyGoal; goals.dailyDone = dailyDone;
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_goals_v20', JSON.stringify(goals)); }, 500);
             
             document.getElementById('brand-daily-goal-val').innerText = dailyGoal;
+            let dailyPct = (dailyDone / dailyGoal) * 100; if (dailyPct > 100) dailyPct = 100;
+            document.getElementById('brand-daily-progress').style.width = dailyPct + '%'; document.getElementById('brand-daily-pct').innerText = dailyPct.toFixed(1) + '%'; document.getElementById('brand-perday-required').innerText = perDayRequired.toFixed(1) + ' зам/день';
             
-            let dailyPct = (dailyDone / dailyGoal) * 100;
-            if (dailyPct > 100) dailyPct = 100;
-            document.getElementById('brand-daily-progress').style.width = dailyPct + '%';
-            document.getElementById('brand-daily-pct').innerText = dailyPct.toFixed(1) + '%';
-            document.getElementById('brand-perday-required').innerText = perDayRequired.toFixed(1) + ' зам/день';
-            
-            let daysToGoal = "∞";
-            if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
-            
-            if (dailyGoal >= perDayRequired) {
-                document.getElementById('brand-daily-comment').innerHTML = `Йдете з випередженням! Закриєте за ${daysToGoal} дн.`;
-            } else {
-                document.getElementById('brand-daily-comment').innerHTML = `Потрібно прискоритись. Мінімум ${perDayRequired.toFixed(1)} зам/день.`;
-            }
+            let daysToGoal = "∞"; if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
+            if (dailyGoal >= perDayRequired) { document.getElementById('brand-daily-comment').innerHTML = `Йдете з випередженням! Закриєте план за ${daysToGoal} дн.`; } else { document.getElementById('brand-daily-comment').innerHTML = `Потрібно прискоритись. Мінімум ${perDayRequired.toFixed(1)} зам/день.`; }
         }
 
-        function updateFuelLabels(type) {
-            const consLabel = document.getElementById('set-fuel-cons-label');
-            const priceLabel = document.getElementById('set-fuel-price-label');
-            if (type === 'electro') {
-                consLabel.innerText = "Розхід (kWt):";
-                priceLabel.innerText = "Ціна (₴/kWt):";
-            } else {
-                consLabel.innerText = "Розхід (л):";
-                priceLabel.innerText = "Ціна (₴/л):";
-            }
-        }
+        function updateFuelLabels(type) { const consLabel = document.getElementById('set-fuel-cons-label'); const priceLabel = document.getElementById('set-fuel-price-label'); if (type === 'electro') { consLabel.innerText = "Розхід (kWt):"; priceLabel.innerText = "Ціна (₴/kWt):"; } else { consLabel.innerText = "Розхід (л):"; priceLabel.innerText = "Ціна (₴/л):"; } }
 
         function switchTab(tab) {
-            haptic();
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            
+            haptic(); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const tabsMap = { 'calc': 0, 'branding': 1, 'cash': 2, 'strategy': 3, 'settings': 4 };
-            document.querySelectorAll('.tab-btn')[tabsMap[tab]].classList.add('active');
-            document.getElementById('page-' + tab).classList.add('active');
-
-            if(tab === 'calc') {
-                renderCarSelector();
-                recalc();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else if(tab === 'branding') {
-                calcBranding();
-            } else if(tab === 'cash') {
-                updateCashPageUI();
-            } else if(tab === 'strategy') {
-                renderCarSelector();
-                calcStrategy();
-            } else if(tab === 'settings') {
-                renderSettings();
-            }
+            document.querySelectorAll('.tab-btn')[tabsMap[tab]].classList.add('active'); document.getElementById('page-' + tab).classList.add('active');
+            if(tab === 'calc') { renderCarSelector(); recalc(); window.scrollTo({ top: 0, behavior: 'smooth' }); } else if(tab === 'branding') { calcBranding(); } else if(tab === 'cash') { updateCashPageUI(); } else if(tab === 'strategy') { renderCarSelector(); calcStrategy(); } else if(tab === 'settings') { renderSettings(); }
         }
 
         function renderSettings() {
-            const container = document.getElementById('settings-container');
-            container.innerHTML = '';
-
+            const container = document.getElementById('settings-container'); container.innerHTML = '';
             Object.keys(tariffs).forEach(key => {
                 const t = tariffs[key];
-                container.innerHTML += `
-                    <div class="card" style="margin-bottom: 12px; padding: 14px;">
-                        <h3 style="margin-bottom:12px; font-size:14px; color: var(--text-color);">${t.icon} ${t.name}</h3>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
-                    </div>
-                `;
+                container.innerHTML += `<div class="card" style="margin-bottom: 12px; padding: 14px;"><h3 style="margin-bottom:12px; font-size:14px; color: var(--text-color);">${t.icon} ${t.name}</h3><div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div><div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div><div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div><div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div><div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div><div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div></div>`;
             });
         }
 
         function autoSaveSettings() {
-            Object.keys(tariffs).forEach(key => {
-                tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0;
-                tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0;
-                tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0;
-                tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0;
-                tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0;
-                tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0;
-            });
-            expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0;
-            expenses.type = document.getElementById('set-fuel-type').value;
-            expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0;
-            expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0;
-            expenses.workMode = document.getElementById('set-work-mode').value;
-            expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0;
-            expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
-            goals.dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12;
-
-            // Оптимізація зберігання
-            clearTimeout(saveSettingsTimeout);
-            saveSettingsTimeout = setTimeout(() => {
-                localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
-                localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses));
-                localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-            }, 500);
+            Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; });
+            expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0; expenses.type = document.getElementById('set-fuel-type').value; expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0; expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0; expenses.workMode = document.getElementById('set-work-mode').value; expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0; expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
             
-            document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal;
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses)); }, 500);
             updateFuelLabels(expenses.type);
         }
 
-        function saveTariffsClick() {
-            haptic();
-            autoSaveSettings();
-            if (tg && tg.showAlert) tg.showAlert('Збережено!');
-            else alert('Збережено!');
-            switchTab('calc');
-        }
+        function saveTariffsClick() { haptic(); autoSaveSettings(); if (tg && tg.showAlert) tg.showAlert('Збережено!'); else alert('Збережено!'); switchTab('calc'); }
+        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути всі тарифи до початкових?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs)); renderSettings(); } }
 
-        function resetToFactoryTariffs() {
-            haptic();
-            if (confirm('Скинути всі тарифи до початкових?')) {
-                tariffs = JSON.parse(JSON.stringify(defaultTariffs));
-                localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
-                renderSettings();
-            }
-        }
-
-        loadSavedData();
-        renderCarSelector();
-        recalc();
-        calcBranding();
-
-        function loadSavedData() {
-            loadSavedRouteParams();
-        }
+        loadSavedData(); renderCarSelector(); recalc(); calcBranding();
+        function loadSavedData() { loadSavedRouteParams(); }
     </script>
 </body>
 </html>
