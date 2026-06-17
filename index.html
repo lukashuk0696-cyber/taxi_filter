@@ -42,6 +42,7 @@
         .card { background: var(--card-bg); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
+        /* Автокомпліт */
         .ac-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
         .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color); }
         .map-input { flex: 1; background: transparent; border: none; font-size: 14px; color: var(--text-color); outline: none; font-weight: 500; }
@@ -95,7 +96,6 @@
         .btn-shift.start { background: var(--uklon-green); color: #fff; box-shadow: 0 2px 8px rgba(0, 211, 105, 0.3); }
         .btn-shift.stop { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); }
         
-        /* Гарні компактні рядки для меню опцій */
         .sett-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 6px 8px; background: var(--bg-color); border-radius: 10px; border: 1px solid var(--border-color); }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); } .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto; }
     </style>
@@ -133,6 +133,14 @@
                     <div id="route-from-ac" class="ac-dropdown"></div>
                 </div>
                 
+                <div class="ac-wrapper" id="via-wrapper" style="display: none;">
+                    <div class="map-input-group">
+                        <span style="margin-right: 8px; font-size: 16px;">🟡</span>
+                        <input type="text" id="route-via" class="map-input" placeholder="Через (напр: Барське шосе)" onkeyup="handleAutocomplete(event, 'route-via')" autocomplete="off">
+                    </div>
+                    <div id="route-via-ac" class="ac-dropdown"></div>
+                </div>
+
                 <div class="ac-wrapper">
                     <div class="map-input-group">
                         <span style="margin-right: 8px; font-size: 16px;">🔴</span>
@@ -141,49 +149,61 @@
                     <div id="route-to-ac" class="ac-dropdown"></div>
                 </div>
                 
-                <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); padding: 12px;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
+                <div style="display:flex; gap:8px; margin-bottom: 8px;">
+                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); margin-top:0; padding:10px;" onclick="showViaInput()">+ Додати заїзд</button>
+                </div>
+
+                <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); padding: 12px; margin-top:4px;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
                 <div class="nav-btn-group" id="nav-btn-group"><button class="nav-btn" style="background: #33CCFF; color: #fff;" onclick="openWaze()">🚀 Waze</button><button class="nav-btn" style="background: #34A853; color: #fff;" onclick="openGmaps()">🗺️ G-Maps</button></div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>Параметри маршруту</span><span style="color: var(--accent-danger); cursor: pointer; text-transform: none; font-weight: 700;" onclick="resetCalc()">🔄 Скинути</span></div>
+            <div class="card-title" style="cursor: pointer;" onclick="toggleRouteParams()">
+                <span>Параметри маршруту</span>
+                <div>
+                    <span style="color: var(--accent-danger); text-transform: none; font-weight: 700; margin-right: 12px;" onclick="event.stopPropagation(); resetCalc()">🔄 Скинути</span>
+                    <span id="params-chevron">▲</span>
+                </div>
+            </div>
             
-            <div class="input-block">
-                <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-blue">📍</div><span class="input-label">Км місто</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')"><button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button></div></div>
-                <div class="slider-container"><input type="range" id="slider-dist" min="0" max="50" step="0.1" value="0.0" oninput="syncSliderToInput('dist')"></div>
-            </div>
+            <div id="params-body">
+                <div class="input-block">
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-blue">📍</div><span class="input-label">Км місто</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')"><button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button></div></div>
+                    <div class="slider-container"><input type="range" id="slider-dist" min="0" max="50" step="0.1" value="0.0" oninput="syncSliderToInput('dist')"></div>
+                </div>
 
-            <div class="input-block">
-                <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-purple">🛣️</div><span class="input-label">Км за містом</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')"><button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button></div></div>
-                <div class="slider-container"><input type="range" id="slider-distOut" min="0" max="250" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')"></div>
-            </div>
+                <div class="input-block">
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-purple">🛣️</div><span class="input-label">Км за містом</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')"><button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button></div></div>
+                    <div class="slider-container"><input type="range" id="slider-distOut" min="0" max="250" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')"></div>
+                </div>
 
-            <div class="input-block">
-                <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-cyan">🔄</div><span class="input-label">Порожній пробіг</span></div><div class="counter"><button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button><button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-emptyKm" value="0" oninput="syncInputToSlider('emptyKm')"><button class="btn-counter" onclick="changeVal('emptyKm', 1)">+</button></div></div>
-                <div class="slider-container"><input type="range" id="slider-emptyKm" min="0" max="250" step="1" value="0" oninput="syncSliderToInput('emptyKm')"></div>
-            </div>
+                <div class="input-block">
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-cyan">🔄</div><span class="input-label">Порожній пробіг</span></div><div class="counter"><button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button><button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-emptyKm" value="0" oninput="syncInputToSlider('emptyKm')"><button class="btn-counter" onclick="changeVal('emptyKm', 1)">+</button></div></div>
+                    <div class="slider-container"><input type="range" id="slider-emptyKm" min="0" max="250" step="1" value="0" oninput="syncSliderToInput('emptyKm')"></div>
+                </div>
 
-            <div class="input-block">
-                <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange">🚗</div><span class="input-label">Подача (км)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')"><button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button></div></div>
-                <div class="slider-container"><input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="0.0" oninput="syncSliderToInput('delivery')"></div>
-            </div>
+                <div class="input-block">
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange">🚗</div><span class="input-label">Подача (км)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')"><button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button></div></div>
+                    <div class="slider-container"><input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="0.0" oninput="syncSliderToInput('delivery')"></div>
+                </div>
 
-            <div class="input-block" style="border-bottom:none;">
-                <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-yellow">⚡</div><span class="input-label">Коефіцієнт</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" style="color:var(--accent-success)" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')"><button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button></div></div>
-                <div class="quick-coef-container"><button class="quick-coef-btn" onclick="setQuickCoef(1.0)">1.0x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.2)">1.2x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.5)">1.5x</button><button class="quick-coef-btn" onclick="setQuickCoef(2.0)">2.0x</button></div>
-                <div class="slider-container"><input type="range" id="slider-coef" min="1.0" max="4.0" step="0.1" value="1.0" oninput="syncSliderToInput('coef')"></div>
-            </div>
+                <div class="input-block" style="border-bottom:none;">
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-yellow">⚡</div><span class="input-label">Коефіцієнт</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" style="color:var(--accent-success)" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')"><button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button></div></div>
+                    <div class="quick-coef-container"><button class="quick-coef-btn" onclick="setQuickCoef(1.0)">1.0x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.2)">1.2x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.5)">1.5x</button><button class="quick-coef-btn" onclick="setQuickCoef(2.0)">2.0x</button></div>
+                    <div class="slider-container"><input type="range" id="slider-coef" min="1.0" max="4.0" step="0.1" value="1.0" oninput="syncSliderToInput('coef')"></div>
+                </div>
 
-            <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">Показати додаткові налаштування</button>
-            
-            <div id="extra-params" style="display: none; margin-top: 4px; border-top: 1px solid var(--border-color); padding-top: 4px;">
-                <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange">⏳</div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
-                <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-red">📌</div><span class="input-label">Дод. точки</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('stops', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')"><button class="btn-counter" onclick="changeVal('stops', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')"></div></div>
-                <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-gray">☕</div><span class="input-label">Витрати (₴)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')"><button class="btn-counter" onclick="changeVal('extraExp', 5)">+</button></div></div><div class="slider-container"><input type="range" id="slider-extraExp" min="0" max="200" step="5" value="0" oninput="syncSliderToInput('extraExp')"></div></div>
-                <div class="input-block" style="border-bottom:none;"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-green">💸</div><span class="input-label">Доплата (Чайові)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')"><button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button></div></div>
-                    <div class="quick-coef-container"><button class="quick-coef-btn" onclick="addTip(10)">+10 ₴</button><button class="quick-coef-btn" onclick="addTip(20)">+20 ₴</button><button class="quick-coef-btn" onclick="addTip(50)">+50 ₴</button><button class="quick-coef-btn btn-clear" onclick="clearTip()">✕</button></div>
-                    <div class="slider-container"><input type="range" id="slider-clientBonus" min="0" max="100" step="1" value="0" oninput="syncSliderToInput('clientBonus')"></div>
+                <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">Показати додаткові налаштування</button>
+                
+                <div id="extra-params" style="display: none; margin-top: 4px; border-top: 1px solid var(--border-color); padding-top: 4px;">
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange">⏳</div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-red">📌</div><span class="input-label">Дод. точки</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('stops', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')"><button class="btn-counter" onclick="changeVal('stops', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')"></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-gray">☕</div><span class="input-label">Витрати (₴)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')"><button class="btn-counter" onclick="changeVal('extraExp', 5)">+</button></div></div><div class="slider-container"><input type="range" id="slider-extraExp" min="0" max="200" step="5" value="0" oninput="syncSliderToInput('extraExp')"></div></div>
+                    <div class="input-block" style="border-bottom:none;"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-green">💸</div><span class="input-label">Доплата (Чайові)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')"><button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button></div></div>
+                        <div class="quick-coef-container"><button class="quick-coef-btn" onclick="addTip(10)">+10 ₴</button><button class="quick-coef-btn" onclick="addTip(20)">+20 ₴</button><button class="quick-coef-btn" onclick="addTip(50)">+50 ₴</button><button class="quick-coef-btn btn-clear" onclick="clearTip()">✕</button></div>
+                        <div class="slider-container"><input type="range" id="slider-clientBonus" min="0" max="100" step="1" value="0" oninput="syncSliderToInput('clientBonus')"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -346,7 +366,7 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        let routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null };
+        let routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null, vLat: null, vLon: null };
         let saveRouteTimeout = null;
         let saveSettingsTimeout = null;
         let acTimeout = null;
@@ -369,13 +389,10 @@
         
         function haptic() { if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {} } }
         
-        // --- СИНХРОНІЗАЦІЯ З TG CLOUD STORAGE ---
         function cloudSave(key, data) {
             const str = JSON.stringify(data);
             localStorage.setItem(key, str); 
-            if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) {
-                tg.CloudStorage.setItem(key, str, (err) => {});
-            }
+            if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) { tg.CloudStorage.setItem(key, str, (err) => {}); }
         }
 
         function initApp() {
@@ -383,7 +400,7 @@
             if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) {
                 tg.CloudStorage.getItems(keys, (err, res) => { loadAllData(res || {}); });
             } else {
-                const res = {}; keys.forEach(k => res[key] = localStorage.getItem(k)); loadAllData(res);
+                const res = {}; keys.forEach(k => res[k] = localStorage.getItem(k)); loadAllData(res);
             }
         }
 
@@ -395,21 +412,15 @@
             
             if(res.taxi_daily_cash_data_v20) {
                 const savedCash = JSON.parse(res.taxi_daily_cash_data_v20);
-                if (savedCash.date === new Date().toLocaleDateString()) {
-                    dailyCashData = savedCash;
-                    if(!dailyCashData.history) dailyCashData.history = [];
-                } else { createNewShift(); }
+                if (savedCash.date === new Date().toLocaleDateString()) { dailyCashData = savedCash; if(!dailyCashData.history) dailyCashData.history = []; } else { createNewShift(); }
             } else { createNewShift(); }
 
             const theme = res.taxi_theme || 'dark'; document.body.setAttribute('data-theme', theme);
             if(brandingData.days === 0) setDaysToEndOfMonth();
 
-            // Відновлення параметрів форми
             if(res.taxi_route_params_v20) {
                 const saved = JSON.parse(res.taxi_route_params_v20);
-                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => {
-                    if(saved[id] !== undefined) { document.getElementById('inp-'+id).value = saved[id]; document.getElementById('slider-'+id).value = saved[id]; }
-                });
+                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { if(saved[id] !== undefined) { document.getElementById('inp-'+id).value = saved[id]; document.getElementById('slider-'+id).value = saved[id]; } });
             }
             if(res.taxi_strat_params_v20) {
                 const strat = JSON.parse(res.taxi_strat_params_v20);
@@ -427,14 +438,13 @@
                 document.getElementById('shift-timer-display').innerText = `${hrs}:${mins}`;
             }
 
-            toggleWorkModeInputs(); updateFuelLabels(expenses.type); renderCarSelector(); recalc(); calcBranding();
+            toggleWorkModeInputs(); updateFuelLabels(expenses.type); renderCarSelector(); recalc(); calcBranding(); renderSettings();
         }
 
         function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); cloudSave('taxi_daily_cash_data_v20', dailyCashData); }
 
         function toggleTheme() { haptic(); const body = document.body; const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', newTheme); cloudSave('taxi_theme', newTheme); }
 
-        // --- ЛОГІКА ТАЙМЕРА ---
         function toggleShiftTimer() {
             haptic(); const btn = document.getElementById('btn-shift-toggle');
             if (dailyCashData.shiftActive) {
@@ -456,15 +466,35 @@
 
         function toggleNavigator() { haptic(); const container = document.getElementById('navigator-container'); const chevron = document.getElementById('nav-chevron'); const isHidden = container.style.display === 'none'; container.style.display = isHidden ? 'block' : 'none'; chevron.innerText = isHidden ? '▲' : '▼'; }
         
-        function resetCalc() { haptic(); if(confirm("Очистити всі параметри?")) { ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'clientBonus'].forEach(id => { document.getElementById('inp-'+id).value = 0; document.getElementById('slider-'+id).value = 0; }); document.getElementById('inp-coef').value = "1.0"; document.getElementById('slider-coef').value = 1.0; document.getElementById('route-from').value = ""; document.getElementById('route-to').value = ""; document.getElementById('nav-btn-group').style.display = 'none'; routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null }; recalc(); } }
+        // --- БОЙОВИЙ РЕЖИМ (АВТОЗГОРТАННЯ ПАРАМЕТРІВ) ---
+        function toggleRouteParams(forceClose = false) {
+            haptic(); const body = document.getElementById('params-body'); const chevron = document.getElementById('params-chevron');
+            if (body.style.display === 'none' && !forceClose) { body.style.display = 'block'; chevron.innerText = '▲'; } 
+            else { body.style.display = 'none'; chevron.innerText = '▼'; }
+        }
 
-        // --- АВТОКОМПЛІТ З ПРІОРИТЕТОМ НА ВІННИЦЮ (VIEWBOX) ---
+        function showViaInput() { haptic(); document.getElementById('via-wrapper').style.display = 'block'; document.getElementById('btn-add-via').style.display = 'none'; }
+
+        function resetCalc() { 
+            haptic(); 
+            if(confirm("Очистити всі параметри?")) { 
+                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'clientBonus'].forEach(id => { document.getElementById('inp-'+id).value = 0; document.getElementById('slider-'+id).value = 0; }); 
+                document.getElementById('inp-coef').value = "1.0"; document.getElementById('slider-coef').value = 1.0; 
+                document.getElementById('route-from').value = ""; document.getElementById('route-to').value = ""; document.getElementById('route-via').value = ""; 
+                document.getElementById('via-wrapper').style.display = 'none'; document.getElementById('btn-add-via').style.display = 'block';
+                document.getElementById('nav-btn-group').style.display = 'none'; 
+                routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null, vLat: null, vLon: null }; 
+                recalc(); 
+                toggleRouteParams(false); // Розгорнути, якщо було згорнуто
+                if (tg && tg.showAlert) tg.showAlert('Форму очищено!'); 
+            } 
+        }
+
         async function handleAutocomplete(e, inputId) {
             clearTimeout(acTimeout); const val = e.target.value; const box = document.getElementById(inputId + '-ac');
             if (val.length < 3) { box.style.display = 'none'; return; }
             acTimeout = setTimeout(async () => {
                 try {
-                    // viewbox фільтр встановлює фокус пошуку на регіон Вінниці, залишаючи можливість міжміста
                     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Україна')}&limit=5&addressdetails=1&viewbox=28.38,49.27,28.56,49.19&bounded=0`;
                     const res = await fetch(url); const data = await res.json(); box.innerHTML = '';
                     if (data.length > 0) {
@@ -475,6 +505,7 @@
                                 document.getElementById(inputId).value = div.innerText; box.style.display = 'none'; 
                                 if(inputId === 'route-from') { routeCoords.lat1 = item.lat; routeCoords.lon1 = item.lon; }
                                 if(inputId === 'route-to') { routeCoords.lat2 = item.lat; routeCoords.lon2 = item.lon; }
+                                if(inputId === 'route-via') { routeCoords.vLat = item.lat; routeCoords.vLon = item.lon; }
                             };
                             box.appendChild(div);
                         });
@@ -491,17 +522,26 @@
         }
 
         async function calculateSmartRoute() {
-            haptic(); const fromStr = document.getElementById('route-from').value; const toStr = document.getElementById('route-to').value; const btn = document.getElementById('btn-calc-route');
-            if(!fromStr || !toStr) { alert("Заповніть обидва поля!"); return; }
-            btn.innerText = "⏳ Рахую маршрут..."; btn.style.opacity = "0.7";
+            haptic(); const fromStr = document.getElementById('route-from').value; const toStr = document.getElementById('route-to').value; const viaStr = document.getElementById('route-via').value; const btn = document.getElementById('btn-calc-route');
+            if(!fromStr || !toStr) { alert("Заповніть початкову і кінцеву точки!"); return; }
+            btn.innerText = "⏳ Рахую..."; btn.style.opacity = "0.7";
             try {
                 if(fromStr !== "📍 Моя поточна локація" && !routeCoords.lat1) { const c1 = await geocodeAddress(fromStr); if(!c1) throw new Error("Не знайдено старт"); routeCoords.lat1 = c1.lat; routeCoords.lon1 = c1.lon; }
                 if(!routeCoords.lat2) { const c2 = await geocodeAddress(toStr); if(!c2) throw new Error("Не знайдено фініш"); routeCoords.lat2 = c2.lat; routeCoords.lon2 = c2.lon; }
-                const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${routeCoords.lon1},${routeCoords.lat1};${routeCoords.lon2},${routeCoords.lat2}?overview=false`); const routeData = await res.json();
+                if(viaStr && !routeCoords.vLat) { const cv = await geocodeAddress(viaStr); if(cv) { routeCoords.vLat = cv.lat; routeCoords.vLon = cv.lon; } }
+
+                let coordString = `${routeCoords.lon1},${routeCoords.lat1}`;
+                if(routeCoords.vLat) coordString += `;${routeCoords.vLon},${routeCoords.vLat}`;
+                coordString += `;${routeCoords.lon2},${routeCoords.lat2}`;
+
+                const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordString}?overview=false`); const routeData = await res.json();
                 if(routeData.routes && routeData.routes.length > 0) {
                     const totalKm = (routeData.routes[0].distance / 1000); let cityKm = Math.min(5.0, totalKm).toFixed(1); let outKm = Math.max(0, totalKm - 5.0).toFixed(1);
                     document.getElementById('inp-dist').value = cityKm; document.getElementById('slider-dist').value = cityKm; document.getElementById('inp-distOut').value = outKm; document.getElementById('slider-distOut').value = outKm;
-                    recalc(); document.getElementById('nav-btn-group').style.display = 'flex';
+                    recalc(); 
+                    document.getElementById('nav-btn-group').style.display = 'flex';
+                    toggleRouteParams(true); // Автозгортання блоку налаштувань
+                    if(tg && tg.showAlert) tg.showAlert(`✅ Загальна відстань: ${totalKm.toFixed(1)} км.`);
                 } else { throw new Error("Маршрут не знайдено."); }
             } catch (err) { alert(err.message || "Помилка розрахунку."); } finally { btn.innerText = "Прокласти маршрут"; btn.style.opacity = "1"; }
         }
@@ -525,7 +565,7 @@
             const finalTotal = baseTotal + clientBonus; const totalKm = distCity + distOut + delivery + emptyKm;
             document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴`; document.getElementById('res-extra-dist').innerText = `${(((extraCity * t.perKmCity) + (extraOut * t.perKmOut)) * coef).toFixed(1)} ₴`; document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
             if(clientBonus > 0) { document.getElementById('row-res-bonus').style.display = 'flex'; document.getElementById('res-bonus').innerText = `+${clientBonus} ₴`; } else { document.getElementById('row-res-bonus').style.display = 'none'; }
-            document.getElementById('res-total').innerText = `${Math.teal ? Math.ceil(finalTotal) : Math.ceil(finalTotal)} ₴`;
+            document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
             const commCost = finalTotal * (expenses.comm / 100); const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
             let rentCost = 0; if (expenses.workMode === 'rent') rentCost = expenses.rentVal; else if (expenses.workMode === 'split') rentCost = (finalTotal - commCost) * (expenses.splitPct / 100);
             const netIncome = finalTotal - commCost - fuelCost - extraExp - rentCost; const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
@@ -556,7 +596,7 @@
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, comm: comm, fuel: fuel, extraExp: extraExp, rent: rentCost, km: tripKm, pay: currentPaymentMode });
             cloudSave('taxi_daily_cash_data_v20', dailyCashData);
             goals.dailyDone += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; cloudSave('taxi_goals_v20', goals);
-            updateCashPageUI(); calcBranding();
+            updateCashPageUI(); calcBranding(); toggleRouteParams(true);
         }
 
         function removeTrip(id) {
@@ -617,16 +657,17 @@
                 const t = tariffs[key];
                 container.innerHTML += `
                 <div class="card" style="margin-bottom: 8px; padding: 0; border: 1px solid var(--border-color);">
-                    <div class="card-title" style="margin: 0; padding: 12px; cursor: pointer; text-transform: none; font-size: 14px; color: var(--text-color); display:flex; justify-content:space-between;" onclick="toggleSettingAccordion('${key}')">
-                        <span><span style="font-size:16px; margin-right:8px;">${t.icon}</span> ${t.name}</span><span id="set-chev-${key}" style="color:var(--text-muted);">▼</span>
+                    <div class="card-title" style="margin: 0; padding: 14px; cursor: pointer; text-transform: none; font-size: 15px; color: var(--text-color); display:flex; justify-content:space-between;" onclick="toggleSettingAccordion('${key}')">
+                        <span><span style="font-size:18px; margin-right:8px;">${t.icon}</span> ${t.name}</span>
+                        <span id="set-chev-${key}" style="color:var(--text-muted);">▼</span>
                     </div>
-                    <div id="set-body-${key}" style="display:none; padding: 4px 12px 12px 12px; border-top: 1px solid var(--border-color); padding-top: 8px;">
-                        <div class="sett-row"><span>Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
-                        <div class="sett-row"><span>Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
-                        <div class="sett-row"><span>1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
-                        <div class="sett-row"><span>1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
-                        <div class="sett-row"><span>Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
-                        <div class="sett-row"><span>Ціна дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
+                    <div id="set-body-${key}" style="display:none; padding: 0 14px 14px 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
                     </div>
                 </div>`;
             });
