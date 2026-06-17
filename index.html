@@ -25,14 +25,12 @@
             --accent-color: #FFCC00; --accent-success: #34C759; --accent-danger: #FF3B30; --accent-blue: #007AFF; --uklon-green: #00D369; 
         }
         
-        /* Глобальні теми прив'язані до html (documentElement) */
         html[data-theme="dark"] { --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(255, 255, 255, 0.1); --text-color: #FFFFFF; --text-muted: #EBEBF5; }
         html[data-theme="light"] { --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.1); --text-color: #1C1C1E; --text-muted: #8E8E93; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         button, .car-card, .tab-btn, input[type=range], select { -webkit-user-select: none; user-select: none; }
         
-        /* ВІДСТУП 340px, щоб шторка не перекривала чек */
         body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 340px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
         
         .app-header { padding: 12px 16px 8px 16px; display: flex; align-items: center; justify-content: space-between; }
@@ -97,7 +95,6 @@
         .save-btn { width: 100%; padding: 14px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 4px 12px rgba(0, 211, 105, 0.3); transition: 0.2s; } .save-btn:active { transform: scale(0.98); } .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         .reset-btn { width: 100%; padding: 14px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; } 
-        
         .toggle-btn { width: 100%; padding: 12px; background: rgba(0, 122, 255, 0.08); color: var(--accent-blue); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 10px;}
         
         .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 10px 0; overflow: hidden; height: 8px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px; }
@@ -323,8 +320,18 @@
         <div class="card">
             <div class="card-title">Симулятор плану</div>
             <div class="input-block" style="border:none;">
-                <div class="input-header" style="margin-bottom: 10px;"><span style="font-weight: 600; font-size: 13px;">Хочу чистими (₴):</span><input type="number" enterkeyhint="done" class="admin-input" style="width: 80px; border-color: var(--text-color);" id="strat-target" value="2000" oninput="calcStrategy()"></div>
-                <div class="input-header"><span style="font-weight: 600; font-size: 13px;">Середня поїздка (км):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 80px;" id="strat-km" value="6.5" oninput="calcStrategy()"></div>
+                <div class="input-header" style="margin-bottom: 10px;">
+                    <span style="font-weight: 600; font-size: 13px;">Хочу чистими (₴):</span>
+                    <input type="number" enterkeyhint="done" class="admin-input" style="width: 80px; border-color: var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
+                </div>
+                <div class="input-header" style="margin-bottom: 10px;">
+                    <span style="font-weight: 600; font-size: 13px;">Середня поїздка (км):</span>
+                    <input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 80px;" id="strat-km" value="6.5" oninput="calcStrategy()">
+                </div>
+                <div class="input-header">
+                    <span style="font-weight: 600; font-size: 13px;">Час 1 поїздки (хв):</span>
+                    <input type="number" enterkeyhint="done" step="1" class="admin-input" style="width: 80px;" id="strat-min" value="25" oninput="calcStrategy()">
+                </div>
             </div>
         </div>
 
@@ -332,9 +339,15 @@
             <div class="card-title">Що для цього потрібно:</div>
             <div id="strat-result-data">
                 <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 22px; color: var(--accent-blue);">0</strong></div>
-                <div class="result-row"><span style="color: var(--text-muted);">Брудними:</span><span id="strat-gross" style="font-weight: 700;">0 ₴</span></div>
-                <div class="result-row"><span style="color: var(--text-muted);">Пробіг:</span><span id="strat-km-total" style="font-weight: 700;">0 км</span></div>
-                <div class="result-row"><span style="color: var(--text-muted);">Пальне:</span><span id="strat-fuel-total" style="font-weight: 700;">0</span></div>
+                <div class="result-row"><span>Час на лінії:</span><strong id="strat-hours-total" style="font-size: 16px; color: var(--text-color);">0 год</strong></div>
+                
+                <div style="border-top: 1px solid var(--border-color); margin: 10px 0;"></div>
+                
+                <div class="result-row"><span style="color: var(--text-muted);">Брудними (Оборот):</span><strong id="strat-gross">0 ₴</strong></div>
+                <div class="result-row"><span style="color: var(--text-muted);">Комісія служби:</span><span id="strat-comm-total" style="color: var(--accent-danger);">0 ₴</span></div>
+                <div class="result-row" id="row-strat-park" style="display:none;"><span style="color: var(--text-muted);">Оренда / Парк:</span><span id="strat-park-total" style="color: var(--accent-danger);">0 ₴</span></div>
+                <div class="result-row"><span style="color: var(--text-muted);">Пальне:</span><span id="strat-fuel-total" style="color: #ff9500;">0 ₴</span></div>
+                <div class="result-row"><span style="color: var(--text-muted);">Пробіг:</span><span id="strat-km-total">0 км</span></div>
             </div>
             <div id="strat-warning" style="display:none; color: var(--accent-danger); font-weight: 600; font-size: 12px; text-align: center; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1); border-radius: 8px;">⚠️ Фільтр збитковий! Змініть налаштування.</div>
         </div>
@@ -368,10 +381,10 @@
         <div class="modal-content">
             <div class="modal-title">Посібник Водія</div>
             <div class="modal-text">
-                <strong>🗺️ СМАРТ-МАРШРУТИ:</strong> Почніть вводити адресу, щоб підтягнути варіанти з пріоритетом по місту.<br><br>
-                <strong>🧮 ТАРИФ:</strong> Обирайте тип оплати (Готівка/Картка) прямо у шторці для автоматичного зведення балансу.<br><br>
+                <strong>🗺️ СМАРТ-МАРШРУТИ:</strong> Введіть адресу, щоб підтягнути варіанти. Можна додати проміжну точку "через".<br><br>
+                <strong>🧮 ТАРИФ:</strong> Обирайте тип оплати (Готівка/Картка) прямо у шторці для автоматичного зведення балансу. "Деталі" покажуть комісію.<br><br>
                 <strong>💰 КАСА:</strong> Тисніть "Почати зміну". Розрахунок ставки за годину тепер повністю автоматичний.<br><br>
-                <strong>⚙️ ОПЦІЇ:</strong> Клацайте на назву тарифу, щоб розгорнути його детальне редагування.
+                <strong>📊 АНАЛІЗ:</strong> Вкажіть скільки хочете чистими. Бот розрахує потрібний час і відніме всі комісії.
             </div>
             <button class="save-btn" style="margin-top:0;" onclick="closeManual()">Зрозуміло</button>
         </div>
@@ -415,27 +428,18 @@
                 if (typeof parsed !== 'object' || parsed === null) return JSON.parse(JSON.stringify(fallback));
                 if (Object.keys(parsed).length === 0 && Object.keys(fallback).length > 0) return JSON.parse(JSON.stringify(fallback));
                 return parsed;
-            } catch (e) {
-                return JSON.parse(JSON.stringify(fallback));
-            }
+            } catch (e) { return JSON.parse(JSON.stringify(fallback)); }
         }
 
         function initApp() {
             const keys = ['taxi_tariffs_v20', 'taxi_expenses_v20', 'taxi_goals_v20', 'taxi_branding_v20', 'taxi_daily_cash_data_v20', 'taxi_theme', 'taxi_route_params_v20', 'taxi_strat_params_v20'];
-            if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) {
-                tg.CloudStorage.getItems(keys, (err, res) => { loadAllData(res || {}); });
-            } else {
-                const res = {}; keys.forEach(k => res[k] = localStorage.getItem(k)); loadAllData(res);
-            }
+            if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) { tg.CloudStorage.getItems(keys, (err, res) => { loadAllData(res || {}); }); } 
+            else { const res = {}; keys.forEach(k => res[k] = localStorage.getItem(k)); loadAllData(res); }
         }
 
         function loadAllData(res) {
-            tariffs = safeParse(res.taxi_tariffs_v20, defaultTariffs);
-            Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
-            
-            expenses = safeParse(res.taxi_expenses_v20, defaultExpenses);
-            Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
-            
+            tariffs = safeParse(res.taxi_tariffs_v20, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
+            expenses = safeParse(res.taxi_expenses_v20, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
             goals = safeParse(res.taxi_goals_v20, defaultGoals);
             brandingData = safeParse(res.taxi_branding_v20, defaultBranding);
             
@@ -452,13 +456,12 @@
 
                 const savedParams = safeParse(res.taxi_route_params_v20, {});
                 ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { 
-                    if(savedParams[id] !== undefined && document.getElementById('inp-'+id)) { 
-                        document.getElementById('inp-'+id).value = savedParams[id]; document.getElementById('slider-'+id).value = savedParams[id]; 
-                    } 
+                    if(savedParams[id] !== undefined && document.getElementById('inp-'+id)) { document.getElementById('inp-'+id).value = savedParams[id]; document.getElementById('slider-'+id).value = savedParams[id]; } 
                 });
                 
-                const strat = safeParse(res.taxi_strat_params_v20, {target: 2000, km: 6.5});
-                document.getElementById('strat-target').value = strat.target || 2000; document.getElementById('strat-km').value = strat.km || 6.5;
+                const strat = safeParse(res.taxi_strat_params_v20, {target: 2000, km: 6.5, min: 25});
+                document.getElementById('strat-target').value = strat.target || 2000; document.getElementById('strat-km').value = strat.km || 6.5; 
+                if(document.getElementById('strat-min')) document.getElementById('strat-min').value = strat.min || 25;
 
                 document.getElementById('set-comm').value = expenses.comm; document.getElementById('set-fuel-type').value = expenses.type; document.getElementById('set-fuel-cons').value = expenses.cons; document.getElementById('set-fuel-price').value = expenses.price; document.getElementById('set-work-mode').value = expenses.workMode || 'solo'; document.getElementById('set-rent-val').value = expenses.rentVal || 30; document.getElementById('set-split-pct').value = expenses.splitPct || 10;
                 document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('set-daily-goal').value = goals.dailyGoal; document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal; document.getElementById('brand-done').value = brandingData.done; document.getElementById('brand-target').value = brandingData.target; document.getElementById('brand-days').value = brandingData.days;
@@ -472,9 +475,7 @@
                 }
 
                 toggleWorkModeInputs(); updateFuelLabels(expenses.type); renderCarSelector(); renderSettings(); recalc(); calcBranding();
-            } catch(e) {
-                renderCarSelector(); renderSettings(); recalc();
-            }
+            } catch(e) { renderCarSelector(); renderSettings(); recalc(); }
         }
 
         function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); cloudSave('taxi_daily_cash_data_v20', dailyCashData); }
@@ -500,6 +501,24 @@
             dailyCashData.shiftHours = totalMins / 60;
         }
 
+        // --- ВІДНОВЛЕНА КНОПКА ДЕТАЛІ ---
+        function toggleSummary() { 
+            haptic(); 
+            const details = document.getElementById('summary-details'); 
+            const chevron = document.getElementById('summary-chevron'); 
+            if (details.style.display === 'none') { 
+                details.style.display = 'block'; 
+                chevron.innerText = 'Приховати';
+                chevron.style.background = 'transparent';
+                chevron.style.color = 'var(--text-muted)';
+            } else { 
+                details.style.display = 'none'; 
+                chevron.innerText = 'Деталі'; 
+                chevron.style.background = 'rgba(52, 199, 89, 0.15)';
+                chevron.style.color = 'var(--accent-success)';
+            } 
+        }
+        
         function toggleNavigator() { haptic(); const container = document.getElementById('navigator-container'); const chevron = document.getElementById('nav-chevron'); const isHidden = container.style.display === 'none'; container.style.display = isHidden ? 'block' : 'none'; chevron.innerText = isHidden ? '▲' : '▼'; }
         
         function toggleRouteParams(forceClose = false) {
@@ -628,27 +647,67 @@
             if (distOut >= remKm) { extraOut = distOut - remKm; remKm = 0; } else { extraOut = 0; }
             const costAddons = (wait * t.perMin) + (stopsQty * t.stopPrice); const baseTotal = (t.minPrice + (extraCity * t.perKmCity) + (extraOut * t.perKmOut) + costAddons) * coef;
             const finalTotal = baseTotal + clientBonus; const totalKm = distCity + distOut + delivery + emptyKm;
+            
             document.getElementById('res-base').innerText = `${(t.minPrice * coef).toFixed(1)} ₴`; document.getElementById('res-extra-dist').innerText = `${(((extraCity * t.perKmCity) + (extraOut * t.perKmOut)) * coef).toFixed(1)} ₴`; document.getElementById('res-addons').innerText = `${(costAddons * coef).toFixed(1)} ₴`;
             if(clientBonus > 0) { document.getElementById('row-res-bonus').style.display = 'flex'; document.getElementById('res-bonus').innerText = `+${clientBonus} ₴`; } else { document.getElementById('row-res-bonus').style.display = 'none'; }
             document.getElementById('res-total').innerText = `${Math.ceil(finalTotal)} ₴`;
+            
             const commCost = finalTotal * (expenses.comm / 100); const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
             let rentCost = 0; if (expenses.workMode === 'rent') rentCost = expenses.rentVal; else if (expenses.workMode === 'split') rentCost = (finalTotal - commCost) * (expenses.splitPct / 100);
             const netIncome = finalTotal - commCost - fuelCost - extraExp - rentCost; const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
+            
             document.getElementById('res-net').innerText = `${netIncome.toFixed(1)} ₴`; document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${commCost.toFixed(1)} ₴`; document.getElementById('res-fuel').innerText = `-${fuelCost.toFixed(1)} ₴`;
             if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${extraExp} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
             if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${rentCost.toFixed(1)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
             const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
         }
 
+        // --- ОНОВЛЕНИЙ АНАЛІЗ (СИМУЛЯТОР) ---
         function calcStrategy() {
-            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_strat_params_v20', {target: targetNet, km: avgKm}); }, 500);
-            const t = tariffs[currentClass]; let extraKm = Math.max(0, avgKm - t.minKm); let tripGross = t.minPrice + (extraKm * t.perKmCity); let tripComm = tripGross * (expenses.comm / 100); let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
-            let tripRent = 0; if (expenses.workMode === 'rent') tripRent = expenses.rentVal; else if (expenses.workMode === 'split') tripRent = (tripGross - tripComm) * (expenses.splitPct / 100); let tripNet = tripGross - tripComm - tripFuel - tripRent;
-            if (tripNet <= 0) { document.getElementById('strat-result-data').style.display = 'none'; document.getElementById('strat-warning').style.display = 'block'; return; }
+            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; 
+            const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
+            const avgMin = parseFloat(document.getElementById('strat-min').value) || 25;
+            
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_strat_params_v20', {target: targetNet, km: avgKm, min: avgMin}); }, 500);
+            
+            const t = tariffs[currentClass]; 
+            let extraKm = Math.max(0, avgKm - t.minKm); 
+            let tripGross = t.minPrice + (extraKm * t.perKmCity); 
+            let tripComm = tripGross * (expenses.comm / 100); 
+            let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
+            
+            let dailyRent = (expenses.workMode === 'rent') ? expenses.rentVal : 0;
+            let tripNetBeforeRent = tripGross - tripComm - tripFuel;
+            if (expenses.workMode === 'split') {
+                let parkFee = (tripGross - tripComm) * (expenses.splitPct / 100);
+                tripNetBeforeRent -= parkFee;
+            }
+
+            if (tripNetBeforeRent <= 0) { document.getElementById('strat-result-data').style.display = 'none'; document.getElementById('strat-warning').style.display = 'block'; return; }
             document.getElementById('strat-result-data').style.display = 'block'; document.getElementById('strat-warning').style.display = 'none';
-            let tripsNeeded = Math.ceil(targetNet / tripNet); let totalKm = tripsNeeded * avgKm;
-            document.getElementById('strat-trips').innerText = tripsNeeded; document.getElementById('strat-gross').innerText = (tripsNeeded * tripGross).toFixed(0) + ' ₴'; document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; document.getElementById('strat-fuel-total').innerText = ((totalKm / 100) * expenses.cons).toFixed(1) + ' ' + (expenses.type === 'electro' ? 'kWt' : 'л');
+            
+            let requiredNetFromTrips = targetNet + dailyRent;
+            let tripsNeeded = Math.ceil(requiredNetFromTrips / tripNetBeforeRent);
+            
+            let totalGross = tripsNeeded * tripGross; 
+            let totalComm = tripsNeeded * tripComm;
+            let totalPark = (expenses.workMode === 'split') ? (totalGross - totalComm) * (expenses.splitPct / 100) : dailyRent;
+            let totalKm = tripsNeeded * avgKm; 
+            let totalFuelVal = (totalKm / 100) * expenses.cons;
+            let totalFuelCost = tripsNeeded * tripFuel;
+            let totalHours = (tripsNeeded * avgMin) / 60;
+
+            document.getElementById('strat-trips').innerText = tripsNeeded; 
+            document.getElementById('strat-hours-total').innerText = totalHours.toFixed(1) + ' год';
+            document.getElementById('strat-gross').innerText = totalGross.toFixed(0) + ' ₴'; 
+            document.getElementById('strat-comm-total').innerText = '-' + totalComm.toFixed(0) + ' ₴'; 
+            
+            const parkRow = document.getElementById('row-strat-park');
+            if (totalPark > 0) { parkRow.style.display = 'flex'; document.getElementById('strat-park-total').innerText = '-' + totalPark.toFixed(0) + ' ₴'; } 
+            else { parkRow.style.display = 'none'; }
+            
+            document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; 
+            document.getElementById('strat-fuel-total').innerText = '-' + totalFuelCost.toFixed(0) + ' ₴ (' + totalFuelVal.toFixed(1) + (expenses.type === 'electro' ? 'kWt' : 'л') + ')';
         }
 
         function addToDailyCash() {
