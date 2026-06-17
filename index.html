@@ -34,6 +34,7 @@
         
         .page { display: none; padding: 0 12px; } .page.active { display: block; }
         
+        /* КАРТКИ ТАРИФІВ */
         .car-selector { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 12px 0; scrollbar-width: none; } .car-selector::-webkit-scrollbar { display: none; }
         .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: row; align-items: center; gap: 6px; transition: 0.15s; white-space: nowrap; }
         .car-card.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3); transform: scale(1.02); }
@@ -42,7 +43,6 @@
         .card { background: var(--card-bg); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Автокомпліт */
         .ac-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
         .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color); }
         .map-input { flex: 1; background: transparent; border: none; font-size: 14px; color: var(--text-color); outline: none; font-weight: 500; }
@@ -85,7 +85,11 @@
         
         .admin-input { width: 70px; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; font-size: 14px; font-weight: 700; background: var(--bg-color); color: var(--text-color); }
         .save-btn { width: 100%; padding: 14px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 4px 12px rgba(0, 211, 105, 0.3); transition: 0.2s; } .save-btn:active { transform: scale(0.98); } .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .reset-btn { width: 100%; padding: 14px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; } .toggle-btn { width: 100%; padding: 12px; background: transparent; color: var(--accent-blue); border: none; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center;}
+        
+        .reset-btn { width: 100%; padding: 14px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; } 
+        
+        /* Зробив кнопку Додаткових налаштувань більш явною */
+        .toggle-btn { width: 100%; padding: 12px; background: rgba(0, 122, 255, 0.08); color: var(--accent-blue); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 10px;}
         
         .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 10px 0; overflow: hidden; height: 8px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px; }
         .history-item { padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; } .history-item:last-child { border-bottom: none; } .del-btn { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -150,7 +154,7 @@
                 </div>
                 
                 <div style="display:flex; gap:8px; margin-bottom: 8px;">
-                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); margin-top:0; padding:10px;" onclick="showViaInput()">+ Додати заїзд</button>
+                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0; padding:10px;" onclick="showViaInput()">+ Додати заїзд</button>
                 </div>
 
                 <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); padding: 12px; margin-top:4px;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
@@ -194,7 +198,7 @@
                     <div class="slider-container"><input type="range" id="slider-coef" min="1.0" max="4.0" step="0.1" value="1.0" oninput="syncSliderToInput('coef')"></div>
                 </div>
 
-                <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">Показати додаткові налаштування</button>
+                <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">⚙️ Показати додаткові налаштування</button>
                 
                 <div id="extra-params" style="display: none; margin-top: 4px; border-top: 1px solid var(--border-color); padding-top: 4px;">
                     <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange">⏳</div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
@@ -338,7 +342,14 @@
 
         <div class="card">
             <h3 style="margin-bottom:10px; font-size:12px; text-transform: uppercase; color: var(--text-muted);">Режим роботи</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Режим:</span><select class="admin-input" style="width:120px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();"><option value="solo">Власне авто</option><option value="rent">Оренда (фікс)</option><option value="split">Парк (%)</option></select></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;">
+                <span style="font-weight: 600; font-size: 13px;">Режим:</span>
+                <select class="admin-input" style="width:120px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();">
+                    <option value="solo">Власне авто</option>
+                    <option value="rent">Оренда (фікс)</option>
+                    <option value="split">Парк (%)</option>
+                </select>
+            </div>
             <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Сума плану (₴):</span><input type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()"></div>
             <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Відсоток парку:</span><input type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()"></div>
         </div>
@@ -348,7 +359,7 @@
         
         <button class="save-btn" style="padding: 14px;" onclick="saveTariffsClick()">Зберегти налаштування</button>
         <button class="reset-btn" style="padding: 14px;" onclick="resetToFactoryTariffs()">Відновити стандартні</button>
-        <div style="text-align: center; margin-top: 16px;"><button class="toggle-btn" onclick="openManual()">📖 Інструкція користувача</button></div>
+        <div style="text-align: center; margin-top: 16px;"><button class="toggle-btn" onclick="openManual()" style="border:none;">📖 Інструкція користувача</button></div>
     </div>
 
     <div class="modal-overlay" id="manual-modal">
@@ -395,6 +406,20 @@
             if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) { tg.CloudStorage.setItem(key, str, (err) => {}); }
         }
 
+        // --- ФУНКЦІЯ-БРОНЯ ДЛЯ ПАРСИНГУ ---
+        function safeParse(data, fallback) {
+            if (!data) return JSON.parse(JSON.stringify(fallback));
+            try {
+                let parsed = JSON.parse(data);
+                if (typeof parsed !== 'object' || parsed === null) return JSON.parse(JSON.stringify(fallback));
+                // Перевірка на пустий об'єкт через збій
+                if (Object.keys(parsed).length === 0 && Object.keys(fallback).length > 0) return JSON.parse(JSON.stringify(fallback));
+                return parsed;
+            } catch (e) {
+                return JSON.parse(JSON.stringify(fallback));
+            }
+        }
+
         function initApp() {
             const keys = ['taxi_tariffs_v20', 'taxi_expenses_v20', 'taxi_goals_v20', 'taxi_branding_v20', 'taxi_daily_cash_data_v20', 'taxi_theme', 'taxi_route_params_v20', 'taxi_strat_params_v20'];
             if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) {
@@ -405,40 +430,52 @@
         }
 
         function loadAllData(res) {
-            tariffs = res.taxi_tariffs_v20 ? JSON.parse(res.taxi_tariffs_v20) : JSON.parse(JSON.stringify(defaultTariffs));
-            expenses = res.taxi_expenses_v20 ? JSON.parse(res.taxi_expenses_v20) : JSON.parse(JSON.stringify(defaultExpenses));
-            goals = res.taxi_goals_v20 ? JSON.parse(res.taxi_goals_v20) : JSON.parse(JSON.stringify(defaultGoals));
-            brandingData = res.taxi_branding_v20 ? JSON.parse(res.taxi_branding_v20) : JSON.parse(JSON.stringify(defaultBranding));
+            // Надійний парсинг
+            tariffs = safeParse(res.taxi_tariffs_v20, defaultTariffs);
+            Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; }); // Якщо об'єкт не повний
             
-            if(res.taxi_daily_cash_data_v20) {
-                const savedCash = JSON.parse(res.taxi_daily_cash_data_v20);
-                if (savedCash.date === new Date().toLocaleDateString()) { dailyCashData = savedCash; if(!dailyCashData.history) dailyCashData.history = []; } else { createNewShift(); }
+            expenses = safeParse(res.taxi_expenses_v20, defaultExpenses);
+            Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
+            
+            goals = safeParse(res.taxi_goals_v20, defaultGoals);
+            brandingData = safeParse(res.taxi_branding_v20, defaultBranding);
+            
+            const cachedCash = safeParse(res.taxi_daily_cash_data_v20, defaultDailyCash);
+            if (cachedCash.date === new Date().toLocaleDateString()) {
+                dailyCashData = cachedCash;
+                if(!dailyCashData.history) dailyCashData.history = [];
             } else { createNewShift(); }
 
-            const theme = res.taxi_theme || 'dark'; document.body.setAttribute('data-theme', theme);
-            if(brandingData.days === 0) setDaysToEndOfMonth();
+            try {
+                const theme = res.taxi_theme || 'dark'; document.body.setAttribute('data-theme', theme);
+                if(brandingData.days === 0) setDaysToEndOfMonth();
 
-            if(res.taxi_route_params_v20) {
-                const saved = JSON.parse(res.taxi_route_params_v20);
-                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { if(saved[id] !== undefined) { document.getElementById('inp-'+id).value = saved[id]; document.getElementById('slider-'+id).value = saved[id]; } });
-            }
-            if(res.taxi_strat_params_v20) {
-                const strat = JSON.parse(res.taxi_strat_params_v20);
+                const savedParams = safeParse(res.taxi_route_params_v20, {});
+                ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { 
+                    if(savedParams[id] !== undefined && document.getElementById('inp-'+id)) { 
+                        document.getElementById('inp-'+id).value = savedParams[id]; document.getElementById('slider-'+id).value = savedParams[id]; 
+                    } 
+                });
+                
+                const strat = safeParse(res.taxi_strat_params_v20, {target: 2000, km: 6.5});
                 document.getElementById('strat-target').value = strat.target || 2000; document.getElementById('strat-km').value = strat.km || 6.5;
+
+                document.getElementById('set-comm').value = expenses.comm; document.getElementById('set-fuel-type').value = expenses.type; document.getElementById('set-fuel-cons').value = expenses.cons; document.getElementById('set-fuel-price').value = expenses.price; document.getElementById('set-work-mode').value = expenses.workMode || 'solo'; document.getElementById('set-rent-val').value = expenses.rentVal || 30; document.getElementById('set-split-pct').value = expenses.splitPct || 10;
+                document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('set-daily-goal').value = goals.dailyGoal; document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal; document.getElementById('brand-done').value = brandingData.done; document.getElementById('brand-target').value = brandingData.target; document.getElementById('brand-days').value = brandingData.days;
+
+                if(dailyCashData.shiftActive) {
+                    const btn = document.getElementById('btn-shift-toggle'); btn.innerText = "⏹ Завершити"; btn.classList.remove('start'); btn.classList.add('stop');
+                    updateShiftTimerUI(); shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
+                } else if (dailyCashData.shiftHours > 0) {
+                    const hrs = Math.floor(dailyCashData.shiftHours).toString().padStart(2, '0'); const mins = Math.floor((dailyCashData.shiftHours % 1) * 60).toString().padStart(2, '0');
+                    document.getElementById('shift-timer-display').innerText = `${hrs}:${mins}`;
+                }
+
+                toggleWorkModeInputs(); updateFuelLabels(expenses.type); renderCarSelector(); renderSettings(); recalc(); calcBranding();
+            } catch(e) {
+                // Якщо десь помилка відмальовки - малюємо базу
+                renderCarSelector(); renderSettings(); recalc();
             }
-
-            document.getElementById('set-comm').value = expenses.comm; document.getElementById('set-fuel-type').value = expenses.type; document.getElementById('set-fuel-cons').value = expenses.cons; document.getElementById('set-fuel-price').value = expenses.price; document.getElementById('set-work-mode').value = expenses.workMode || 'solo'; document.getElementById('set-rent-val').value = expenses.rentVal || 30; document.getElementById('set-split-pct').value = expenses.splitPct || 10;
-            document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('set-daily-goal').value = goals.dailyGoal; document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal; document.getElementById('brand-done').value = brandingData.done; document.getElementById('brand-target').value = brandingData.target; document.getElementById('brand-days').value = brandingData.days;
-
-            if(dailyCashData.shiftActive) {
-                const btn = document.getElementById('btn-shift-toggle'); btn.innerText = "⏹ Завершити"; btn.classList.remove('start'); btn.classList.add('stop');
-                updateShiftTimerUI(); shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
-            } else if (dailyCashData.shiftHours > 0) {
-                const hrs = Math.floor(dailyCashData.shiftHours).toString().padStart(2, '0'); const mins = Math.floor((dailyCashData.shiftHours % 1) * 60).toString().padStart(2, '0');
-                document.getElementById('shift-timer-display').innerText = `${hrs}:${mins}`;
-            }
-
-            toggleWorkModeInputs(); updateFuelLabels(expenses.type); renderCarSelector(); recalc(); calcBranding(); renderSettings();
         }
 
         function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); cloudSave('taxi_daily_cash_data_v20', dailyCashData); }
@@ -466,7 +503,6 @@
 
         function toggleNavigator() { haptic(); const container = document.getElementById('navigator-container'); const chevron = document.getElementById('nav-chevron'); const isHidden = container.style.display === 'none'; container.style.display = isHidden ? 'block' : 'none'; chevron.innerText = isHidden ? '▲' : '▼'; }
         
-        // --- БОЙОВИЙ РЕЖИМ (АВТОЗГОРТАННЯ ПАРАМЕТРІВ) ---
         function toggleRouteParams(forceClose = false) {
             haptic(); const body = document.getElementById('params-body'); const chevron = document.getElementById('params-chevron');
             if (body.style.display === 'none' && !forceClose) { body.style.display = 'block'; chevron.innerText = '▲'; } 
@@ -485,7 +521,7 @@
                 document.getElementById('nav-btn-group').style.display = 'none'; 
                 routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null, vLat: null, vLon: null }; 
                 recalc(); 
-                toggleRouteParams(false); // Розгорнути, якщо було згорнуто
+                toggleRouteParams(false); 
                 if (tg && tg.showAlert) tg.showAlert('Форму очищено!'); 
             } 
         }
@@ -521,6 +557,11 @@
             navigator.geolocation.getCurrentPosition(async (position) => { routeCoords.lat1 = position.coords.latitude; routeCoords.lon1 = position.coords.longitude; fromInput.value = "📍 Моя поточна локація"; }, () => { fromInput.value = ""; alert("Не вдалося отримати локацію."); }, { timeout: 10000 });
         }
 
+        async function geocodeAddress(address) {
+            const query = encodeURIComponent(address + ", Україна");
+            try { const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`); const data = await res.json(); if (data && data.length > 0) return { lat: data[0].lat, lon: data[0].lon }; return null; } catch (e) { return null; }
+        }
+
         async function calculateSmartRoute() {
             haptic(); const fromStr = document.getElementById('route-from').value; const toStr = document.getElementById('route-to').value; const viaStr = document.getElementById('route-via').value; const btn = document.getElementById('btn-calc-route');
             if(!fromStr || !toStr) { alert("Заповніть початкову і кінцеву точки!"); return; }
@@ -540,17 +581,29 @@
                     document.getElementById('inp-dist').value = cityKm; document.getElementById('slider-dist').value = cityKm; document.getElementById('inp-distOut').value = outKm; document.getElementById('slider-distOut').value = outKm;
                     recalc(); 
                     document.getElementById('nav-btn-group').style.display = 'flex';
-                    toggleRouteParams(true); // Автозгортання блоку налаштувань
-                    if(tg && tg.showAlert) tg.showAlert(`✅ Загальна відстань: ${totalKm.toFixed(1)} км.`);
+                    toggleRouteParams(true); 
+                    if(tg && tg.showAlert) tg.showAlert(`✅ Відстань: ${totalKm.toFixed(1)} км.`);
                 } else { throw new Error("Маршрут не знайдено."); }
             } catch (err) { alert(err.message || "Помилка розрахунку."); } finally { btn.innerText = "Прокласти маршрут"; btn.style.opacity = "1"; }
         }
 
+        function openWaze() { haptic(); if(routeCoords.lat2 && routeCoords.lon2) window.open(`https://waze.com/ul?ll=${routeCoords.lat2},${routeCoords.lon2}&navigate=yes`, '_blank'); }
+        function openGmaps() { haptic(); if(routeCoords.lat2 && routeCoords.lon2) { const origin = (routeCoords.lat1 && routeCoords.lon1) ? `&origin=${routeCoords.lat1},${routeCoords.lon1}` : ""; window.open(`https://www.google.com/maps/dir/?api=1${origin}&destination=${routeCoords.lat2},${routeCoords.lon2}`, '_blank'); } }
+
+        function toggleWorkModeInputs() { const mode = document.getElementById('set-work-mode').value; document.getElementById('box-set-rent').style.display = (mode === 'rent') ? 'flex' : 'none'; document.getElementById('box-set-split').style.display = (mode === 'split') ? 'flex' : 'none'; }
         function setPaymentMode(mode) { haptic(); currentPaymentMode = mode; document.getElementById('pay-opt-cash').classList.remove('active'); document.getElementById('pay-opt-card').classList.remove('active'); document.getElementById('pay-opt-' + mode).classList.add('active'); }
         function saveCurrentRouteParams() { clearTimeout(saveRouteTimeout); saveRouteTimeout = setTimeout(() => { const params = {}; ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { params[id] = document.getElementById('inp-'+id).value; }); cloudSave('taxi_route_params_v20', params); }, 500); }
+        
+        function renderCarSelector() {
+            const container = document.getElementById('car-list-calc'); const container2 = document.getElementById('car-list-strat'); if(container) container.innerHTML = ''; if(container2) container2.innerHTML = '';
+            Object.keys(tariffs).forEach(key => { const t = tariffs[key]; const active = key === currentClass ? 'active' : ''; const html = `<div class="car-card ${active}" onclick="selectClass('${key}')"><div class="car-emoji">${t.icon}</div><div><div class="car-name">${t.name}</div><div class="car-price-info">${t.minPrice} ₴</div></div></div>`; if(container) container.innerHTML += html; if(container2) container2.innerHTML += html; });
+        }
+        function selectClass(key) { haptic(); currentClass = key; renderCarSelector(); recalc(); calcStrategy(); }
+
         function syncSliderToInput(id) { const val = document.getElementById('slider-' + id).value; const input = document.getElementById('inp-' + id); if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) { input.value = parseFloat(val).toFixed(1); } else { input.value = Math.round(val); } recalc(); }
         function syncInputToSlider(id) { document.getElementById('slider-' + id).value = document.getElementById('inp-' + id).value; recalc(); }
         function changeVal(id, step) { haptic(); const input = document.getElementById('inp-' + id); let val = (parseFloat(input.value) || 0) + step; if (id === 'coef' && val < 1.0) val = 1.0; else if (val < 0) val = 0; if (['dist', 'distOut', 'delivery', 'coef'].includes(id)) { input.value = val.toFixed(1); } else { input.value = Math.round(val); } document.getElementById('slider-' + id).value = val; recalc(); }
+        function copyOutToEmpty() { haptic(); const outVal = document.getElementById('inp-distOut').value; document.getElementById('inp-emptyKm').value = outVal; document.getElementById('slider-emptyKm').value = outVal; recalc(); }
         function setQuickCoef(val) { haptic(); document.getElementById('inp-coef').value = val.toFixed(1); document.getElementById('slider-coef').value = val; recalc(); }
         function addTip(val) { haptic(); const input = document.getElementById('inp-clientBonus'); let current = parseInt(input.value) || 0; input.value = current + val; document.getElementById('slider-clientBonus').value = input.value; recalc(); }
         function clearTip() { haptic(); document.getElementById('inp-clientBonus').value = 0; document.getElementById('slider-clientBonus').value = 0; recalc(); }
@@ -679,7 +732,7 @@
             clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_tariffs_v20', tariffs); cloudSave('taxi_expenses_v20', expenses); }, 500); updateFuelLabels(expenses.type);
         }
 
-        function saveTariffsClick() { haptic(); autoSaveSettings(); switchTab('calc'); }
+        function saveTariffsClick() { haptic(); autoSaveSettings(); if (tg && tg.showAlert) tg.showAlert('Збережено!'); else alert('Збережено!'); switchTab('calc'); }
         function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); cloudSave('taxi_tariffs_v20', tariffs); renderSettings(); } }
 
         initApp();
