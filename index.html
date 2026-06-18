@@ -759,17 +759,45 @@
         function changeDailyDone(step) { haptic(); const input = document.getElementById('inp-daily-done'); let val = (parseInt(input.value) || 0) + step; input.value = val < 0 ? 0 : val; calcBranding(); }
 
         function calcBranding() {
-            brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_branding_v20', brandingData); }, 500);
-            let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); let remain = Math.max(0, brandingData.target - brandingData.done); let perDayReq = remain / brandingData.days;
-            document.getElementById('brand-progress').style.width = pct + '%'; document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; document.getElementById('brand-remain').innerText = remain; document.getElementById('brand-perday').innerText = perDayReq.toFixed(1) + ' зам/день';
-            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12; const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
-            goals.dailyGoal = dailyGoal; goals.dailyDone = dailyDone;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_goals_v20', goals); }, 500);
-            document.getElementById('brand-daily-goal-val').innerText = dailyGoal; let dPct = Math.min(100, (dailyDone / dailyGoal) * 100);
-            document.getElementById('brand-daily-progress').style.width = dPct + '%'; document.getElementById('brand-daily-pct').innerText = dPct.toFixed(1) + '%'; document.getElementById('brand-perday-required').innerText = perDayReq.toFixed(1) + ' зам/день';
-            document.getElementById('brand-daily-comment').innerHTML = dailyGoal >= perDayReq ? `Йдете з випередженням! План за ${(remain / dailyGoal).toFixed(1)} дн.` : `Прискортесь! Мінімум ${perDayReq.toFixed(1)} зам/день.`;
-        }
+            brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; 
+            brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; 
+            brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
+            
+            let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); 
+            let remain = Math.max(0, brandingData.target - brandingData.done); 
+            let perDayReq = remain / brandingData.days;
+
+            document.getElementById('brand-progress').style.width = pct + '%'; 
+            document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; 
+            document.getElementById('brand-remain').innerText = remain; 
+            document.getElementById('brand-perday').innerText = perDayReq.toFixed(1) + ' зам/день';
+            
+            const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12; 
+            const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
+            goals.dailyGoal = dailyGoal; 
+            goals.dailyDone = dailyDone;
+            
+            // ВИПРАВЛЕННЯ: Тепер обидва масиви зберігаються разом і не перебивають один одного
+            clearTimeout(saveSettingsTimeout); 
+            saveSettingsTimeout = setTimeout(() => { 
+                cloudSave('taxi_branding_v20', brandingData);
+                cloudSave('taxi_goals_v20', goals);
+            }, 500);
+            
+            document.getElementById('brand-daily-goal-val').innerText = dailyGoal; 
+            let dPct = Math.min(100, (dailyDone / dailyGoal) * 100);
+            document.getElementById('brand-daily-progress').style.width = dPct + '%'; 
+            document.getElementById('brand-daily-pct').innerText = dPct.toFixed(1) + '%'; 
+            document.getElementById('brand-perday-required').innerText = perDayReq.toFixed(1) + ' зам/день';
+            
+            let daysToGoal = "∞"; 
+            if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
+            
+            if (dailyGoal >= perDayReq) { 
+                document.getElementById('brand-daily-comment').innerHTML = `Йдете з випередженням! План за ${daysToGoal} дн.`; 
+            } else { 
+                document.getElementById('brand-daily-comment').innerHTML = `Прискортесь! Мінімум ${perDayReq.toFixed(1)} зам/день.`; 
+            }
 
         function updateFuelLabels(type) { const isElec = type === 'electro'; document.getElementById('set-fuel-cons-label').innerText = isElec ? "Розхід (kWt):" : "Розхід (л):"; document.getElementById('set-fuel-price-label').innerText = isElec ? "Ціна (₴/kWt):" : "Ціна (₴/л):"; }
         function switchTab(tab) { haptic(); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); const tabsMap = { 'calc': 0, 'branding': 1, 'cash': 2, 'strategy': 3, 'settings': 4 }; document.querySelectorAll('.tab-btn')[tabsMap[tab]].classList.add('active'); document.getElementById('page-' + tab).classList.add('active'); if(tab === 'calc') { renderCarSelector(); recalc(); window.scrollTo({ top: 0, behavior: 'smooth' }); } else if(tab === 'branding') calcBranding(); else if(tab === 'cash') updateCashPageUI(); else if(tab === 'strategy') { renderCarSelector(); calcStrategy(); } else if(tab === 'settings') renderSettings(); }
