@@ -61,8 +61,12 @@
         .gps-btn { background: transparent; border: none; font-size: 16px; cursor: pointer; color: var(--accent-blue); padding-left: 8px; border-left: 1px solid var(--border-color); }
         .nav-btn-group { display: none; gap: 6px; margin-top: 8px; } .nav-btn { flex: 1; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 4px; }
         
+        /* Виправлено яскравий спалах шторки */
         .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 12px 16px 24px 16px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); transition: transform 0.3s; }
-        @supports (backdrop-filter: blur(10px)) { .sticky-summary { background: rgba(var(--card-bg-rgb, 255,255,255), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); } html[data-theme="dark"] .sticky-summary { background: rgba(28,28,30, 0.85); } }
+        @supports (backdrop-filter: blur(10px)) { 
+            .sticky-summary { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); } 
+            html[data-theme="dark"] .sticky-summary { background: rgba(28, 28, 30, 0.85); } 
+        }
         .drag-handle { width: 36px; height: 4px; background: var(--border-color); border-radius: 2px; margin: 0 auto 8px auto; }
         .summary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 4px; }
         .summary-mini-title { font-size: 16px; font-weight: 800; }
@@ -320,18 +324,9 @@
         <div class="card">
             <div class="card-title">Симулятор плану</div>
             <div class="input-block" style="border:none;">
-                <div class="input-header" style="margin-bottom: 10px;">
-                    <span style="font-weight: 600; font-size: 13px;">Хочу чистими (₴):</span>
-                    <input type="number" enterkeyhint="done" class="admin-input" style="width: 80px; border-color: var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
-                </div>
-                <div class="input-header" style="margin-bottom: 10px;">
-                    <span style="font-weight: 600; font-size: 13px;">Середня поїздка (км):</span>
-                    <input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 80px;" id="strat-km" value="6.5" oninput="calcStrategy()">
-                </div>
-                <div class="input-header">
-                    <span style="font-weight: 600; font-size: 13px;">Час 1 поїздки (хв):</span>
-                    <input type="number" enterkeyhint="done" step="1" class="admin-input" style="width: 80px;" id="strat-min" value="25" oninput="calcStrategy()">
-                </div>
+                <div class="input-header" style="margin-bottom: 10px;"><span style="font-weight: 600; font-size: 13px;">Хочу чистими (₴):</span><input type="number" enterkeyhint="done" class="admin-input" style="width: 80px; border-color: var(--text-color);" id="strat-target" value="2000" oninput="calcStrategy()"></div>
+                <div class="input-header" style="margin-bottom: 10px;"><span style="font-weight: 600; font-size: 13px;">Середня поїздка (км):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 80px;" id="strat-km" value="6.5" oninput="calcStrategy()"></div>
+                <div class="input-header"><span style="font-weight: 600; font-size: 13px;">Час 1 поїздки (хв):</span><input type="number" enterkeyhint="done" step="1" class="admin-input" style="width: 80px;" id="strat-min" value="25" oninput="calcStrategy()"></div>
             </div>
         </div>
 
@@ -340,10 +335,8 @@
             <div id="strat-result-data">
                 <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 22px; color: var(--accent-blue);">0</strong></div>
                 <div class="result-row"><span>Час на лінії:</span><strong id="strat-hours-total" style="font-size: 16px; color: var(--text-color);">0 год</strong></div>
-                
                 <div style="border-top: 1px solid var(--border-color); margin: 10px 0;"></div>
-                
-                <div class="result-row"><span style="color: var(--text-muted);">Брудними (Оборот):</span><strong id="strat-gross">0 ₴</strong></div>
+                <div class="result-row"><span style="color: var(--text-muted);">Брудними:</span><span id="strat-gross" style="font-weight: 700;">0 ₴</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Комісія служби:</span><span id="strat-comm-total" style="color: var(--accent-danger);">0 ₴</span></div>
                 <div class="result-row" id="row-strat-park" style="display:none;"><span style="color: var(--text-muted);">Оренда / Парк:</span><span id="strat-park-total" style="color: var(--accent-danger);">0 ₴</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Пальне:</span><span id="strat-fuel-total" style="color: #ff9500;">0 ₴</span></div>
@@ -381,10 +374,10 @@
         <div class="modal-content">
             <div class="modal-title">Посібник Водія</div>
             <div class="modal-text">
-                <strong>🗺️ СМАРТ-МАРШРУТИ:</strong> Введіть адресу, щоб підтягнути варіанти. Можна додати проміжну точку "через".<br><br>
+                <strong>🗺️ СМАРТ-МАРШРУТИ:</strong> Почніть вводити адресу, щоб підтягнути варіанти з пріоритетом по місту.<br><br>
                 <strong>🧮 ТАРИФ:</strong> Обирайте тип оплати (Готівка/Картка) прямо у шторці для автоматичного зведення балансу. "Деталі" покажуть комісію.<br><br>
                 <strong>💰 КАСА:</strong> Тисніть "Почати зміну". Розрахунок ставки за годину тепер повністю автоматичний.<br><br>
-                <strong>📊 АНАЛІЗ:</strong> Вкажіть скільки хочете чистими. Бот розрахує потрібний час і відніме всі комісії.
+                <strong>⚙️ ОПЦІЇ:</strong> Клацайте на назву тарифу, щоб розгорнути його детальне редагування.
             </div>
             <button class="save-btn" style="margin-top:0;" onclick="closeManual()">Зрозуміло</button>
         </div>
@@ -393,8 +386,6 @@
     <script>
         const tg = window.Telegram.WebApp;
         let routeCoords = { lat1: null, lon1: null, lat2: null, lon2: null, vLat: null, vLon: null };
-        let saveRouteTimeout = null;
-        let saveSettingsTimeout = null;
         let acTimeout = null;
         let currentPaymentMode = 'cash';
         let shiftTimerInterval = null;
@@ -407,19 +398,14 @@
 
         let tariffs, expenses, goals, brandingData, dailyCashData, currentClass = 'business';
 
-        if (tg) { tg.expand(); tg.ready(); if (tg.enableClosingConfirmation) tg.enableClosingConfirmation(); }
+        // ВИДАЛЕНО enableClosingConfirmation, щоб не дратувало вікно при закритті
+        if (tg) { tg.expand(); tg.ready(); }
 
         document.addEventListener('focusin', function(e) { if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { const panel = document.getElementById('sticky-panel'); if(panel) panel.style.transform = 'translateY(150%)'; } });
         document.addEventListener('focusout', function(e) { setTimeout(() => { if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { const panel = document.getElementById('sticky-panel'); if(panel) panel.style.transform = 'translateY(0)'; document.querySelectorAll('.ac-dropdown').forEach(d => d.style.display = 'none'); } }, 250); });
         document.addEventListener('keydown', function(event) { if (event.key === 'Enter') document.activeElement.blur(); });
         
         function haptic() { if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {} } }
-        
-        function cloudSave(key, data) {
-            const str = JSON.stringify(data);
-            localStorage.setItem(key, str); 
-            if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) { tg.CloudStorage.setItem(key, str, (err) => {}); }
-        }
 
         function safeParse(data, fallback) {
             if (!data) return JSON.parse(JSON.stringify(fallback));
@@ -432,9 +418,10 @@
         }
 
         function initApp() {
-            const keys = ['taxi_tariffs_v20', 'taxi_expenses_v20', 'taxi_goals_v20', 'taxi_branding_v20', 'taxi_daily_cash_data_v20', 'taxi_theme', 'taxi_route_params_v20', 'taxi_strat_params_v20'];
-            if (tg && tg.CloudStorage && tg.isVersionAtLeast('6.9')) { tg.CloudStorage.getItems(keys, (err, res) => { loadAllData(res || {}); }); } 
-            else { const res = {}; keys.forEach(k => res[k] = localStorage.getItem(k)); loadAllData(res); }
+            // МИТТЄВЕ ЛОКАЛЬНЕ ЗАВАНТАЖЕННЯ ЗАМІСТЬ ХМАРНОГО
+            const res = {}; 
+            ['taxi_tariffs_v20', 'taxi_expenses_v20', 'taxi_goals_v20', 'taxi_branding_v20', 'taxi_daily_cash_data_v20', 'taxi_theme', 'taxi_route_params_v20', 'taxi_strat_params_v20'].forEach(k => res[k] = localStorage.getItem(k)); 
+            loadAllData(res);
         }
 
         function loadAllData(res) {
@@ -478,7 +465,7 @@
             } catch(e) { renderCarSelector(); renderSettings(); recalc(); }
         }
 
-        function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); cloudSave('taxi_daily_cash_data_v20', dailyCashData); }
+        function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData)); }
 
         function toggleTheme() { haptic(); const body = document.documentElement; const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', newTheme); localStorage.setItem('taxi_theme', newTheme); }
 
@@ -491,7 +478,7 @@
                 btn.innerText = "⏹ Завершити"; btn.classList.remove('start'); btn.classList.add('stop');
                 shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
             }
-            cloudSave('taxi_daily_cash_data_v20', dailyCashData); updateShiftTimerUI(); updateCashPageUI();
+            localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData)); updateShiftTimerUI(); updateCashPageUI();
         }
 
         function updateShiftTimerUI() {
@@ -501,7 +488,6 @@
             dailyCashData.shiftHours = totalMins / 60;
         }
 
-        // --- ВІДНОВЛЕНА КНОПКА ДЕТАЛІ ---
         function toggleSummary() { 
             haptic(); 
             const details = document.getElementById('summary-details'); 
@@ -518,7 +504,7 @@
                 chevron.style.color = 'var(--accent-success)';
             } 
         }
-        
+
         function toggleNavigator() { haptic(); const container = document.getElementById('navigator-container'); const chevron = document.getElementById('nav-chevron'); const isHidden = container.style.display === 'none'; container.style.display = isHidden ? 'block' : 'none'; chevron.innerText = isHidden ? '▲' : '▼'; }
         
         function toggleRouteParams(forceClose = false) {
@@ -528,16 +514,9 @@
         }
 
         function toggleExtraParams() {
-            haptic();
-            const panel = document.getElementById('extra-params');
-            const btn = document.getElementById('toggle-extra-btn');
-            if (panel.style.display === 'none') {
-                panel.style.display = 'block';
-                btn.innerText = '⚙️ Сховати додаткові налаштування';
-            } else {
-                panel.style.display = 'none';
-                btn.innerText = '⚙️ Показати додаткові налаштування';
-            }
+            haptic(); const panel = document.getElementById('extra-params'); const btn = document.getElementById('toggle-extra-btn');
+            if (panel.style.display === 'none') { panel.style.display = 'block'; btn.innerText = '⚙️ Сховати додаткові налаштування'; } 
+            else { panel.style.display = 'none'; btn.innerText = '⚙️ Показати додаткові налаштування'; }
         }
 
         function showViaInput() { haptic(); document.getElementById('via-wrapper').style.display = 'block'; document.getElementById('btn-add-via').style.display = 'none'; }
@@ -623,7 +602,12 @@
 
         function toggleWorkModeInputs() { const mode = document.getElementById('set-work-mode').value; document.getElementById('box-set-rent').style.display = (mode === 'rent') ? 'flex' : 'none'; document.getElementById('box-set-split').style.display = (mode === 'split') ? 'flex' : 'none'; }
         function setPaymentMode(mode) { haptic(); currentPaymentMode = mode; document.getElementById('pay-opt-cash').classList.remove('active'); document.getElementById('pay-opt-card').classList.remove('active'); document.getElementById('pay-opt-' + mode).classList.add('active'); }
-        function saveCurrentRouteParams() { clearTimeout(saveRouteTimeout); saveRouteTimeout = setTimeout(() => { const params = {}; ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { params[id] = document.getElementById('inp-'+id).value; }); cloudSave('taxi_route_params_v20', params); }, 500); }
+        
+        // МИТТЄВЕ ЗБЕРЕЖЕННЯ ПАРАМЕТРІВ (БЕЗ ЗАТРИМКИ)
+        function saveCurrentRouteParams() { 
+            const params = {}; ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { params[id] = document.getElementById('inp-'+id).value; }); 
+            localStorage.setItem('taxi_route_params_v20', JSON.stringify(params)); 
+        }
         
         function renderCarSelector() {
             const container = document.getElementById('car-list-calc'); const container2 = document.getElementById('car-list-strat'); if(container) container.innerHTML = ''; if(container2) container2.innerHTML = '';
@@ -662,13 +646,13 @@
             const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
         }
 
-        // --- ОНОВЛЕНИЙ АНАЛІЗ (СИМУЛЯТОР) ---
+        // МИТТЄВЕ ЗБЕРЕЖЕННЯ (БЕЗ ЗАТРИМКИ)
         function calcStrategy() {
             const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; 
             const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
             const avgMin = parseFloat(document.getElementById('strat-min').value) || 25;
             
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_strat_params_v20', {target: targetNet, km: avgKm, min: avgMin}); }, 500);
+            localStorage.setItem('taxi_strat_params_v20', JSON.stringify({target: targetNet, km: avgKm, min: avgMin}));
             
             const t = tariffs[currentClass]; 
             let extraKm = Math.max(0, avgKm - t.minKm); 
@@ -718,8 +702,8 @@
             if (currentPaymentMode === 'cash') dailyCashData.totalCash += gross; else dailyCashData.totalCard += gross;
             const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, comm: comm, fuel: fuel, extraExp: extraExp, rent: rentCost, km: tripKm, pay: currentPaymentMode });
-            cloudSave('taxi_daily_cash_data_v20', dailyCashData);
-            goals.dailyDone += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; cloudSave('taxi_goals_v20', goals);
+            localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
+            goals.dailyDone += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
             updateCashPageUI(); calcBranding(); toggleRouteParams(true);
         }
 
@@ -729,8 +713,8 @@
                 if(idx > -1) {
                     const t = dailyCashData.history[idx]; dailyCashData.orders = Math.max(0, dailyCashData.orders - 1); dailyCashData.gross -= t.gross; dailyCashData.comm -= t.comm; dailyCashData.fuel -= t.fuel; dailyCashData.extraExp -= t.extraExp; dailyCashData.rent -= t.rent; dailyCashData.net -= t.net; dailyCashData.totalKm = Math.max(0, dailyCashData.totalKm - t.km);
                     if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
-                    dailyCashData.history.splice(idx, 1); cloudSave('taxi_daily_cash_data_v20', dailyCashData);
-                    goals.dailyDone = Math.max(0, goals.dailyDone - 1); document.getElementById('inp-daily-done').value = goals.dailyDone; cloudSave('taxi_goals_v20', goals);
+                    dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
+                    goals.dailyDone = Math.max(0, goals.dailyDone - 1); document.getElementById('inp-daily-done').value = goals.dailyDone; localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
                     updateCashPageUI(); calcBranding();
                 }
             }
@@ -752,7 +736,7 @@
         }
 
         function shareReport() { haptic(); let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours').value) || 1); if (hours <= 0) hours = 0.01; const text = `Підсумок зміни (${dailyCashData.date}):\n\n✅ Замовлень: ${dailyCashData.orders}\n⏱ Годин: ${hours.toFixed(1)}\n📍 Пробіг: ${dailyCashData.totalKm.toFixed(1)} км\n\n💵 Оборот: ${dailyCashData.gross.toFixed(0)} ₴\n (Гот: ${dailyCashData.totalCash.toFixed(0)} | Карта: ${dailyCashData.totalCard.toFixed(0)})\n🟡 Комісія: -${dailyCashData.comm.toFixed(0)} ₴\n⛽ Пальне: -${dailyCashData.fuel.toFixed(0)} ₴\n\n💰 ЧИСТИМИ: ${dailyCashData.net.toFixed(0)} ₴\n📈 Ставка: ${(dailyCashData.net / hours).toFixed(0)} ₴/год\n\n🏦 Баланс (Винен парку): ${(dailyCashData.totalCash - dailyCashData.comm - dailyCashData.rent).toFixed(0)} ₴`; if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); }); } }
-        function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; cloudSave('taxi_goals_v20', goals); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerText = "▶ Почати зміну"; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
+        function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v20', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerText = "▶ Почати зміну"; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
         function setDaysToEndOfMonth() { haptic(); const now = new Date(); const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1; document.getElementById('brand-days').value = daysLeft; calcBranding(); }
         function updateDailyGoalSlider(val) { document.getElementById('brand-daily-goal-val').innerText = val; document.getElementById('set-daily-goal').value = val; autoSaveSettings(); calcBranding(); }
         function resetDailyDone() { haptic(); if(confirm("Скинути прогрес цілі?")) { document.getElementById('inp-daily-done').value = 0; calcBranding(); } }
@@ -763,10 +747,12 @@
             brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; 
             brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
             
+            localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
+            
             let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); 
             let remain = Math.max(0, brandingData.target - brandingData.done); 
             let perDayReq = remain / brandingData.days;
-
+            
             document.getElementById('brand-progress').style.width = pct + '%'; 
             document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; 
             document.getElementById('brand-remain').innerText = remain; 
@@ -777,12 +763,7 @@
             goals.dailyGoal = dailyGoal; 
             goals.dailyDone = dailyDone;
             
-            // ВИПРАВЛЕННЯ: Тепер обидва масиви зберігаються разом і не перебивають один одного
-            clearTimeout(saveSettingsTimeout); 
-            saveSettingsTimeout = setTimeout(() => { 
-                cloudSave('taxi_branding_v20', brandingData);
-                cloudSave('taxi_goals_v20', goals);
-            }, 500);
+            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
             
             document.getElementById('brand-daily-goal-val').innerText = dailyGoal; 
             let dPct = Math.min(100, (dailyDone / dailyGoal) * 100);
@@ -790,14 +771,9 @@
             document.getElementById('brand-daily-pct').innerText = dPct.toFixed(1) + '%'; 
             document.getElementById('brand-perday-required').innerText = perDayReq.toFixed(1) + ' зам/день';
             
-            let daysToGoal = "∞"; 
-            if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
-            
-            if (dailyGoal >= perDayReq) { 
-                document.getElementById('brand-daily-comment').innerHTML = `Йдете з випередженням! План за ${daysToGoal} дн.`; 
-            } else { 
-                document.getElementById('brand-daily-comment').innerHTML = `Прискортесь! Мінімум ${perDayReq.toFixed(1)} зам/день.`; 
-            }
+            let daysToGoal = "∞"; if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
+            if (dailyGoal >= perDayReq) { document.getElementById('brand-daily-comment').innerHTML = `Йдете з випередженням! План за ${daysToGoal} дн.`; } else { document.getElementById('brand-daily-comment').innerHTML = `Прискортесь! Мінімум ${perDayReq.toFixed(1)} зам/день.`; }
+        }
 
         function updateFuelLabels(type) { const isElec = type === 'electro'; document.getElementById('set-fuel-cons-label').innerText = isElec ? "Розхід (kWt):" : "Розхід (л):"; document.getElementById('set-fuel-price-label').innerText = isElec ? "Ціна (₴/kWt):" : "Ціна (₴/л):"; }
         function switchTab(tab) { haptic(); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); const tabsMap = { 'calc': 0, 'branding': 1, 'cash': 2, 'strategy': 3, 'settings': 4 }; document.querySelectorAll('.tab-btn')[tabsMap[tab]].classList.add('active'); document.getElementById('page-' + tab).classList.add('active'); if(tab === 'calc') { renderCarSelector(); recalc(); window.scrollTo({ top: 0, behavior: 'smooth' }); } else if(tab === 'branding') calcBranding(); else if(tab === 'cash') updateCashPageUI(); else if(tab === 'strategy') { renderCarSelector(); calcStrategy(); } else if(tab === 'settings') renderSettings(); }
@@ -828,11 +804,15 @@
         function autoSaveSettings() {
             Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; });
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0; expenses.type = document.getElementById('set-fuel-type').value; expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0; expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0; expenses.workMode = document.getElementById('set-work-mode').value; expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0; expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { cloudSave('taxi_tariffs_v20', tariffs); cloudSave('taxi_expenses_v20', expenses); }, 500); updateFuelLabels(expenses.type);
+            
+            localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs));
+            localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses));
+            
+            updateFuelLabels(expenses.type);
         }
 
         function saveTariffsClick() { haptic(); autoSaveSettings(); switchTab('calc'); }
-        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); cloudSave('taxi_tariffs_v20', tariffs); renderSettings(); } }
+        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs)); renderSettings(); } }
 
         initApp();
     </script>
