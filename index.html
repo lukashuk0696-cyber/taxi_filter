@@ -309,7 +309,7 @@
 
     <div id="page-cash" class="page">
         
-        <button class="save-btn" style="background: linear-gradient(135deg, var(--accent-blue), #2563EB); margin-bottom: 16px; margin-top: 0; padding: 14px;" onclick="processScreenshot()">📸 Імпорт поїздки зі скріншота</button>
+        <button class="save-btn" id="btn-import" style="background: linear-gradient(135deg, var(--accent-blue), #2563EB); margin-bottom: 16px; margin-top: 0; padding: 14px;" onclick="processScreenshot()">📸 Імпорт поїздки зі скріншота</button>
         <input type="file" id="screenshot-input" accept="image/*" style="display:none" onchange="handleFile(event)">
 
         <div class="shift-timer-box">
@@ -523,7 +523,7 @@
             } catch(e) { renderCarSelector(); renderSettings(); recalc(); }
         }
 
-        // ЛОГІКА ІМПОРТУ З ФОТО (OCR)
+        // --- ЛОГІКА ІМПОРТУ З ФОТО (OCR) ---
         function processScreenshot() {
             haptic();
             document.getElementById('screenshot-input').click();
@@ -533,33 +533,50 @@
             const file = e.target.files[0];
             if (!file) return;
             
+            const btn = document.getElementById('btn-import');
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ Аналізую скріншот...";
+            
             if(tg.MainButton) { tg.MainButton.setText("Аналізую фото..."); tg.MainButton.show(); }
             
             Tesseract.recognize(file, 'ukr', { logger: m => console.log(m) })
             .then(({ data: { text } }) => {
-                console.log("Розпізнаний текст:", text);
+                console.log("Розпізнаний текст:\n", text);
                 
-                // Простий парсинг цифр (знаходимо числа біля знаку ₴ або "км")
-                const priceMatch = text.match(/(\d+)\s*₴/);
-                const kmMatch = text.match(/(\d+\.?\d*)\s*км/);
+                const priceMatch = text.match(/(\d+)\s*[₴гzZ]/i);
+                const kmRegex = /(\d+[\.,]\d+)\s*км/gi;
+                const kmMatches = [...text.matchAll(kmRegex)];
                 
                 if (priceMatch) {
-                    document.getElementById('inp-clientBonus').value = 0; 
                     document.getElementById('res-total').innerText = priceMatch[1] + ' ₴';
+                    document.getElementById('inp-clientBonus').value = 0; 
+                    document.getElementById('slider-clientBonus').value = 0;
                 }
                 
-                if (kmMatch) {
-                    document.getElementById('inp-dist').value = kmMatch[1];
+                if (kmMatches.length > 0) {
+                    const cityKm = kmMatches[0][1].replace(',', '.');
+                    document.getElementById('inp-dist').value = cityKm;
                     syncInputToSlider('dist');
+                    
+                    if (kmMatches.length > 1) {
+                        const deliveryKm = kmMatches[1][1].replace(',', '.');
+                        document.getElementById('inp-delivery').value = deliveryKm;
+                        syncInputToSlider('delivery');
+                    }
                 }
 
+                recalc(); // Одразу перераховуємо всі дані
+                
+                btn.innerText = originalText;
                 if(tg.MainButton) tg.MainButton.hide();
-                if(tg.showAlert) tg.showAlert("Дані підтягнуто! Перевір цифри та тисни 'Зафіксувати поїздку'.");
-                else alert("Дані підтягнуто! Перевір цифри та тисни 'Зафіксувати поїздку'.");
+                if(tg.showAlert) tg.showAlert("✅ Дані підтягнуто! Перевір цифри.");
+                else alert("✅ Дані підтягнуто! Перевір цифри.");
+                switchTab('calc'); // Перекидаємо користувача на калькулятор, щоб він побачив цифри
             })
             .catch(err => {
-                if(tg.showAlert) tg.showAlert("Помилка розпізнавання. Спробуй чіткіший скріншот.");
-                else alert("Помилка розпізнавання. Спробуй чіткіший скріншот.");
+                btn.innerText = originalText;
+                if(tg.showAlert) tg.showAlert("❌ Помилка розпізнавання. Спробуй інший скріншот.");
+                else alert("❌ Помилка розпізнавання. Спробуй інший скріншот.");
                 if(tg.MainButton) tg.MainButton.hide();
             });
         }
