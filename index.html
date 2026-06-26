@@ -124,7 +124,6 @@
         <button class="tab-btn" onclick="switchTab('settings')"><span class="tab-icon">⚙️</span><span>Опції</span></button>
     </div>
 
-    <!-- Вкладка ТАРИФ -->
     <div id="page-calc" class="page active">
         <div class="car-selector" id="car-list-calc"></div>
 
@@ -233,7 +232,7 @@
         <div class="sticky-summary" id="sticky-panel">
             <div class="drag-handle"></div>
             <div class="summary-header" onclick="toggleSummary()">
-                <div class="summary-mini-title">Мій прибуток: <span id="res-net" style="color: var(--uklon-green); margin-left: 6px;">0 ₴</span></div>
+                <div class="summary-mini-title">Мій прибуток: <span id="res-net" style="color: var(--uklon-green); margin-left: 6px; transition: color 0.3s;">0 ₴</span></div>
                 <div class="summary-chevron" id="summary-chevron">Деталі</div>
             </div>
             
@@ -256,7 +255,6 @@
         </div>
     </div>
 
-    <!-- Вкладка ЦІЛІ -->
     <div id="page-branding" class="page">
         <div class="card">
             <div class="card-title">Програма лояльності (Місяць)</div>
@@ -309,7 +307,6 @@
         </div>
     </div>
 
-    <!-- Вкладка КАСА -->
     <div id="page-cash" class="page">
         
         <button class="save-btn" id="btn-import" style="background: linear-gradient(135deg, var(--accent-blue), #2563EB); margin-bottom: 14px; margin-top: 0; padding: 14px;" onclick="processScreenshot()">📸 Імпорт поїздки зі скріншота</button>
@@ -374,7 +371,6 @@
         <button class="reset-btn" onclick="resetDailyCashClick()">🔄 Почати нову зміну (Скинути касу)</button>
     </div>
 
-    <!-- Вкладка АНАЛІЗ -->
     <div id="page-strategy" class="page">
         <div class="car-selector" id="car-list-strat"></div>
         <div class="card">
@@ -424,7 +420,6 @@
         </div>
     </div>
 
-    <!-- Вкладка ОПЦІЇ -->
     <div id="page-settings" class="page">
         <div class="card">
             <h3 style="margin-bottom:14px; font-size:12px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">Постійні Витрати</h3>
@@ -447,9 +442,23 @@
         <button class="save-btn" onclick="saveTariffsClick()">💾 Зберегти всі налаштування</button>
         <button class="reset-btn" onclick="resetToFactoryTariffs()">⚠️ Відновити стандартні тарифи</button>
         <div style="text-align: center; margin-top: 20px; margin-bottom: 24px;"><button class="toggle-btn" onclick="openManual()" style="border:none;">📖 Відкрити посібник користувача</button></div>
+
+        <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05)); border: 1px dashed rgba(59, 130, 246, 0.4); margin-top: 24px;">
+            <div style="text-align: center; margin-bottom: 12px;">
+                <span style="font-size: 24px;">☕</span>
+                <div style="font-size: 15px; font-weight: 800; color: var(--text-color); margin-top: 4px;">Підтримати розробника</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">Якщо додаток допомагає вам заробляти більше, ви можете пригостити автора кавою!</div>
+            </div>
+            <div style="background: var(--bg-color); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">КАРТКА (MONOBANK)</div>
+                    <div style="font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--text-color);">4441 1144 2469 9245</div>
+                </div>
+                <button onclick="copyDonateCard()" style="background: var(--accent-blue); color: #fff; border: none; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.15s;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">Копіювати</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Модалка -->
     <div class="modal-overlay" id="manual-modal">
         <div class="modal-content">
             <div class="card-title" style="font-size: 15px; color: var(--text-color);">Довідка DriverHub PRO</div>
@@ -482,7 +491,14 @@
 
         const fmt = (num) => Math.ceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-        document.addEventListener('focusin', function(e) { if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { const panel = document.getElementById('sticky-panel'); if(panel) panel.style.transform = 'translateY(150%)'; } });
+        // АВТОВИДІЛЕННЯ ТЕКСТУ В ІНПУТАХ ПРИ КЛІКУ ДЛЯ ЗРУЧНОСТІ
+        document.addEventListener('focusin', function(e) { 
+            if (e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { 
+                e.target.select();
+                const panel = document.getElementById('sticky-panel'); 
+                if(panel) panel.style.transform = 'translateY(150%)'; 
+            } 
+        });
         document.addEventListener('focusout', function(e) { setTimeout(() => { if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { const panel = document.getElementById('sticky-panel'); if(panel) panel.style.transform = 'translateY(0)'; document.querySelectorAll('.ac-dropdown').forEach(d => d.style.display = 'none'); } }, 250); });
         document.addEventListener('keydown', function(event) { if (event.key === 'Enter') document.activeElement.blur(); });
         
@@ -529,7 +545,6 @@
             } catch(e) { renderCarSelector(); renderSettings(); recalc(); }
         }
 
-        // --- ЛОГІКА ІМПОРТУ З ФОТО (OCR) ---
         function processScreenshot() {
             haptic();
             document.getElementById('screenshot-input').click();
@@ -547,7 +562,6 @@
             
             Tesseract.recognize(file, 'ukr', { logger: m => console.log(m) })
             .then(({ data: { text } }) => {
-                console.log("Розпізнаний текст:\n", text);
                 
                 const priceMatch = text.match(/(\d+)\s*[₴гzZ]/i);
                 const kmRegex = /(\d+[\.,]\d+)\s*км/gi;
@@ -571,7 +585,7 @@
                     }
                 }
 
-                recalc();
+                recalc(); 
                 
                 btn.innerText = originalText;
                 if(tg.MainButton) tg.MainButton.hide();
@@ -678,7 +692,12 @@
             let rentCost = 0; if (expenses.workMode === 'rent') rentCost = expenses.rentVal; else if (expenses.workMode === 'split') rentCost = (finalTotal - commCost) * (expenses.splitPct / 100);
             const netIncome = finalTotal - commCost - fuelCost - extraExp - rentCost; const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
             
-            document.getElementById('res-net').innerText = `${fmt(netIncome)} ₴`; document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${fmt(commCost)} ₴`; document.getElementById('res-fuel').innerText = `-${fmt(fuelCost)} ₴`;
+            // ЧЕРВОНИЙ КОЛІР ЯКЩО ЗБИТОК
+            const resNetEl = document.getElementById('res-net');
+            resNetEl.innerText = `${fmt(netIncome)} ₴`; 
+            resNetEl.style.color = netIncome < 0 ? "var(--accent-danger)" : "var(--uklon-green)";
+
+            document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${fmt(commCost)} ₴`; document.getElementById('res-fuel').innerText = `-${fmt(fuelCost)} ₴`;
             if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${fmt(extraExp)} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
             if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${fmt(rentCost)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
             const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
@@ -718,13 +737,8 @@
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, comm: comm, fuel: fuel, extraExp: extraExp, rent: rentCost, km: tripKm, pay: currentPaymentMode });
             localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
             
-            // СИНХРОНІЗАЦІЯ ЦІЛЕЙ (ДЕНЬ + МІСЯЦЬ)
-            goals.dailyDone += 1; 
-            brandingData.done += 1; 
-            document.getElementById('inp-daily-done').value = goals.dailyDone; 
-            document.getElementById('brand-done').value = brandingData.done;
-            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-            localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
+            goals.dailyDone += 1; brandingData.done += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
+            localStorage.setItem('taxi_goals_v20', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
             
             updateCashPageUI(); calcBranding(); toggleRouteParams(true);
         }
@@ -737,13 +751,9 @@
                     if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
                     dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v20', JSON.stringify(dailyCashData));
                     
-                    // СИНХРОНІЗАЦІЯ ВІДНІМАННЯ ЦІЛЕЙ
-                    goals.dailyDone = Math.max(0, goals.dailyDone - 1); 
-                    brandingData.done = Math.max(0, brandingData.done - 1);
-                    document.getElementById('inp-daily-done').value = goals.dailyDone; 
-                    document.getElementById('brand-done').value = brandingData.done;
-                    localStorage.setItem('taxi_goals_v20', JSON.stringify(goals));
-                    localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
+                    goals.dailyDone = Math.max(0, goals.dailyDone - 1); brandingData.done = Math.max(0, brandingData.done - 1);
+                    document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
+                    localStorage.setItem('taxi_goals_v20', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v20', JSON.stringify(brandingData));
                     
                     updateCashPageUI(); calcBranding();
                 }
@@ -769,7 +779,7 @@
             
             const list = document.getElementById('cash-history-list'); const empty = document.getElementById('cash-empty-state'); list.innerHTML = '';
             if(dailyCashData.history.length > 0) {
-                empty.style.display = 'none'; dailyCashData.history.forEach(trip => { list.innerHTML += `<div class="history-item"><div><strong style="font-size: 15px;">${trip.time} ${trip.pay === 'cash' ? '💵' : '💳'}</strong><br><span style="font-size: 12px; color: var(--text-muted);">Пробіг: ${trip.km.toFixed(1)} км | Об: <span style="color:var(--text-color); font-weight:700;">${fmt(trip.gross)} ₴</span></span></div><div style="text-align: right; margin-right: 14px;"><strong style="font-size: 16px; color: var(--uklon-green);">+${fmt(trip.net)} ₴</strong></div><button class="del-btn" onclick="removeTrip(${trip.id})">✕</button></div>`; });
+                empty.style.display = 'none'; dailyCashData.history.forEach(trip => { list.innerHTML += `<div class="history-item"><div><strong style="font-size: 15px;">${trip.time} ${trip.pay === 'cash' ? '💵' : '💳'}</strong><br><span style="font-size: 12px; color: var(--text-muted);">Пробіг: ${trip.km.toFixed(1)} км | Об: <span style="color:var(--text-color); font-weight:700;">${fmt(trip.gross)} ₴</span></span></div><div style="text-align: right; margin-right: 14px;"><strong style="font-size: 18px; color: var(--uklon-green);">+${fmt(trip.net)} ₴</strong></div><button class="del-btn" onclick="removeTrip(${trip.id})">✕</button></div>`; });
             } else { empty.style.display = 'block'; }
         }
 
@@ -781,27 +791,8 @@
         function updateDailyGoalSlider(val) { document.getElementById('brand-daily-goal-val').innerText = val; document.getElementById('set-daily-goal').value = val; calcBranding(); }
         function resetDailyDone() { haptic(); if(confirm("Скинути прогрес цілі?")) { document.getElementById('inp-daily-done').value = 0; calcBranding(); } }
         
-        // СИНХРОНІЗАЦІЯ ПРИ РУЧНОМУ РЕДАГУВАННІ (КНОПКИ +/-)
-        function changeDailyDone(step) { 
-            haptic(); 
-            const input = document.getElementById('inp-daily-done'); 
-            let val = (parseInt(input.value) || 0) + step; 
-            if (val < 0) val = 0; 
-            input.value = val; 
-            
-            // Змінюємо місячну ціль разом із денною
-            let monthDone = parseInt(document.getElementById('brand-done').value) || 0;
-            monthDone += step;
-            if (monthDone < 0) monthDone = 0;
-            document.getElementById('brand-done').value = monthDone;
-            
-            calcBranding(); 
-        }
-
-        function manualDailyDoneInput() {
-            // Оновлюємо дані при ручному вводі в інпут
-            calcBranding();
-        }
+        function changeDailyDone(step) { haptic(); const input = document.getElementById('inp-daily-done'); let val = (parseInt(input.value) || 0) + step; if (val < 0) val = 0; input.value = val; let monthDone = parseInt(document.getElementById('brand-done').value) || 0; monthDone += step; if (monthDone < 0) monthDone = 0; document.getElementById('brand-done').value = monthDone; calcBranding(); }
+        function manualDailyDoneInput() { calcBranding(); }
 
         function calcBranding() {
             brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
@@ -855,6 +846,25 @@
         function resetToFactoryTariffs() { haptic(); if (confirm('Скинути всі тарифи та налаштування на заводські?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); expenses = JSON.parse(JSON.stringify(defaultExpenses)); localStorage.setItem('taxi_tariffs_v20', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v20', JSON.stringify(expenses)); initApp(); if (tg && tg.showAlert) tg.showAlert('🔄 Відновлено стандартні параметри'); } }
         function openManual() { document.getElementById('manual-modal').style.display = 'flex'; }
         function closeManual() { document.getElementById('manual-modal').style.display = 'none'; }
+        
+        // КОПІЮВАННЯ КАРТКИ
+        function copyDonateCard() {
+            haptic();
+            const cardNumber = "4441114424699245";
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(cardNumber).then(() => {
+                    if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано! Дякую за підтримку!');
+                });
+            } else {
+                const tempInput = document.createElement("input");
+                tempInput.value = cardNumber;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано! Дякую за підтримку!');
+            }
+        }
 
         initApp();
     </script>
