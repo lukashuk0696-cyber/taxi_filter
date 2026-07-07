@@ -587,7 +587,7 @@
             
             const btn = document.getElementById('btn-import');
             const originalText = btn.innerText;
-            btn.innerText = `⏳ Обробляю ${files.length} фото...`;
+            btn.innerText = `⏳ Аналізую ${files.length} фото...`;
             
             if(tg.MainButton) { tg.MainButton.setText(`Аналізую чеки...`); tg.MainButton.show(); }
 
@@ -595,111 +595,110 @@
 
             for (let i = 0; i < files.length; i++) {
                 try {
-                    btn.innerText = `⏳ Фото ${i+1} з ${files.length}...`;
+                    btn.innerText = `⏳ Обробка ${i+1}/${files.length}...`;
                     const { data: { text } } = await Tesseract.recognize(files[i], 'ukr');
                     
-                    // 1. Очищуємо текст: прибираємо переноси, кому міняємо на крапку, "О" на нуль
-                    const textClean = text.replace(/\n/g, ' ').replace(/o|о/gi, '0').replace(/,/g, '.');
+                    // 1. Агресивна чистка сміття (Tesseract часто плутає іконки 📍, 💳 з буквами)
+                    const textClean = text.replace(/\n/g, ' ').replace(/o|о|q|@/gi, '0').replace(/,/g, '.');
                     
-                    // 2. Шукаємо ВСІ кілометражі на екрані (наприклад: 4.21 км, 0.2 км)
-                    const allKmRegex = /(\d+\.\d+)\s*(?:км|km|kм|кн|xm|хм)/gi;
-                    const allKmMatches = [...textClean.matchAll(allKmRegex)].map(m => parseFloat(m[1]));
+                    // 2. Витягуємо ВСІ ціни та ВСІ кілометражі з екрану
+                    const prices = [...textClean.matchAll(/(\d{1,2}\s?\d{3}|\d{1,4})\s*(?:₴|г|z|e|є|s|2\b|€|\$)/gi)].map(m => parseInt(m[1].replace(/\s/g, '')));
+                    const kms = [...textClean.matchAll(/(\d+\.\d+|\d+)\s*(?:км|km|kм|кн|xm|хм)/gi)].map(m => parseFloat(m[1]));
                     
-                    // 3. Шукаємо ПАРИ: [Ціна] [Значок/Сміття] [Кілометраж маршруту]
-                    // Це ідеальний патерн для Uklon, де ціна завжди стоїть перед маршрутом
-                    const pairRegex = /(\d{1,2}\s?\d{3}|\d{2,4})\s*[^\d]{1,8}\s*(\d+\.\d+)\s*(?:км|km|kм|кн|xm|хм)/gi;
-                    const pairs = [...textClean.matchAll(pairRegex)];
-                    
-                    if (pairs.length > 0) {
-                        // Проходимося по парах (якщо це скріншот "Історії", пар буде кілька)
-                        for (let p = 0; p < pairs.length; p++) {
-                            const targetPrice = parseInt(pairs[p][1].replace(/\s/g, '')); // Ціна (прибираємо пробіли для тисяч)
-                            const cityKm = parseFloat(pairs[p][2]); // Км маршруту
-                            let deliveryKm = 0;
-                            
-                            // Шукаємо подачу (це інший кілометраж на екрані, який не дорівнює маршруту)
-                            if (pairs.length === 1 && allKmMatches.length > 1) {
-                                const idx = allKmMatches.indexOf(cityKm);
-                                if (idx > -1) allKmMatches.splice(idx, 1);
-                                deliveryKm = allKmMatches[0] || 0; // Залишок - це подача
-                            }
+                    if (prices.length === 0 || kms.length === 0) continue;
 
-                            // Якщо це ОДНЕ фото з ОДНИМ чеком -> підставляємо в калькулятор для перевірки
-                            if (files.length === 1 && pairs.length === 1) {
-                                document.getElementById('inp-dist').value = cityKm;
-                                document.getElementById('slider-dist').value = cityKm;
-                                document.getElementById('inp-delivery').value = deliveryKm;
-                                document.getElementById('slider-delivery').value = deliveryKm;
-                                document.getElementById('inp-clientBonus').value = 0; 
-                                document.getElementById('slider-clientBonus').value = 0;
-                                
-                                recalc(); // Прораховуємо базу
-                                
-                                // Якщо ціна в Уклоні більша за нашу базу -> кидаємо різницю в чайові
-                                const calculatedPrice = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴',''))) || 0;
-                                if (targetPrice > calculatedPrice) {
-                                    const diff = targetPrice - calculatedPrice;
-                                    document.getElementById('inp-clientBonus').value = diff;
-                                    document.getElementById('slider-clientBonus').value = diff;
-                                    recalc(); // Фінальний перерахунок
-                                }
-                                
-                                successCount++;
-                                switchTab('calc'); // Перекидаємо водія на Тариф
-                            } 
-                            // Якщо фото БАГАТО АБО на фото КІЛЬКА чеків (Історія) -> масово закидаємо в касу
-                            else {
-                                const commCost = targetPrice * (expenses.comm / 100);
-                                const totalKm = cityKm + deliveryKm;
-                                const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-                                const amortCost = totalKm * expenses.amort;
-                                const netIncome = targetPrice - commCost - fuelCost - amortCost;
-                                
-                                dailyCashData.orders += 1;
-                                dailyCashData.gross += targetPrice;
-                                dailyCashData.comm += commCost;
-                                dailyCashData.fuel += fuelCost;
-                                dailyCashData.extraExp += amortCost;
-                                dailyCashData.net += netIncome;
-                                dailyCashData.totalKm += totalKm;
-                                dailyCashData.totalCash += targetPrice;
-                                
-                                const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                                dailyCashData.history.unshift({ id: Date.now() + i + p, time: timeStr, gross: targetPrice, net: netIncome, km: totalKm, pay: 'cash' });
-                                
-                                goals.dailyDone += 1;
-                                brandingData.done += 1;
-                                successCount++;
+                    // 3. Визначаємо тип скріншоту: Історія (багато чеків) чи Поточне замовлення
+                    const isHistory = /архівне|історія|активні/i.test(textClean);
+
+                    if (isHistory) {
+                        // РЕЖИМ ІСТОРІЇ: Масово додаємо всі пари (Ціна + Км) в касу
+                        const limit = Math.min(prices.length, kms.length);
+                        for (let p = 0; p < limit; p++) {
+                            const targetPrice = prices[p];
+                            const cityKm = kms[p];
+                            
+                            const commCost = targetPrice * (expenses.comm / 100);
+                            const fuelCost = (cityKm / 100) * expenses.cons * expenses.price;
+                            const amortCost = cityKm * expenses.amort;
+                            const netIncome = targetPrice - commCost - fuelCost - amortCost;
+                            
+                            dailyCashData.orders += 1;
+                            dailyCashData.gross += targetPrice;
+                            dailyCashData.comm += commCost;
+                            dailyCashData.fuel += fuelCost;
+                            dailyCashData.extraExp += amortCost;
+                            dailyCashData.net += netIncome;
+                            dailyCashData.totalKm += cityKm;
+                            dailyCashData.totalCash += targetPrice; // В історії не видно типу, пишемо в готівку
+                            
+                            const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
+                            dailyCashData.history.unshift({ id: Date.now() + i + p, time: timeStr, gross: targetPrice, net: netIncome, km: cityKm, pay: 'cash' });
+                            
+                            goals.dailyDone += 1; brandingData.done += 1; successCount++;
+                        }
+                    } else {
+                        // РЕЖИМ ОДНОГО ЗАМОВЛЕННЯ: Підставляємо в калькулятор
+                        const targetPrice = prices[0]; // Перша знайдена сума (найбільша/головна)
+                        const cityKm = kms[0]; // Перший кілометраж - маршрут
+                        const deliveryKm = kms.length > 1 ? kms[1] : 0; // Другий - подача
+                        
+                        // Визначаємо тип оплати (готівка чи картка)
+                        const isCash = textClean.toLowerCase().includes('готівк');
+                        setPaymentMode(isCash ? 'cash' : 'card');
+
+                        if (files.length === 1) {
+                            document.getElementById('inp-dist').value = cityKm; document.getElementById('slider-dist').value = cityKm;
+                            document.getElementById('inp-delivery').value = deliveryKm; document.getElementById('slider-delivery').value = deliveryKm;
+                            document.getElementById('inp-clientBonus').value = 0; document.getElementById('slider-clientBonus').value = 0;
+                            
+                            recalc(); // Прорахунок бази
+                            
+                            const calculatedPrice = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴',''))) || 0;
+                            if (targetPrice > calculatedPrice) {
+                                const diff = targetPrice - calculatedPrice;
+                                document.getElementById('inp-clientBonus').value = diff; document.getElementById('slider-clientBonus').value = diff;
+                                recalc();
                             }
+                            
+                            successCount++; switchTab('calc');
+                            if(tg.showAlert) tg.showAlert("✅ Дані підтягнуто! (Маршрут + Подача). Перевірте та зафіксуйте.");
+                        } else {
+                            // Якщо завантажили кілька "одиночних" чеків
+                            const commCost = targetPrice * (expenses.comm / 100);
+                            const totalKm = cityKm + deliveryKm;
+                            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
+                            const amortCost = totalKm * expenses.amort;
+                            const netIncome = targetPrice - commCost - fuelCost - amortCost;
+                            
+                            dailyCashData.orders += 1; dailyCashData.gross += targetPrice; dailyCashData.comm += commCost; dailyCashData.fuel += fuelCost; dailyCashData.extraExp += amortCost; dailyCashData.net += netIncome; dailyCashData.totalKm += totalKm;
+                            if (isCash) dailyCashData.totalCash += targetPrice; else dailyCashData.totalCard += targetPrice;
+                            
+                            const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
+                            dailyCashData.history.unshift({ id: Date.now() + i, time: timeStr, gross: targetPrice, net: netIncome, km: totalKm, pay: isCash ? 'cash' : 'card' });
+                            
+                            goals.dailyDone += 1; brandingData.done += 1; successCount++;
                         }
                     }
                 } catch(err) { console.error("Помилка сканування:", err); }
             }
 
-            // Зберігаємо та оновлюємо інтерфейс
-            if (successCount > 0) {
+            if (files.length > 1 || successCount > 1) {
                 localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
                 document.getElementById('inp-daily-done').value = goals.dailyDone;
                 document.getElementById('brand-done').value = brandingData.done;
                 localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
                 localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
                 
-                updateCashPageUI(); calcBranding();
-                
-                if (files.length === 1 && successCount === 1) {
-                    if(tg.showAlert) tg.showAlert("✅ Чек розпізнано! Перевірте цифри та натисніть 'Зафіксувати'.");
-                } else {
-                    if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано чеків: ${successCount}`);
-                    switchTab('cash');
-                }
-            } else {
-                 if(tg.showAlert) tg.showAlert("❌ Не вдалося розпізнати цифри на цих фото.");
+                updateCashPageUI(); calcBranding(); switchTab('cash');
+                if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано: ${successCount}`);
+            } else if (successCount === 0) {
+                 if(tg.showAlert) tg.showAlert("❌ Не вдалося розпізнати цифри. Спробуйте інший скріншот.");
                  else alert("❌ Не вдалося розпізнати цифри.");
             }
 
             btn.innerText = originalText;
             if(tg.MainButton) tg.MainButton.hide();
-            document.getElementById('screenshot-input').value = ""; // Очищаємо інпут
+            document.getElementById('screenshot-input').value = "";
         }
 
         // ШВИДКІ ВИТРАТИ З РУЧНИМ ВВОДОМ
