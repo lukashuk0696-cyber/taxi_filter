@@ -32,98 +32,97 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         button, .car-card, .tab-btn, input[type=range], select { -webkit-user-select: none; user-select: none; }
         
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 340px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 300px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
         
-        .app-header { padding: 12px 16px 8px 16px; display: flex; align-items: center; justify-content: space-between; }
-        .app-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, var(--text-color), var(--uklon-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .theme-toggle { font-size: 18px; cursor: pointer; padding: 6px; background: var(--card-bg); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .app-header { padding: 10px 14px 6px 14px; display: flex; align-items: center; justify-content: space-between; }
+        .app-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, var(--text-color), var(--uklon-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .theme-toggle { font-size: 16px; cursor: pointer; padding: 6px; background: var(--card-bg); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         
-        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 4px 12px 16px 12px; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 4px 10px 12px 10px; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
         .tab-btn { flex: 1; padding: 6px 2px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0.7; }
         .tab-icon { font-size: 16px; transition: 0.2s; } .tab-btn.active { background: var(--text-color); color: var(--bg-color); opacity: 1; }
         
-        .page { display: none; padding: 0 12px; } .page.active { display: block; }
+        .page { display: none; padding: 0 10px; } .page.active { display: block; }
         
-        .car-selector { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 12px 0; scrollbar-width: none; } .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: row; align-items: center; gap: 6px; transition: 0.15s; white-space: nowrap; }
+        .car-selector { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px 0; scrollbar-width: none; } .car-selector::-webkit-scrollbar { display: none; }
+        .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 6px 12px; border-radius: 14px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: row; align-items: center; gap: 6px; transition: 0.15s; white-space: nowrap; }
         .car-card.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3); transform: scale(1.02); }
-        .car-emoji { font-size: 16px; } .car-name { font-size: 13px; font-weight: 700; } .car-price-info { font-size: 11px; font-weight: 600; opacity: 0.7; } .car-price-info::before { content: "• "; margin-right: 2px; } .car-card.active .car-price-info { opacity: 0.9; color: #000; }
+        .car-emoji { font-size: 14px; } .car-name { font-size: 12px; font-weight: 700; } .car-price-info { font-size: 10px; font-weight: 600; opacity: 0.7; } .car-price-info::before { content: "• "; margin-right: 2px; } .car-card.active .car-price-info { opacity: 0.9; color: #000; }
         
-        .card { background: var(--card-bg); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: var(--card-bg); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         
         .ac-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
-        .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color); }
-        .map-input { flex: 1; background: transparent; border: none; font-size: 14px; color: var(--text-color); outline: none; font-weight: 500; }
+        .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 10px; padding: 6px 10px; border: 1px solid var(--border-color); }
+        .map-input { flex: 1; background: transparent; border: none; font-size: 13px; color: var(--text-color); outline: none; font-weight: 500; }
         .map-input::placeholder { color: var(--text-muted); }
         .ac-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 50; display: none; max-height: 160px; overflow-y: auto; margin-top: 4px; }
-        .ac-item { padding: 10px 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-color); } .ac-item:last-child { border-bottom: none; } .ac-item:active { background: var(--bg-color); }
+        .ac-item { padding: 10px 12px; border-bottom: 1px solid var(--border-color); font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-color); } .ac-item:last-child { border-bottom: none; } .ac-item:active { background: var(--bg-color); }
 
-        .gps-btn { background: transparent; border: none; font-size: 16px; cursor: pointer; color: var(--accent-blue); padding-left: 8px; border-left: 1px solid var(--border-color); }
-        .nav-btn-group { display: none; gap: 6px; margin-top: 8px; } .nav-btn { flex: 1; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 4px; }
+        .gps-btn { background: transparent; border: none; font-size: 14px; cursor: pointer; color: var(--accent-blue); padding-left: 8px; border-left: 1px solid var(--border-color); }
+        .nav-btn-group { display: none; gap: 6px; margin-top: 8px; } .nav-btn { flex: 1; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 4px; }
         
-        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 12px 16px 24px 16px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); transition: transform 0.3s; }
+        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 20px 20px 0 0; padding: 10px 14px 20px 14px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); transition: transform 0.3s; }
         @supports (backdrop-filter: blur(10px)) { .sticky-summary { background: rgba(var(--card-bg-rgb, 255,255,255), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); } html[data-theme="dark"] .sticky-summary { background: rgba(28,28,30, 0.85); } }
-        .drag-handle { width: 36px; height: 4px; background: var(--border-color); border-radius: 2px; margin: 0 auto 8px auto; }
+        .drag-handle { width: 36px; height: 4px; background: var(--border-color); border-radius: 2px; margin: 0 auto 6px auto; }
         .summary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 4px; }
-        .summary-mini-title { font-size: 16px; font-weight: 800; transition: color 0.3s; }
-        .summary-chevron { font-size: 12px; font-weight: 700; color: var(--accent-success); background: rgba(52, 199, 89, 0.15); padding: 4px 10px; border-radius: 10px; }
+        .summary-mini-title { font-size: 15px; font-weight: 800; transition: color 0.3s; }
+        .summary-chevron { font-size: 11px; font-weight: 700; color: var(--accent-success); background: rgba(52, 199, 89, 0.15); padding: 4px 10px; border-radius: 10px; }
         
-        .pay-switch { display: flex; background: var(--bg-color); border-radius: 10px; padding: 3px; margin: 10px 0; }
-        .pay-opt { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
+        .pay-switch { display: flex; background: var(--bg-color); border-radius: 10px; padding: 3px; margin: 8px 0; }
+        .pay-opt { flex: 1; text-align: center; padding: 6px 0; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
         .pay-opt.active { background: var(--card-bg); color: var(--text-color); box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
         
-        .input-block { padding: 8px 0; border-bottom: 1px solid var(--border-color); } .input-block:last-child { border-bottom: none; padding-bottom: 0; }
+        .input-block { padding: 6px 0; border-bottom: 1px solid var(--border-color); } .input-block:last-child { border-bottom: none; padding-bottom: 0; }
         .input-header { display: flex; justify-content: space-between; align-items: center; }
-        .icon-wrap { display: flex; align-items: center; gap: 10px; } .icon-box { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .icon-wrap { display: flex; align-items: center; gap: 8px; } .icon-box { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
         .ib-blue { background: rgba(0, 122, 255, 0.15); } .ib-purple { background: rgba(175, 82, 222, 0.15); } .ib-cyan { background: rgba(50, 173, 230, 0.15); } .ib-orange { background: rgba(255, 149, 0, 0.15); } .ib-yellow { background: rgba(255, 204, 0, 0.2); } .ib-red { background: rgba(255, 59, 48, 0.15); } .ib-green { background: rgba(52, 199, 89, 0.15); }
-        .input-label { font-size: 14px; font-weight: 600; }
+        .input-label { font-size: 13px; font-weight: 600; }
         
         .counter { display: flex; align-items: center; gap: 4px; }
-        .btn-counter { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--bg-color); color: var(--text-color); font-size: 18px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; } .btn-counter:active { background: var(--border-color); transform: scale(0.95); }
-        .btn-x2 { font-size: 12px; width: auto; padding: 0 10px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-weight: 800; }
-        .counter-value { font-size: 16px; font-weight: 800; width: 50px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; }
+        .btn-counter { width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--bg-color); color: var(--text-color); font-size: 16px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; } .btn-counter:active { background: var(--border-color); transform: scale(0.95); }
+        .btn-x2 { font-size: 11px; width: auto; padding: 0 8px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-weight: 800; }
+        .counter-value { font-size: 15px; font-weight: 800; width: 44px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; }
         ::selection { background: var(--accent-blue); color: #fff; }
         
-        .slider-container { padding-top: 8px; width: 100%; } input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; } input[type=range]:focus { outline: none; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; margin-top: -9px; } input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; }
+        .slider-container { padding-top: 4px; width: 100%; } input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; } input[type=range]:focus { outline: none; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; margin-top: -7px; } input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; }
         
-        .quick-coef-container { display: flex; gap: 6px; margin-top: 6px; margin-bottom: 2px; } .quick-coef-btn { flex: 1; padding: 8px 0; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.1s; } .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); transform: scale(0.97); } .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); flex: 0 0 40px; border: none; }
+        .quick-coef-container { display: flex; gap: 6px; margin-top: 4px; margin-bottom: 2px; } .quick-coef-btn { flex: 1; padding: 6px 0; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 800; font-size: 11px; cursor: pointer; transition: 0.1s; } .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); transform: scale(0.97); } .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); flex: 0 0 36px; border: none; }
 
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
-        .result-total { border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 10px; font-size: 20px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--accent-success); }
-        .eff-badge { color: white; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; } .eff-green { background-color: var(--uklon-green); } .eff-yellow { background-color: #FF9500; } .eff-red { background-color: var(--accent-danger); }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; font-weight: 600; }
+        .result-total { border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 8px; font-size: 18px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--accent-success); }
+        .eff-badge { color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; } .eff-green { background-color: var(--uklon-green); } .eff-yellow { background-color: #FF9500; } .eff-red { background-color: var(--accent-danger); }
         
-        .admin-input { width: 70px; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; font-size: 14px; font-weight: 700; background: var(--bg-color); color: var(--text-color); }
-        .save-btn { width: 100%; padding: 14px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 4px 12px rgba(0, 211, 105, 0.3); transition: 0.2s; } .save-btn:active { transform: scale(0.98); } .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .admin-input { width: 70px; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); text-align: center; font-size: 13px; font-weight: 700; background: var(--bg-color); color: var(--text-color); }
+        .save-btn { width: 100%; padding: 12px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0, 211, 105, 0.3); transition: 0.2s; } .save-btn:active { transform: scale(0.98); } .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        .reset-btn { width: 100%; padding: 14px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; } 
-        .toggle-btn { width: 100%; padding: 12px; background: rgba(0, 122, 255, 0.08); color: var(--accent-blue); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 10px;}
+        .reset-btn { width: 100%; padding: 12px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 8px; } 
+        .toggle-btn { width: 100%; padding: 10px; background: rgba(0, 122, 255, 0.08); color: var(--accent-blue); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 8px;}
         
-        .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 10px 0; overflow: hidden; height: 8px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px; }
-        .history-item { padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; } .history-item:last-child { border-bottom: none; } .del-btn { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 8px 0; overflow: hidden; height: 6px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px; }
+        .history-item { padding: 8px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; } .history-item:last-child { border-bottom: none; } .del-btn { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 6px; width: 28px; height: 28px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        .shift-timer-box { background: var(--bg-color); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border-color); }
-        .timer-text { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
-        .btn-shift { padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; border: none; transition: 0.2s; }
+        .shift-timer-box { background: var(--bg-color); border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .timer-text { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .btn-shift { padding: 6px 14px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; border: none; transition: 0.2s; }
         .btn-shift.start { background: var(--uklon-green); color: #fff; box-shadow: 0 2px 8px rgba(0, 211, 105, 0.3); }
         .btn-shift.stop { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); }
         
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); } .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); } .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 16px; padding: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto; }
         
-        /* НОВІ СТИЛІ ДЛЯ ДОДАТКОВИХ ФУНКЦІЙ */
-        .quick-expense-row { display: flex; gap: 6px; margin-bottom: 12px; }
-        .qe-btn { flex: 1; padding: 10px 4px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.1s; } .qe-btn:active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
-        .cal-day { padding: 10px 0; text-align: center; background: var(--bg-color); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: 0.1s;}
+        .quick-expense-row { display: flex; gap: 6px; margin-bottom: 10px; }
+        .qe-btn { flex: 1; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.1s; } .qe-btn:active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+        .cal-day { padding: 8px 0; text-align: center; background: var(--bg-color); border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: 0.1s;}
         .cal-day.active { background: var(--uklon-green); color: #fff; }
         .cal-day.off { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border-color: rgba(255, 59, 48, 0.3); }
-        .donate-card { background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(52, 199, 89, 0.05)); border: 1px dashed var(--accent-blue); margin-top: 20px; }
+        .donate-card { background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(52, 199, 89, 0.05)); border: 1px dashed var(--accent-blue); margin-top: 16px; }
     </style>
 </head>
 <body>
 
     <div class="app-header">
-        <div class="app-title">DriverHub PRO</div>
+        <div class="app-title">DriverHub</div>
         <div class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙</div>
     </div>
 
@@ -135,6 +134,7 @@
         <button class="tab-btn" onclick="switchTab('settings')"><span class="tab-icon">⚙️</span><span>Опції</span></button>
     </div>
 
+    <!-- ВКЛАДКА 1: КАЛЬКУЛЯТОР -->
     <div id="page-calc" class="page active">
         <div class="car-selector" id="car-list-calc"></div>
 
@@ -143,10 +143,10 @@
                 <span>🗺️ Смарт-Навігатор (Міжмісто)</span><span id="nav-chevron">▼</span>
             </div>
             
-            <div id="navigator-container" style="display: none; padding-top: 12px; margin-top: 10px; border-top: 1px solid var(--border-color);">
+            <div id="navigator-container" style="display: none; padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--border-color);">
                 <div class="ac-wrapper">
                     <div class="map-input-group">
-                        <span style="margin-right: 8px; font-size: 16px;">🟢</span>
+                        <span style="margin-right: 6px; font-size: 14px;">🟢</span>
                         <input type="text" id="route-from" class="map-input" placeholder="Звідки (напр: Келецька)" onkeyup="handleAutocomplete(event, 'route-from')" autocomplete="off">
                         <button class="gps-btn" onclick="getGPSLocation()" title="Моя локація">📍</button>
                     </div>
@@ -155,7 +155,7 @@
                 
                 <div class="ac-wrapper" id="via-wrapper" style="display: none;">
                     <div class="map-input-group">
-                        <span style="margin-right: 8px; font-size: 16px;">🟡</span>
+                        <span style="margin-right: 6px; font-size: 14px;">🟡</span>
                         <input type="text" id="route-via" class="map-input" placeholder="Через (напр: Барське шосе)" onkeyup="handleAutocomplete(event, 'route-via')" autocomplete="off">
                     </div>
                     <div id="route-via-ac" class="ac-dropdown"></div>
@@ -163,17 +163,17 @@
 
                 <div class="ac-wrapper">
                     <div class="map-input-group">
-                        <span style="margin-right: 8px; font-size: 16px;">🔴</span>
+                        <span style="margin-right: 6px; font-size: 14px;">🔴</span>
                         <input type="text" id="route-to" class="map-input" placeholder="Куди (напр: Хрещатик)" onkeyup="handleAutocomplete(event, 'route-to')" autocomplete="off">
                     </div>
                     <div id="route-to-ac" class="ac-dropdown"></div>
                 </div>
                 
-                <div style="display:flex; gap:8px; margin-bottom: 8px;">
-                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0; padding:10px;" onclick="showViaInput()">+ Додати заїзд</button>
+                <div style="display:flex; gap:6px; margin-bottom: 6px;">
+                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0; padding:8px;" onclick="showViaInput()">+ Додати заїзд</button>
                 </div>
 
-                <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); padding: 12px; margin-top:4px;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
+                <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); padding: 10px; margin-top:4px;" onclick="calculateSmartRoute()">Прокласти маршрут</button>
                 <div class="nav-btn-group" id="nav-btn-group"><button class="nav-btn" style="background: #33CCFF; color: #fff;" onclick="openWaze()">🚀 Waze</button><button class="nav-btn" style="background: #34A853; color: #fff;" onclick="openGmaps()">🗺️ G-Maps</button></div>
             </div>
         </div>
@@ -182,7 +182,7 @@
             <div class="card-title" style="cursor: pointer;" onclick="toggleRouteParams()">
                 <span>Параметри маршруту</span>
                 <div>
-                    <span style="color: var(--accent-danger); text-transform: none; font-weight: 700; margin-right: 12px;" onclick="event.stopPropagation(); resetCalc()">🔄 Скинути</span>
+                    <span style="color: var(--accent-danger); text-transform: none; font-weight: 700; margin-right: 10px;" onclick="event.stopPropagation(); resetCalc()">🔄 Скинути</span>
                     <span id="params-chevron">▲</span>
                 </div>
             </div>
@@ -261,6 +261,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 2: ЦІЛІ -->
     <div id="page-branding" class="page">
         <div class="card">
             <div class="card-title">Програма лояльності</div>
@@ -288,8 +289,10 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 3: КАСА -->
     <div id="page-cash" class="page">
-        <button class="save-btn" id="btn-import" style="background: var(--accent-blue); margin-bottom: 12px; margin-top: 0; padding: 12px;" onclick="processScreenshot()">📸 Мульти-Імпорт скріншотів</button>
+        <!-- КНОПКА ІМПОРТУ (РОЗУМНА) -->
+        <button class="save-btn" id="btn-import" style="background: var(--accent-blue); margin-bottom: 10px; margin-top: 0; padding: 12px;" onclick="processScreenshot()">📸 Імпорт чеків (Скріншоти)</button>
         <input type="file" id="screenshot-input" accept="image/*" multiple style="display:none" onchange="handleFile(event)">
 
         <div class="shift-timer-box">
@@ -300,13 +303,14 @@
             <button class="btn-shift start" id="btn-shift-toggle" onclick="toggleShiftTimer()">▶ Почати зміну</button>
         </div>
 
+        <!-- КНОПКИ ШВИДКИХ ВИТРАТ (РУЧНІ СУМИ) -->
         <div class="quick-expense-row">
-            <button class="qe-btn" onclick="addExpense('Пальне', 300)">⛽ Пальне</button>
-            <button class="qe-btn" onclick="addExpense('Мийка', 100)">🧽 Мийка</button>
-            <button class="qe-btn" onclick="addExpense('Кава/Їжа', 150)">🍔 Перекус</button>
+            <button class="qe-btn" onclick="addExpense('Пальне')">⛽ Пальне</button>
+            <button class="qe-btn" onclick="addExpense('Мийка')">🧽 Мийка</button>
+            <button class="qe-btn" onclick="addExpense('Перекус')">🍔 Перекус</button>
         </div>
 
-        <button class="save-btn save-btn-alt" style="margin-bottom: 12px; margin-top: 12px; padding: 12px;" onclick="shareReport()">📤 Поділитися звітом</button>
+        <button class="save-btn save-btn-alt" style="margin-bottom: 12px; margin-top: 6px; padding: 12px;" onclick="shareReport()">📤 Поділитися звітом</button>
         
         <div class="card">
             <div class="card-title">Підсумок зміни</div>
@@ -320,9 +324,9 @@
             <div class="result-row"><span style="color: var(--text-muted);">Пальне та ТО:</span><span id="cash-fuel" style="color: #ff9500;">-0 ₴</span></div>
             <div class="result-row" id="row-cash-extraExp"><span style="color: var(--text-muted);">Витрати:</span><span id="cash-extraExp" style="color: var(--accent-danger);">-0 ₴</span></div>
             <div class="result-row" id="row-cash-rent"><span style="color: var(--text-muted);">Оренда:</span><span id="cash-rent" style="color: var(--accent-danger);">-0 ₴</span></div>
-            <div class="result-total" style="color: var(--uklon-green); font-size: 22px;"><span>Чистий прибуток:</span><span id="cash-net">0 ₴</span></div>
+            <div class="result-total" style="color: var(--uklon-green); font-size: 20px;"><span>Чистий прибуток:</span><span id="cash-net">0 ₴</span></div>
             
-            <div style="border-top: 1px solid var(--border-color); margin: 12px 0; padding-top: 12px;">
+            <div style="border-top: 1px solid var(--border-color); margin: 10px 0; padding-top: 10px;">
                 <div class="result-row" style="font-size: 13px;"><span>💵 Всього Готівки:</span><strong id="cash-money-cash">0 ₴</strong></div>
                 <div class="result-row" style="font-size: 13px;"><span>💳 Всього на Картку:</span><strong id="cash-money-card">0 ₴</strong></div>
                 <div class="result-row" style="font-size: 14px; margin-top: 8px;"><span>🏦 Баланс (Кому винен):</span><strong id="cash-balance" style="color: var(--accent-blue);">0 ₴</strong></div>
@@ -338,6 +342,7 @@
         <button class="reset-btn" onclick="resetDailyCashClick()">Почати нову зміну (Скинути касу)</button>
     </div>
 
+    <!-- ВКЛАДКА 4: АНАЛІЗ -->
     <div id="page-strategy" class="page">
         <div class="car-selector" id="car-list-strat"></div>
         <div class="card">
@@ -361,7 +366,7 @@
         <div class="card" id="strat-result-container">
             <div class="card-title">Що для цього потрібно:</div>
             <div id="strat-result-data">
-                <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 22px; color: var(--accent-blue);">0</strong></div>
+                <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 20px; color: var(--accent-blue);">0</strong></div>
                 <div class="result-row"><span>Час на лінії:</span><strong id="strat-hours-total" style="font-size: 16px; color: var(--text-color);">0 год</strong></div>
                 
                 <div style="border-top: 1px solid var(--border-color); margin: 10px 0;"></div>
@@ -376,6 +381,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 5: ОПЦІЇ -->
     <div id="page-settings" class="page">
         <div class="card">
             <h3 style="margin-bottom:10px; font-size:12px; text-transform: uppercase; color: var(--text-muted);">Витрати</h3>
@@ -396,27 +402,29 @@
         <h3 style="margin: 20px 0 10px 4px; font-size:12px; text-transform: uppercase; color: var(--text-muted); font-weight: 800;">Налаштування Тарифів</h3>
         <div id="settings-container"></div>
         
-        <button class="save-btn" style="padding: 14px;" onclick="saveTariffsClick()">Зберегти налаштування</button>
-        <button class="reset-btn" style="padding: 14px;" onclick="resetToFactoryTariffs()">Відновити стандартні</button>
+        <button class="save-btn" style="padding: 12px;" onclick="saveTariffsClick()">Зберегти налаштування</button>
+        <button class="reset-btn" style="padding: 12px;" onclick="resetToFactoryTariffs()">Відновити стандартні</button>
         
-        <div class="card donate-card" style="margin-top: 20px;">
-            <div style="text-align: center; margin-bottom: 12px;">
-                <span style="font-size: 24px;">☕</span>
-                <div style="font-size: 15px; font-weight: 800; color: var(--text-color); margin-top: 4px;">Підтримати розробника</div>
-                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">Якщо додаток допомагає заробляти, можете пригостити автора кавою!</div>
+        <!-- БЛОК ДОНАТУ -->
+        <div class="card donate-card">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <span style="font-size: 20px;">☕</span>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-color); margin-top: 4px;">Підтримати розробника</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Якщо додаток допомагає, пригостіть автора кавою!</div>
             </div>
-            <div style="background: var(--bg-color); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);">
+            <div style="background: var(--bg-color); border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);">
                 <div>
-                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">КАРТКА (MONOBANK)</div>
-                    <div style="font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--text-color);">4441 1144 2469 9245</div>
+                    <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px;">КАРТКА (MONOBANK)</div>
+                    <div style="font-size: 15px; font-weight: 800; letter-spacing: 1px; color: var(--text-color);">4441 1144 2469 9245</div>
                 </div>
-                <button onclick="copyDonateCard()" style="background: var(--accent-blue); color: #fff; border: none; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.15s;">Копіювати</button>
+                <button onclick="copyDonateCard()" style="background: var(--accent-blue); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.15s;">Копіювати</button>
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 16px;"><button class="toggle-btn" onclick="openManual()" style="border:none;">📖 Інструкція користувача</button></div>
+        <div style="text-align: center; margin-top: 12px;"><button class="toggle-btn" onclick="openManual()" style="border:none;">📖 Інструкція користувача</button></div>
     </div>
 
+    <!-- Модалка Інструкції -->
     <div class="modal-overlay" id="manual-modal">
         <div class="modal-content">
             <div class="card-title" style="font-size: 14px;">Посібник Водія</div>
@@ -430,9 +438,10 @@
         </div>
     </div>
 
+    <!-- Модалка Календаря -->
     <div class="modal-overlay" id="calendar-modal">
         <div class="modal-content">
-            <div class="card-title" style="font-size: 14px; color: var(--text-color); margin-bottom: 4px; display: flex; justify-content: space-between;">Робочі дні <span onclick="closeCalendar()" style="cursor: pointer; color: var(--accent-danger);">✖</span></div>
+            <div class="card-title" style="font-size: 14px; color: var(--text-color); margin-bottom: 4px; display: flex; justify-content: space-between;">Робочі дні <span onclick="closeCalendar()" style="cursor: pointer; color: var(--accent-danger); font-size: 16px;">✖</span></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Натисніть на день, щоб зробити його вихідним.</div>
             <div class="calendar-grid" id="cal-grid"></div>
             <button class="save-btn" style="margin-top:16px;" onclick="closeCalendar()">Застосувати</button>
@@ -461,7 +470,7 @@
 
         const fmt = (num) => Math.ceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-        // Автовиділення тексту при кліку на інпути
+        // Автовиділення тексту при кліку
         document.addEventListener('focusin', function(e) { 
             if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { 
                 e.target.select();
@@ -566,7 +575,7 @@
             dailyCashData.shiftHours = totalMins / 60;
         }
 
-        // МУЛЬТИ-ІМПОРТ ФОТО (OCR)
+        // РОЗУМНИЙ ІМПОРТ ФОТО (OCR)
         function processScreenshot() {
             haptic();
             document.getElementById('screenshot-input').click();
@@ -598,54 +607,89 @@
                         const deliveryKm = kmMatches.length > 1 ? parseFloat(kmMatches[1][1].replace(',', '.')) : 0;
                         const targetPrice = parseInt(priceMatch[1]);
                         
-                        const commCost = targetPrice * (expenses.comm / 100);
-                        const totalKm = cityKm + deliveryKm;
-                        const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-                        const amortCost = totalKm * expenses.amort;
-                        const netIncome = targetPrice - commCost - fuelCost - amortCost;
-                        
-                        dailyCashData.orders += 1;
-                        dailyCashData.gross += targetPrice;
-                        dailyCashData.comm += commCost;
-                        dailyCashData.fuel += fuelCost;
-                        dailyCashData.extraExp += amortCost; // Записуємо амортизацію у витрати каси
-                        dailyCashData.net += netIncome;
-                        dailyCashData.totalKm += totalKm;
-                        dailyCashData.totalCash += targetPrice;
-                        
-                        const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                        dailyCashData.history.unshift({ id: Date.now() + i, time: timeStr, gross: targetPrice, net: netIncome, km: totalKm, pay: 'cash' });
-                        
-                        goals.dailyDone += 1;
-                        brandingData.done += 1;
-                        successCount++;
+                        if (files.length === 1) {
+                            // Якщо файл один - підставляємо в калькулятор
+                            document.getElementById('inp-dist').value = cityKm;
+                            document.getElementById('slider-dist').value = cityKm;
+                            document.getElementById('inp-delivery').value = deliveryKm;
+                            document.getElementById('slider-delivery').value = deliveryKm;
+                            document.getElementById('inp-clientBonus').value = 0; 
+                            document.getElementById('slider-clientBonus').value = 0;
+                            
+                            recalc();
+                            
+                            // Коригуємо доплату якщо ціна з фото вища за базову
+                            const calculatedPrice = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴',''))) || 0;
+                            if (targetPrice > calculatedPrice) {
+                                document.getElementById('inp-clientBonus').value = targetPrice - calculatedPrice;
+                                document.getElementById('slider-clientBonus').value = targetPrice - calculatedPrice;
+                                recalc();
+                            }
+                            
+                            successCount++;
+                            switchTab('calc');
+                            if(tg.showAlert) tg.showAlert("✅ Дані підтягнуто! Перевірте цифри та натисніть 'Зафіксувати'.");
+                            else alert("✅ Дані підтягнуто! Перевірте цифри та натисніть 'Зафіксувати'.");
+                        } else {
+                            // Якщо файлів багато - відразу кидаємо в касу
+                            const commCost = targetPrice * (expenses.comm / 100);
+                            const totalKm = cityKm + deliveryKm;
+                            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
+                            const amortCost = totalKm * expenses.amort;
+                            const netIncome = targetPrice - commCost - fuelCost - amortCost;
+                            
+                            dailyCashData.orders += 1;
+                            dailyCashData.gross += targetPrice;
+                            dailyCashData.comm += commCost;
+                            dailyCashData.fuel += fuelCost;
+                            dailyCashData.extraExp += amortCost;
+                            dailyCashData.net += netIncome;
+                            dailyCashData.totalKm += totalKm;
+                            dailyCashData.totalCash += targetPrice;
+                            
+                            const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
+                            dailyCashData.history.unshift({ id: Date.now() + i, time: timeStr, gross: targetPrice, net: netIncome, km: totalKm, pay: 'cash' });
+                            
+                            goals.dailyDone += 1;
+                            brandingData.done += 1;
+                            successCount++;
+                        }
                     }
                 } catch(err) { console.error("Помилка", err); }
             }
 
-            localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
-            document.getElementById('inp-daily-done').value = goals.dailyDone;
-            document.getElementById('brand-done').value = brandingData.done;
-            localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
-            localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
-            
-            updateCashPageUI(); calcBranding();
+            if (files.length > 1) {
+                localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
+                document.getElementById('inp-daily-done').value = goals.dailyDone;
+                document.getElementById('brand-done').value = brandingData.done;
+                localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
+                localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
+                
+                updateCashPageUI(); calcBranding();
+                if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано чеків: ${successCount} з ${files.length}`);
+                else alert(`✅ Успішно імпортовано чеків: ${successCount} з ${files.length}`);
+            }
+
             btn.innerText = originalText;
             if(tg.MainButton) tg.MainButton.hide();
-            if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано чеків: ${successCount} з ${files.length}`);
-            else alert(`✅ Успішно імпортовано чеків: ${successCount} з ${files.length}`);
+            document.getElementById('screenshot-input').value = ""; // Очищаємо інпут
         }
 
-        // ШВИДКІ ВИТРАТИ В КАСІ
-        function addExpense(name, amount) {
+        // ШВИДКІ ВИТРАТИ З РУЧНИМ ВВОДОМ
+        function addExpense(name) {
             haptic();
-            if(confirm(`Додати витрату: ${name} на ${amount} ₴?`)) {
-                dailyCashData.extraExp += amount;
-                dailyCashData.net -= amount;
-                const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: name });
-                localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
-                updateCashPageUI();
+            let amountStr = prompt(`Введіть суму витрат на ${name} (₴):`, "");
+            if (amountStr !== null && amountStr.trim() !== "") {
+                let amount = parseInt(amountStr);
+                if (!isNaN(amount) && amount > 0) {
+                    dailyCashData.extraExp += amount;
+                    dailyCashData.net -= amount;
+                    const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
+                    dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: name });
+                    localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
+                    updateCashPageUI();
+                    if(tg.showAlert) tg.showAlert(`💸 Витрату додано!`);
+                }
             }
         }
 
@@ -837,7 +881,7 @@
             
             const commCost = finalTotal * (expenses.comm / 100); 
             const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-            const amortCost = totalKm * (expenses.amort || 0); // Амортизація
+            const amortCost = totalKm * (expenses.amort || 0);
             let rentCost = 0; if (expenses.workMode === 'rent') rentCost = expenses.rentVal; else if (expenses.workMode === 'split') rentCost = (finalTotal - commCost) * (expenses.splitPct / 100);
             const netIncome = finalTotal - commCost - fuelCost - amortCost - extraExp - rentCost; 
             const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
@@ -847,7 +891,7 @@
             resNetEl.style.color = netIncome <= 0 ? "var(--accent-danger)" : "var(--uklon-green)";
 
             document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${fmt(commCost)} ₴`; document.getElementById('res-fuel').innerText = `-${fmt(fuelCost)} ₴`;
-            document.getElementById('res-amort').innerText = `-${fmt(amortCost)} ₴`; // Вивід амортизації
+            document.getElementById('res-amort').innerText = `-${fmt(amortCost)} ₴`;
             if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${fmt(extraExp)} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
             if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${fmt(rentCost)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
             const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
@@ -912,7 +956,6 @@
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode });
             localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
             
-            // СИНХРОНІЗАЦІЯ ЦІЛЕЙ (ДЕНЬ + МІСЯЦЬ)
             goals.dailyDone += 1; brandingData.done += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
             localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
             
@@ -927,7 +970,6 @@
                     if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
                     dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
                     
-                    // ВІДНІМАННЯ ЦІЛЕЙ
                     if(t.pay !== 'expense') {
                         goals.dailyDone = Math.max(0, goals.dailyDone - 1); brandingData.done = Math.max(0, brandingData.done - 1);
                         document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
