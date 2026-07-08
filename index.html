@@ -140,6 +140,7 @@
         <button class="tab-btn" onclick="switchTab('settings')"><span class="tab-icon">⚙️</span><span>Опції</span></button>
     </div>
 
+    <!-- ВКЛАДКА 1: КАЛЬКУЛЯТОР -->
     <div id="page-calc" class="page active">
         <div class="car-selector" id="car-list-calc"></div>
 
@@ -266,6 +267,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 2: ЦІЛІ -->
     <div id="page-branding" class="page">
         <div class="card">
             <div class="card-title">Програма лояльності</div>
@@ -293,6 +295,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 3: КАСА -->
     <div id="page-cash" class="page">
         <button class="save-btn" id="btn-import" style="background: var(--accent-blue); margin-bottom: 10px; margin-top: 0; padding: 12px;" onclick="processScreenshot()">📸 Імпорт чеків (Скріншоти)</button>
         <input type="file" id="screenshot-input" accept="image/*" multiple style="display:none" onchange="handleFile(event)">
@@ -343,6 +346,7 @@
         <button class="reset-btn" onclick="resetDailyCashClick()">Почати нову зміну (Скинути касу)</button>
     </div>
 
+    <!-- ВКЛАДКА 4: АНАЛІЗ -->
     <div id="page-strategy" class="page">
         <div class="car-selector" id="car-list-strat"></div>
         <div class="card">
@@ -381,6 +385,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 5: ОПЦІЇ -->
     <div id="page-settings" class="page">
         <div class="card">
             <h3 style="margin-bottom:10px; font-size:12px; text-transform: uppercase; color: var(--text-muted);">Витрати</h3>
@@ -422,6 +427,7 @@
         <div style="text-align: center; margin-top: 12px;"><button class="toggle-btn" onclick="openManual()" style="border:none;">📖 Інструкція користувача</button></div>
     </div>
 
+    <!-- Модалка Інструкції -->
     <div class="modal-overlay" id="manual-modal">
         <div class="modal-content">
             <div class="card-title" style="font-size: 14px;">Посібник Водія</div>
@@ -435,6 +441,7 @@
         </div>
     </div>
 
+    <!-- Модалка Календаря -->
     <div class="modal-overlay" id="calendar-modal">
         <div class="modal-content">
             <div class="card-title" style="font-size: 14px; color: var(--text-color); margin-bottom: 4px; display: flex; justify-content: space-between;">Робочі дні <span onclick="closeCalendar()" style="cursor: pointer; color: var(--accent-danger); font-size: 16px;">✖</span></div>
@@ -466,7 +473,6 @@
 
         const fmt = (num) => Math.ceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-        // Автовиділення тексту при кліку
         document.addEventListener('focusin', function(e) { 
             if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { 
                 e.target.select();
@@ -549,7 +555,6 @@
         }
 
         function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData)); }
-
         function toggleTheme() { haptic(); const body = document.documentElement; const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', newTheme); localStorage.setItem('taxi_theme', newTheme); }
 
         function toggleShiftTimer() {
@@ -571,7 +576,7 @@
             dailyCashData.shiftHours = totalMins / 60;
         }
 
-        // РОЗУМНИЙ ІМПОРТ ФОТО (OCR) - Оновлений алгоритм
+        // РОЗУМНИЙ ІМПОРТ (АЛГОРИТМ "МАГНІТ")
         function processScreenshot() {
             haptic();
             document.getElementById('screenshot-input').click();
@@ -584,7 +589,6 @@
             const btn = document.getElementById('btn-import');
             const originalText = btn.innerText;
             btn.innerText = `⏳ Аналізую ${files.length} фото...`;
-            
             if(tg.MainButton) { tg.MainButton.setText(`Аналізую чеки...`); tg.MainButton.show(); }
 
             let successCount = 0;
@@ -594,113 +598,123 @@
                     btn.innerText = `⏳ Обробка ${i+1}/${files.length}...`;
                     const { data: { text } } = await Tesseract.recognize(files[i], 'ukr');
                     
-                    // 1. Агресивна чистка сміття (Tesseract часто плутає іконки з буквами)
                     let textClean = text.replace(/\n/g, ' ')
                                         .replace(/o|о|q|@/gi, '0')
                                         .replace(/,/g, '.')
-                                        .replace(/\s\.\s/g, '.'); // Фікс зайвих пробілів навколо крапок
+                                        .replace(/\s\.\s/g, '.');
                     
-                    // Витягуємо всі ціни
-                    const prices = [...textClean.matchAll(/(\d{1,2}\s?\d{3}|\d{1,4})\s*(?:₴|г|z|e|є|s|2\b|€|\$)/gi)]
-                                    .map(m => parseInt(m[1].replace(/\s/g, '')));
-                    
-                    // Витягуємо всі кілометражі
-                    let kms = [...textClean.matchAll(/(\d+(?:\.\d+)?)\s*(?:км|km|kм|кн|xm|хм)/gi)]
-                                    .map(m => parseFloat(m[1]));
-                    
-                    // Евристика: якщо кілометраж 169, а не 1.69 (загублена крапка)
-                    kms = kms.map(k => {
-                        if (k >= 100 && k <= 999 && !textClean.includes(k + '.0')) {
-                            return parseFloat((k / 100).toFixed(2));
-                        }
-                        return k;
-                    });
-                    
-                    // Шукаємо коефіцієнт (блискавка ⚡ або +)
-                    let coefVal = 1.0;
-                    const coefMatch = textClean.match(/(?:⚡|📈|м|\+)\s*(\d+\.\d+|\d+)/i);
-                    if (coefMatch) {
-                        const parsedCoef = parseFloat(coefMatch[1]);
-                        // Якщо знайшли щось типу +5, це може бути чайові або бали, тому беремо тільки дробові як коеф
-                        if (parsedCoef > 1.0 && parsedCoef <= 4.0) coefVal = parsedCoef;
-                    }
-                    
-                    if (prices.length === 0 || kms.length === 0) continue;
-
-                    // Визначаємо тип скріншоту: Історія (багато чеків) чи Поточне замовлення
                     const isHistory = /архівне|історія|активні/i.test(textClean);
 
                     if (isHistory) {
+                        // Якщо це історія (кілька чеків підряд)
+                        const prices = [...textClean.matchAll(/(\d{1,3}(?:\s\d{3})*|\d{1,4})\s*(?:₴|г|z|e|є|s|2\b|€|\$)/gi)]
+                                        .map(m => parseInt(m[1].replace(/\s/g, '')));
+                        const kms = [...textClean.matchAll(/(\d+(?:\.\d+)?)\s*(?:км|km|kм|кн|xm|хм)/gi)]
+                                        .map(m => parseFloat(m[1]));
+
                         const limit = Math.min(prices.length, kms.length);
                         for (let p = 0; p < limit; p++) {
                             const targetPrice = prices[p];
-                            const cityKm = kms[p];
+                            let cityKm = kms[p];
+                            if (cityKm >= 100 && !textClean.includes(cityKm + '.0')) cityKm = parseFloat((cityKm / 100).toFixed(2));
                             
                             const commCost = targetPrice * (expenses.comm / 100);
                             const fuelCost = (cityKm / 100) * expenses.cons * expenses.price;
                             const amortCost = cityKm * (expenses.amort || 1.5);
                             const netIncome = targetPrice - commCost - fuelCost - amortCost;
                             
-                            dailyCashData.orders += 1;
-                            dailyCashData.gross += targetPrice;
-                            dailyCashData.comm += commCost;
-                            dailyCashData.fuel += fuelCost;
-                            dailyCashData.extraExp += amortCost;
-                            dailyCashData.net += netIncome;
-                            dailyCashData.totalKm += cityKm;
-                            dailyCashData.totalCash += targetPrice; // В історії зазвичай готівка
+                            dailyCashData.orders += 1; dailyCashData.gross += targetPrice; dailyCashData.comm += commCost; dailyCashData.fuel += fuelCost; dailyCashData.extraExp += amortCost; dailyCashData.net += netIncome; dailyCashData.totalKm += cityKm; dailyCashData.totalCash += targetPrice;
                             
                             const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
                             dailyCashData.history.unshift({ id: Date.now() + i + p, time: timeStr, gross: targetPrice, net: netIncome, km: cityKm, pay: 'cash' });
-                            
                             goals.dailyDone += 1; brandingData.done += 1; successCount++;
                         }
                     } else {
-                        // Режим ОДНОГО ЗАМОВЛЕННЯ
-                        const targetPrice = prices[0]; 
-                        const cityKm = kms[0]; 
-                        const deliveryKm = kms.length > 1 ? kms[1] : 0; 
-                        
-                        // Визначаємо тип оплати
-                        const isCash = textClean.toLowerCase().includes('готівк');
-                        setPaymentMode(isCash ? 'cash' : 'card');
+                        // ОДНОРАЗОВЕ ЗАМОВЛЕННЯ - Алгоритм "Магніт"
+                        const priceRegex = /(\d{1,3}(?:\s\d{3})*|\d{1,4})\s*(?:₴|г|z|e|є|s|2\b|€|\$)/gi;
+                        let priceMatch;
+                        let targetPrice = 0;
+                        let priceIndex = -1;
 
-                        if (files.length === 1) {
-                            document.getElementById('inp-dist').value = cityKm; document.getElementById('slider-dist').value = cityKm;
-                            document.getElementById('inp-delivery').value = deliveryKm; document.getElementById('slider-delivery').value = deliveryKm;
-                            document.getElementById('inp-clientBonus').value = 0; document.getElementById('slider-clientBonus').value = 0;
-                            
-                            if (coefVal > 1.0) {
-                                document.getElementById('inp-coef').value = coefVal.toFixed(1);
-                                document.getElementById('slider-coef').value = coefVal.toFixed(1);
+                        while ((priceMatch = priceRegex.exec(textClean)) !== null) {
+                            const p = parseInt(priceMatch[1].replace(/\s/g, ''));
+                            if (p > targetPrice) {
+                                targetPrice = p;
+                                priceIndex = priceMatch.index;
                             }
+                        }
+
+                        const kmRegex = /(\d+(?:\.\d+)?)\s*(?:км|km|kм|кн|xm|хм)/gi;
+                        let kmMatches = [];
+                        let kMatch;
+
+                        while ((kMatch = kmRegex.exec(textClean)) !== null) {
+                            const afterStr = textClean.substring(kMatch.index, kMatch.index + 12);
+                            // Ігноруємо "₴/км"
+                            if (!afterStr.includes('/')) {
+                                let val = parseFloat(kMatch[1]);
+                                // Евристика для "загубленої крапки" (наприклад 169 замість 1.69)
+                                if (val >= 100 && val <= 999 && !textClean.includes(val + '.0')) {
+                                    val = parseFloat((val / 100).toFixed(2));
+                                }
+                                kmMatches.push({ val: val, index: kMatch.index });
+                            }
+                        }
+
+                        if (targetPrice > 0 && kmMatches.length > 0) {
+                            // Сортуємо відстані за тим, яка найближча до ціни в тексті
+                            kmMatches.sort((a, b) => Math.abs(a.index - priceIndex) - Math.abs(b.index - priceIndex));
                             
-                            recalc();
+                            const cityKm = kmMatches[0].val; 
+                            let deliveryKm = kmMatches.length > 1 ? kmMatches[1].val : 0;
                             
-                            const calculatedPrice = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴',''))) || 0;
-                            if (targetPrice > calculatedPrice) {
-                                const diff = targetPrice - calculatedPrice;
-                                document.getElementById('inp-clientBonus').value = diff; document.getElementById('slider-clientBonus').value = diff;
+                            // Шукаємо коефіцієнт (блискавка ⚡ або +)
+                            let coefVal = 1.0;
+                            const coefMatch = textClean.match(/(?:⚡|📈|м|\+)\s*(\d+\.\d+|\d+)/i);
+                            if (coefMatch) {
+                                const parsedCoef = parseFloat(coefMatch[1]);
+                                if (parsedCoef > 1.0 && parsedCoef <= 4.0) coefVal = parsedCoef;
+                            }
+
+                            const isCash = textClean.toLowerCase().includes('готівк');
+                            setPaymentMode(isCash ? 'cash' : 'card');
+
+                            if (files.length === 1) {
+                                document.getElementById('inp-dist').value = cityKm; document.getElementById('slider-dist').value = cityKm;
+                                document.getElementById('inp-delivery').value = deliveryKm; document.getElementById('slider-delivery').value = deliveryKm;
+                                document.getElementById('inp-clientBonus').value = 0; document.getElementById('slider-clientBonus').value = 0;
+                                
+                                if (coefVal > 1.0) {
+                                    document.getElementById('inp-coef').value = coefVal.toFixed(1);
+                                    document.getElementById('slider-coef').value = coefVal.toFixed(1);
+                                }
+                                
                                 recalc();
+                                
+                                const calculatedPrice = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴',''))) || 0;
+                                if (targetPrice > calculatedPrice) {
+                                    const diff = targetPrice - calculatedPrice;
+                                    document.getElementById('inp-clientBonus').value = diff; document.getElementById('slider-clientBonus').value = diff;
+                                    recalc();
+                                }
+                                
+                                successCount++; switchTab('calc');
+                                if(tg.showAlert) tg.showAlert("✅ Розпізнано! (Маршрут + Подача). Перевірте та зафіксуйте.");
+                            } else {
+                                const commCost = targetPrice * (expenses.comm / 100);
+                                const totalKm = cityKm + deliveryKm;
+                                const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
+                                const amortCost = totalKm * (expenses.amort || 1.5);
+                                const netIncome = targetPrice - commCost - fuelCost - amortCost;
+                                
+                                dailyCashData.orders += 1; dailyCashData.gross += targetPrice; dailyCashData.comm += commCost; dailyCashData.fuel += fuelCost; dailyCashData.extraExp += amortCost; dailyCashData.net += netIncome; dailyCashData.totalKm += totalKm;
+                                if (isCash) dailyCashData.totalCash += targetPrice; else dailyCashData.totalCard += targetPrice;
+                                
+                                const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
+                                dailyCashData.history.unshift({ id: Date.now() + i, time: timeStr, gross: targetPrice, net: netIncome, km: totalKm, pay: isCash ? 'cash' : 'card' });
+                                
+                                goals.dailyDone += 1; brandingData.done += 1; successCount++;
                             }
-                            
-                            successCount++; switchTab('calc');
-                            if(tg.showAlert) tg.showAlert("✅ Розпізнано! (Маршрут + Подача). Перевірте та зафіксуйте.");
-                        } else {
-                            // Якщо завантажили кілька "одиночних" чеків разом
-                            const commCost = targetPrice * (expenses.comm / 100);
-                            const totalKm = cityKm + deliveryKm;
-                            const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-                            const amortCost = totalKm * (expenses.amort || 1.5);
-                            const netIncome = targetPrice - commCost - fuelCost - amortCost;
-                            
-                            dailyCashData.orders += 1; dailyCashData.gross += targetPrice; dailyCashData.comm += commCost; dailyCashData.fuel += fuelCost; dailyCashData.extraExp += amortCost; dailyCashData.net += netIncome; dailyCashData.totalKm += totalKm;
-                            if (isCash) dailyCashData.totalCash += targetPrice; else dailyCashData.totalCard += targetPrice;
-                            
-                            const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                            dailyCashData.history.unshift({ id: Date.now() + i, time: timeStr, gross: targetPrice, net: netIncome, km: totalKm, pay: isCash ? 'cash' : 'card' });
-                            
-                            goals.dailyDone += 1; brandingData.done += 1; successCount++;
                         }
                     }
                 } catch(err) { console.error("Помилка сканування:", err); }
@@ -708,11 +722,8 @@
 
             if (files.length > 1 || successCount > 1) {
                 localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
-                document.getElementById('inp-daily-done').value = goals.dailyDone;
-                document.getElementById('brand-done').value = brandingData.done;
-                localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
-                localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
-                
+                document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
+                localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
                 updateCashPageUI(); calcBranding(); switchTab('cash');
                 if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано: ${successCount}`);
             } else if (successCount === 0) {
@@ -788,7 +799,6 @@
             localStorage.setItem('taxi_offdays_v22', JSON.stringify(offDays));
         }
 
-        // КОПІЮВАННЯ КАРТКИ ДОНАТУ
         function copyDonateCard() {
             haptic(); const cardNumber = "4441114424699245";
             if (navigator.clipboard) { navigator.clipboard.writeText(cardNumber).then(() => { if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано! Дякую за підтримку!'); }); } 
@@ -800,15 +810,9 @@
             const details = document.getElementById('summary-details'); 
             const chevron = document.getElementById('summary-chevron'); 
             if (details.style.display === 'none') { 
-                details.style.display = 'block'; 
-                chevron.innerText = 'Приховати';
-                chevron.style.background = 'transparent';
-                chevron.style.color = 'var(--text-muted)';
+                details.style.display = 'block'; chevron.innerText = 'Приховати'; chevron.style.background = 'transparent'; chevron.style.color = 'var(--text-muted)';
             } else { 
-                details.style.display = 'none'; 
-                chevron.innerText = 'Деталі'; 
-                chevron.style.background = 'rgba(52, 199, 89, 0.15)';
-                chevron.style.color = 'var(--accent-success)';
+                details.style.display = 'none'; chevron.innerText = 'Деталі'; chevron.style.background = 'rgba(52, 199, 89, 0.15)'; chevron.style.color = 'var(--accent-success)';
             } 
         }
         
@@ -854,15 +858,9 @@
                         data.forEach(item => {
                             const div = document.createElement('div'); div.className = 'ac-item';
                             div.innerText = item.display_name.split(',').slice(0,3).join(',');
-                            div.onmousedown = () => {
-                                document.getElementById(inputId).value = div.innerText; box.style.display = 'none'; 
-                                if(inputId === 'route-from') { routeCoords.lat1 = item.lat; routeCoords.lon1 = item.lon; }
-                                if(inputId === 'route-to') { routeCoords.lat2 = item.lat; routeCoords.lon2 = item.lon; }
-                                if(inputId === 'route-via') { routeCoords.vLat = item.lat; routeCoords.vLon = item.lon; }
-                            };
+                            div.onmousedown = () => { document.getElementById(inputId).value = div.innerText; box.style.display = 'none'; if(inputId === 'route-from') { routeCoords.lat1 = item.lat; routeCoords.lon1 = item.lon; } if(inputId === 'route-to') { routeCoords.lat2 = item.lat; routeCoords.lon2 = item.lon; } if(inputId === 'route-via') { routeCoords.vLat = item.lat; routeCoords.vLon = item.lon; } };
                             box.appendChild(div);
-                        });
-                        box.style.display = 'block';
+                        }); box.style.display = 'block';
                     } else { box.style.display = 'none'; }
                 } catch(err) { box.style.display = 'none'; }
             }, 500);
@@ -896,10 +894,7 @@
                 if(routeData.routes && routeData.routes.length > 0) {
                     const totalKm = (routeData.routes[0].distance / 1000); let cityKm = Math.min(5.0, totalKm).toFixed(1); let outKm = Math.max(0, totalKm - 5.0).toFixed(1);
                     document.getElementById('inp-dist').value = cityKm; document.getElementById('slider-dist').value = cityKm; document.getElementById('inp-distOut').value = outKm; document.getElementById('slider-distOut').value = outKm;
-                    recalc(); 
-                    document.getElementById('nav-btn-group').style.display = 'flex';
-                    toggleRouteParams(true); 
-                    if(tg && tg.showAlert) tg.showAlert(`✅ Відстань: ${totalKm.toFixed(1)} км.`);
+                    recalc(); document.getElementById('nav-btn-group').style.display = 'flex'; toggleRouteParams(true); if(tg && tg.showAlert) tg.showAlert(`✅ Відстань: ${totalKm.toFixed(1)} км.`);
                 } else { throw new Error("Маршрут не знайдено."); }
             } catch (err) { alert(err.message || "Помилка розрахунку."); } finally { btn.innerText = "Прокласти маршрут"; btn.style.opacity = "1"; }
         }
@@ -945,64 +940,33 @@
             const netIncome = finalTotal - commCost - fuelCost - amortCost - extraExp - rentCost; 
             const effPrice = totalKm > 0 ? (netIncome / totalKm) : 0;
             
-            const resNetEl = document.getElementById('res-net');
-            resNetEl.innerText = `${fmt(netIncome)} ₴`; 
-            resNetEl.style.color = netIncome <= 0 ? "var(--accent-danger)" : "var(--uklon-green)";
+            const resNetEl = document.getElementById('res-net'); resNetEl.innerText = `${fmt(netIncome)} ₴`; resNetEl.style.color = netIncome <= 0 ? "var(--accent-danger)" : "var(--uklon-green)";
 
-            document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${fmt(commCost)} ₴`; document.getElementById('res-fuel').innerText = `-${fmt(fuelCost)} ₴`;
-            document.getElementById('res-amort').innerText = `-${fmt(amortCost)} ₴`;
+            document.getElementById('lbl-comm').innerText = expenses.comm; document.getElementById('lbl-fuel-dist').innerText = totalKm.toFixed(1); document.getElementById('res-comm').innerText = `-${fmt(commCost)} ₴`; document.getElementById('res-fuel').innerText = `-${fmt(fuelCost)} ₴`; document.getElementById('res-amort').innerText = `-${fmt(amortCost)} ₴`;
             if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${fmt(extraExp)} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
             if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${fmt(rentCost)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
             const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
         }
 
         function calcStrategy() {
-            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; 
-            const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5;
-            const avgMin = parseFloat(document.getElementById('strat-min').value) || 25;
-            
+            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5; const avgMin = parseFloat(document.getElementById('strat-min').value) || 25;
             clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_strat_params_v22', JSON.stringify({target: targetNet, km: avgKm, min: avgMin})); }, 500);
             
-            const t = tariffs[currentClass]; 
-            let extraKm = Math.max(0, avgKm - t.minKm); 
-            let tripGross = t.minPrice + (extraKm * t.perKmCity); 
-            let tripComm = tripGross * (expenses.comm / 100); 
-            let tripFuel = (avgKm / 100) * expenses.cons * expenses.price;
-            let tripAmort = avgKm * (expenses.amort || 0);
-            
-            let dailyRent = (expenses.workMode === 'rent') ? expenses.rentVal : 0;
-            let tripNetBeforeRent = tripGross - tripComm - tripFuel - tripAmort;
-            if (expenses.workMode === 'split') {
-                let parkFee = (tripGross - tripComm) * (expenses.splitPct / 100);
-                tripNetBeforeRent -= parkFee;
-            }
+            const t = tariffs[currentClass]; let extraKm = Math.max(0, avgKm - t.minKm); let tripGross = t.minPrice + (extraKm * t.perKmCity); let tripComm = tripGross * (expenses.comm / 100); let tripFuel = (avgKm / 100) * expenses.cons * expenses.price; let tripAmort = avgKm * (expenses.amort || 0);
+            let dailyRent = (expenses.workMode === 'rent') ? expenses.rentVal : 0; let tripNetBeforeRent = tripGross - tripComm - tripFuel - tripAmort;
+            if (expenses.workMode === 'split') { let parkFee = (tripGross - tripComm) * (expenses.splitPct / 100); tripNetBeforeRent -= parkFee; }
 
             if (tripNetBeforeRent <= 0) { document.getElementById('strat-result-data').style.display = 'none'; document.getElementById('strat-warning').style.display = 'block'; return; }
             document.getElementById('strat-result-data').style.display = 'block'; document.getElementById('strat-warning').style.display = 'none';
             
-            let requiredNetFromTrips = targetNet + dailyRent;
-            let tripsNeeded = Math.ceil(requiredNetFromTrips / tripNetBeforeRent);
-            
-            let totalGross = tripsNeeded * tripGross; 
-            let totalComm = tripsNeeded * tripComm;
-            let totalPark = (expenses.workMode === 'split') ? (totalGross - totalComm) * (expenses.splitPct / 100) : dailyRent;
-            let totalKm = tripsNeeded * avgKm; 
-            let totalFuelVal = (totalKm / 100) * expenses.cons;
-            let totalFuelCost = tripsNeeded * tripFuel;
-            let totalAmort = tripsNeeded * tripAmort;
-            let totalHours = (tripsNeeded * avgMin) / 60;
+            let requiredNetFromTrips = targetNet + dailyRent; let tripsNeeded = Math.ceil(requiredNetFromTrips / tripNetBeforeRent);
+            let totalGross = tripsNeeded * tripGross; let totalComm = tripsNeeded * tripComm; let totalPark = (expenses.workMode === 'split') ? (totalGross - totalComm) * (expenses.splitPct / 100) : dailyRent; let totalKm = tripsNeeded * avgKm; let totalFuelCost = tripsNeeded * tripFuel; let totalAmort = tripsNeeded * tripAmort; let totalHours = (tripsNeeded * avgMin) / 60;
 
-            document.getElementById('strat-trips').innerText = tripsNeeded; 
-            document.getElementById('strat-hours-total').innerText = totalHours.toFixed(1) + ' год';
-            document.getElementById('strat-gross').innerText = fmt(totalGross) + ' ₴'; 
-            document.getElementById('strat-comm-total').innerText = '-' + fmt(totalComm) + ' ₴'; 
+            document.getElementById('strat-trips').innerText = tripsNeeded; document.getElementById('strat-hours-total').innerText = totalHours.toFixed(1) + ' год'; document.getElementById('strat-gross').innerText = fmt(totalGross) + ' ₴'; document.getElementById('strat-comm-total').innerText = '-' + fmt(totalComm) + ' ₴'; 
             
-            const parkRow = document.getElementById('row-strat-park');
-            if (totalPark > 0) { parkRow.style.display = 'flex'; document.getElementById('strat-park-total').innerText = '-' + fmt(totalPark) + ' ₴'; } 
-            else { parkRow.style.display = 'none'; }
+            const parkRow = document.getElementById('row-strat-park'); if (totalPark > 0) { parkRow.style.display = 'flex'; document.getElementById('strat-park-total').innerText = '-' + fmt(totalPark) + ' ₴'; } else { parkRow.style.display = 'none'; }
             
-            document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; 
-            document.getElementById('strat-fuel-total').innerText = '-' + fmt(totalFuelCost + totalAmort) + ' ₴';
+            document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; document.getElementById('strat-fuel-total').innerText = '-' + fmt(totalFuelCost + totalAmort) + ' ₴';
         }
 
         function addToDailyCash() {
@@ -1015,10 +979,8 @@
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode });
             localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
             
-            // СИНХРОНІЗАЦІЯ ЦІЛЕЙ (ДЕНЬ + МІСЯЦЬ)
             goals.dailyDone += 1; brandingData.done += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
             localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
-            
             updateCashPageUI(); calcBranding(); toggleRouteParams(true);
         }
 
@@ -1030,11 +992,7 @@
                     if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
                     dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
                     
-                    if(t.pay !== 'expense') {
-                        goals.dailyDone = Math.max(0, goals.dailyDone - 1); brandingData.done = Math.max(0, brandingData.done - 1);
-                        document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-                        localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
-                    }
+                    if(t.pay !== 'expense') { goals.dailyDone = Math.max(0, goals.dailyDone - 1); brandingData.done = Math.max(0, brandingData.done - 1); document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done; localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData)); }
                     updateCashPageUI(); calcBranding();
                 }
             }
@@ -1044,11 +1002,9 @@
             document.getElementById('cash-orders-count').innerText = dailyCashData.orders; document.getElementById('cash-gross').innerText = fmt(dailyCashData.gross) + ' ₴'; document.getElementById('cash-comm').innerText = '-' + fmt(dailyCashData.comm) + ' ₴'; document.getElementById('cash-fuel').innerText = '-' + fmt(dailyCashData.fuel) + ' ₴'; document.getElementById('cash-total-km').innerText = dailyCashData.totalKm.toFixed(1) + ' км';
             if (dailyCashData.extraExp > 0) { document.getElementById('row-cash-extraExp').style.display = 'flex'; document.getElementById('cash-extraExp').innerText = '-' + fmt(dailyCashData.extraExp) + ' ₴'; } else { document.getElementById('row-cash-extraExp').style.display = 'none'; }
             if (dailyCashData.rent > 0) { document.getElementById('row-cash-rent').style.display = 'flex'; document.getElementById('cash-rent').innerText = '-' + fmt(dailyCashData.rent) + ' ₴'; } else { document.getElementById('row-cash-rent').style.display = 'none'; }
-            document.getElementById('cash-net').innerText = fmt(dailyCashData.net) + ' ₴';
-            document.getElementById('cash-money-cash').innerText = fmt(dailyCashData.totalCash) + ' ₴'; document.getElementById('cash-money-card').innerText = fmt(dailyCashData.totalCard) + ' ₴';
+            document.getElementById('cash-net').innerText = fmt(dailyCashData.net) + ' ₴'; document.getElementById('cash-money-cash').innerText = fmt(dailyCashData.totalCash) + ' ₴'; document.getElementById('cash-money-card').innerText = fmt(dailyCashData.totalCard) + ' ₴';
             const balance = dailyCashData.totalCash - dailyCashData.comm - dailyCashData.rent; const balEl = document.getElementById('cash-balance'); balEl.innerText = fmt(balance) + ' ₴'; balEl.style.color = balance < 0 ? "var(--accent-danger)" : "var(--uklon-green)";
-            let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01;
-            document.getElementById('cash-hourly-rate').innerText = fmt(dailyCashData.net / hours) + ' ₴/год';
+            let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01; document.getElementById('cash-hourly-rate').innerText = fmt(dailyCashData.net / hours) + ' ₴/год';
             const list = document.getElementById('cash-history-list'); const empty = document.getElementById('cash-empty-state'); list.innerHTML = '';
             if(dailyCashData.history.length > 0) {
                 empty.style.display = 'none'; dailyCashData.history.forEach(trip => { 
