@@ -31,7 +31,6 @@
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* БЛОКУВАННЯ СТРИБКІВ ЕКРАНУ ПРИ ШВИДКОМУ КЛІКУ */
         button, .btn-counter, .car-card, .tab-btn, input[type=range], select { 
             -webkit-user-select: none; user-select: none; touch-action: manipulation; 
         }
@@ -266,6 +265,17 @@
             <div class="result-row" style="color:var(--uklon-green);" id="row-res-bonus"><span>Чайові/Доплата:</span><span id="res-bonus">0 ₴</span></div>
             <div class="result-total"><span>До сплати:</span><span id="res-total">0 ₴</span></div>
         </div>
+        
+        <div class="card" id="change-calculator-card" style="display:none; border: 1px dashed var(--uklon-green); background: rgba(0, 211, 105, 0.05);">
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <span style="font-size: 13px; font-weight: 600;">💵 Клієнт дає (купюра):</span>
+                <input type="number" class="admin-input" id="calc-given-cash" placeholder="500" oninput="calcChange()" style="width: 80px; border-color: var(--uklon-green);">
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items: center; margin-top: 8px;">
+                <span style="font-size: 13px; font-weight: 600;">Здача:</span>
+                <strong id="calc-change-res" style="font-size: 18px; color: var(--uklon-green);">0 ₴</strong>
+            </div>
+        </div>
 
         <div class="sticky-summary" id="sticky-panel">
             <div class="drag-handle"></div>
@@ -406,26 +416,41 @@
         </div>
 
         <div class="card" style="border: 1px solid var(--accent-blue); margin-top: 10px;">
-            <div class="card-title" style="color: var(--accent-blue);">🧮 Матриця Фільтрів (Шпаргалка)</div>
+            <div class="card-title" style="color: var(--accent-blue); display:flex; justify-content:space-between; cursor: pointer;">
+                <span>🧮 Матриця Фільтрів</span>
+                <span style="font-size: 11px; font-weight: 700; color: var(--accent-danger); text-transform: none;" onclick="resetMatrix()">🔄 Скинути</span>
+            </div>
             
-            <div class="matrix-controls">
-                <div>
+            <div class="matrix-controls" style="flex-wrap: wrap;">
+                <div style="flex: 1 1 30%;">
                     <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Мінімалка (₴)</div>
                     <input type="number" class="admin-input" id="mx-min-price" value="120" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
-                <div>
+                <div style="flex: 1 1 30%;">
                     <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Км у мін.</div>
                     <input type="number" step="0.1" class="admin-input" id="mx-min-km" value="1.5" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
-                <div>
+                <div style="flex: 1 1 30%;">
                     <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Подача (км)</div>
                     <input type="number" step="0.1" class="admin-input" id="mx-delivery" value="1.5" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
+                </div>
+                <div style="flex: 1 1 30%;">
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">⚡ Коеф. попиту</div>
+                    <input type="number" step="0.1" class="admin-input" id="mx-coef" value="1.0" style="width: 100%; color: var(--accent-success); border-color: var(--accent-success);" oninput="saveMatrixParams(); drawMatrix();">
+                </div>
+                <div style="flex: 1 1 30%;">
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Довжина (км)</div>
+                    <input type="number" class="admin-input" id="mx-max-dist" value="15" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
+                </div>
+                <div style="flex: 1 1 100%;">
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Тарифи ₴/км (через кому)</div>
+                    <input type="text" class="admin-input" id="mx-custom-rates" value="20, 25, 30, 35, 45" style="width: 100%; text-align: left;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
             </div>
             
             <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">*Зеленим підсвічуються тарифи з ефективністю вище <strong id="mx-target-label" style="color:var(--text-color);">40</strong> ₴/км.</div>
 
-            <div style="overflow-x: auto; padding-bottom: 10px; border-radius: 8px;">
+            <div style="overflow-x: auto; padding-bottom: 10px; border-radius: 8px; scrollbar-width: none;">
                 <table class="matrix-table" id="matrix-table-body">
                     </table>
             </div>
@@ -444,7 +469,7 @@
 
         <div class="card">
             <h3 style="margin-bottom:10px; font-size:12px; text-transform: uppercase; color: var(--text-muted);">Режим роботи</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Режим:</span><select class="admin-input" style="width:120px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();"><option value="solo">Власне авто</option><option value="rent">Оренда (фікс)</option><option value="split">П!)%</option></select></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Режим:</span><select class="admin-input" style="width:120px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();"><option value="solo">Власне авто</option><option value="rent">Оренда (фікс)</option><option value="split">Парк (%)</option></select></div>
             <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Сума плану (₴):</span><input type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()"></div>
             <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Відсоток парку:</span><input type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()"></div>
         </div>
@@ -533,7 +558,6 @@
 
         const fmt = (num) => Math.ceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-        // Автовиділення тексту при кліку
         document.addEventListener('focusin', function(e) { 
             if(e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) { 
                 e.target.select();
@@ -641,7 +665,6 @@
             dailyCashData.shiftHours = totalMins / 60;
         }
 
-        // РОЗУМНИЙ ІМПОРТ ФОТО (OCR)
         async function handleFile(e) {
             const files = e.target.files;
             if (!files || files.length === 0) return;
@@ -941,7 +964,16 @@
         function openGmaps() { haptic(); if(routeCoords.lat2 && routeCoords.lon2) { const origin = (routeCoords.lat1 && routeCoords.lon1) ? `&origin=${routeCoords.lat1},${routeCoords.lon1}` : ""; window.open(`https://www.google.com/maps/dir/?api=1${origin}&destination=${routeCoords.lat2},${routeCoords.lon2}`, '_blank'); } }
 
         function toggleWorkModeInputs() { const mode = document.getElementById('set-work-mode').value; document.getElementById('box-set-rent').style.display = (mode === 'rent') ? 'flex' : 'none'; document.getElementById('box-set-split').style.display = (mode === 'split') ? 'flex' : 'none'; }
-        function setPaymentMode(mode) { haptic(); currentPaymentMode = mode; document.getElementById('pay-opt-cash').classList.remove('active'); document.getElementById('pay-opt-card').classList.remove('active'); document.getElementById('pay-opt-' + mode).classList.add('active'); }
+        
+        function setPaymentMode(mode) { 
+            haptic(); 
+            currentPaymentMode = mode; 
+            document.getElementById('pay-opt-cash').classList.remove('active'); 
+            document.getElementById('pay-opt-card').classList.remove('active'); 
+            document.getElementById('pay-opt-' + mode).classList.add('active'); 
+            document.getElementById('change-calculator-card').style.display = (mode === 'cash') ? 'block' : 'none';
+        }
+
         function saveCurrentRouteParams() { 
             clearTimeout(saveRouteTimeout); 
             saveRouteTimeout = setTimeout(() => { 
@@ -975,6 +1007,22 @@
             }
         }
 
+        function calcChange() {
+            let totalStr = document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴','');
+            let total = parseFloat(totalStr) || 0;
+            let given = parseFloat(document.getElementById('calc-given-cash').value) || 0;
+            let change = given - total;
+            let resEl = document.getElementById('calc-change-res');
+            
+            if (given === 0) { 
+                resEl.innerText = "0 ₴"; resEl.style.color = "var(--text-color)"; 
+            } else if (change < 0) {
+                resEl.innerText = "Мало! (" + change + " ₴)"; resEl.style.color = "var(--accent-danger)";
+            } else {
+                resEl.innerText = change + " ₴"; resEl.style.color = "var(--uklon-green)";
+            }
+        }
+
         function recalc() {
             const distCity = parseFloat(document.getElementById('inp-dist').value) || 0; const distOut = parseFloat(document.getElementById('inp-distOut').value) || 0; const emptyKm = parseFloat(document.getElementById('inp-emptyKm').value) || 0; const delivery = parseFloat(document.getElementById('inp-delivery').value) || 0; const wait = parseInt(document.getElementById('inp-wait').value) || 0; const stopsQty = parseInt(document.getElementById('inp-stops').value) || 0; const extraExp = parseInt(document.getElementById('inp-extraExp').value) || 0; const coef = parseFloat(document.getElementById('inp-coef').value) || 1.0; const clientBonus = parseInt(document.getElementById('inp-clientBonus').value) || 0;
             saveCurrentRouteParams(); const t = tariffs[currentClass];
@@ -984,7 +1032,6 @@
             const costAddons = (wait * t.perMin) + (stopsQty * t.stopPrice); const baseTotal = (t.minPrice + (extraCity * t.perKmCity) + (extraOut * t.perKmOut) + costAddons) * coef;
             const finalTotal = baseTotal + clientBonus; const totalKm = distCity + distOut + delivery + emptyKm;
             
-            // --- ПОЧАТОК ЛОГІКИ АНАЛІЗАТОРА ---
             const targetRate = parseFloat(document.getElementById('set-target-km').value) || 40;
             const currentRate = totalKm > 0 ? (baseTotal / totalKm) : 0; 
             
@@ -1013,7 +1060,6 @@
                 document.getElementById('analyzer-diff').innerText = '0 ₴';
                 document.getElementById('btn-apply-diff').style.display = 'none';
             }
-            // --- КІНЕЦЬ ЛОГІКИ АНАЛІЗАТОРА ---
 
             document.getElementById('res-base').innerText = `${fmt(t.minPrice * coef)} ₴`; document.getElementById('res-extra-dist').innerText = `${fmt(((extraCity * t.perKmCity) + (extraOut * t.perKmOut)) * coef)} ₴`; document.getElementById('res-addons').innerText = `${fmt(costAddons * coef)} ₴`;
             if(clientBonus > 0) { document.getElementById('row-res-bonus').style.display = 'flex'; document.getElementById('res-bonus').innerText = `+${fmt(clientBonus)} ₴`; } else { document.getElementById('row-res-bonus').style.display = 'none'; }
@@ -1035,6 +1081,8 @@
             if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${fmt(extraExp)} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
             if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${fmt(rentCost)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
             const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
+            
+            calcChange();
         }
 
         function calcStrategy() {
@@ -1091,22 +1139,46 @@
             const params = {
                 minPrice: document.getElementById('mx-min-price').value,
                 minKm: document.getElementById('mx-min-km').value,
-                delivery: document.getElementById('mx-delivery').value
+                delivery: document.getElementById('mx-delivery').value,
+                coef: document.getElementById('mx-coef').value,
+                maxDist: document.getElementById('mx-max-dist').value,
+                customRates: document.getElementById('mx-custom-rates').value
             };
-            localStorage.setItem('taxi_matrix_params_v1', JSON.stringify(params));
+            localStorage.setItem('taxi_matrix_params_v2', JSON.stringify(params));
         }
 
         function loadMatrixParams() {
-            const params = safeParse(localStorage.getItem('taxi_matrix_params_v1'), {minPrice: 120, minKm: 1.5, delivery: 1.5});
+            const params = safeParse(localStorage.getItem('taxi_matrix_params_v2'), {minPrice: 120, minKm: 1.5, delivery: 1.5, coef: 1.0, maxDist: 15, customRates: "20, 25, 30, 35, 45"});
             if(document.getElementById('mx-min-price')) document.getElementById('mx-min-price').value = params.minPrice;
             if(document.getElementById('mx-min-km')) document.getElementById('mx-min-km').value = params.minKm;
             if(document.getElementById('mx-delivery')) document.getElementById('mx-delivery').value = params.delivery;
+            if(document.getElementById('mx-coef')) document.getElementById('mx-coef').value = params.coef;
+            if(document.getElementById('mx-max-dist')) document.getElementById('mx-max-dist').value = params.maxDist;
+            if(document.getElementById('mx-custom-rates')) document.getElementById('mx-custom-rates').value = params.customRates;
+        }
+
+        function resetMatrix() {
+            haptic();
+            document.getElementById('mx-min-price').value = 120;
+            document.getElementById('mx-min-km').value = 1.5;
+            document.getElementById('mx-delivery').value = 1.5;
+            document.getElementById('mx-coef').value = 1.0;
+            document.getElementById('mx-max-dist').value = 15;
+            document.getElementById('mx-custom-rates').value = "20, 25, 30, 35, 45";
+            saveMatrixParams(); drawMatrix();
         }
 
         function drawMatrix() {
             const minPrice = parseFloat(document.getElementById('mx-min-price').value) || 120;
             const minKm = parseFloat(document.getElementById('mx-min-km').value) || 1.5;
             const delivery = parseFloat(document.getElementById('mx-delivery').value) || 1.5;
+            const coef = parseFloat(document.getElementById('mx-coef').value) || 1.0;
+            let maxDist = parseInt(document.getElementById('mx-max-dist').value) || 15;
+            if (maxDist > 150) maxDist = 150; 
+            
+            const ratesStr = document.getElementById('mx-custom-rates').value || "20";
+            let rates = ratesStr.split(',').map(r => parseFloat(r.trim())).filter(r => !isNaN(r) && r > 0);
+            if(rates.length === 0) rates = [20];
             
             const targetEl = document.getElementById('set-target-km');
             const targetRate = targetEl ? parseFloat(targetEl.value) : 40;
@@ -1114,20 +1186,19 @@
             const label = document.getElementById('mx-target-label');
             if(label) label.innerText = targetRate;
 
-            const rates = [20, 25, 30, 35, 45]; 
-            
             let html = `<thead><tr><th style="min-width: 45px;">Маршрут</th>`;
-            rates.forEach(r => html += `<th colspan="2">${r} ₴/км</th>`);
+            rates.forEach(r => html += `<th colspan="2">${r} ₴/км ${coef > 1.0 ? `<br><span style="color:var(--accent-danger);font-size:9px;">(⚡${coef}x)</span>` : ''}</th>`);
             html += `</tr><tr><th>(Км)</th>`;
             rates.forEach(() => html += `<th>Сума</th><th>Ефект.</th>`);
             html += `</tr></thead><tbody>`;
 
-            for (let tripDist = 2; tripDist <= 15; tripDist++) {
+            for (let tripDist = 2; tripDist <= maxDist; tripDist++) {
                 html += `<tr><td>${tripDist} км</td>`;
                 
                 rates.forEach(rate => {
                     let extraKm = Math.max(0, tripDist - minKm);
-                    let totalPrice = minPrice + (extraKm * rate);
+                    let basePrice = minPrice + (extraKm * rate);
+                    let totalPrice = basePrice * coef;
                     let totalDist = tripDist + delivery;
                     let eff = totalPrice / totalDist;
                     
@@ -1153,12 +1224,10 @@
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode });
             localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
             
-            // АВТОМАТИЧНЕ ДОДАВАННЯ КІЛОМЕТРАЖУ В ОДОМЕТР ТО
             const currentOdo = parseFloat(document.getElementById('set-odometer').value) || 0;
             document.getElementById('set-odometer').value = (currentOdo + tripKm).toFixed(1);
             updateMaintenance();
             
-            // СИНХРОНІЗАЦІЯ ЦІЛЕЙ (ДЕНЬ + МІСЯЦЬ)
             goals.dailyDone += 1; brandingData.done += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
             localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
             
@@ -1281,7 +1350,6 @@
         function openManual() { document.getElementById('manual-modal').style.display = 'flex'; }
         function closeManual() { document.getElementById('manual-modal').style.display = 'none'; }
 
-        // ЛОГІКА ТРЕКЕРА ТО
         function updateMaintenance() {
             const currentKm = parseFloat(document.getElementById('set-odometer').value) || 0;
             const nextKm = parseFloat(document.getElementById('set-next-service').value) || 10000;
