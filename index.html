@@ -1273,7 +1273,30 @@
         function shareReport() { haptic(); let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01; const text = `Підсумок зміни (${dailyCashData.date}):\n\n✅ Замовлень: ${dailyCashData.orders}\n⏱ Годин: ${hours.toFixed(1)}\n📍 Пробіг: ${dailyCashData.totalKm.toFixed(1)} км\n\n💵 Оборот: ${fmt(dailyCashData.gross)} ₴\n (Гот: ${fmt(dailyCashData.totalCash)} | Карта: ${fmt(dailyCashData.totalCard)})\n🟡 Комісія: -${fmt(dailyCashData.comm)} ₴\n⛽ Пальне: -${fmt(dailyCashData.fuel)} ₴\n\n💰 ЧИСТИМИ: ${fmt(dailyCashData.net)} ₴\n📈 Ставка: ${fmt(dailyCashData.net / hours)} ₴/год\n\n🏦 Баланс (Винен парку): ${fmt(dailyCashData.totalCash - dailyCashData.comm - dailyCashData.rent)} ₴`; if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); }); } }
         function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerText = "▶ Почати зміну"; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
         function setDaysToEndOfMonth() { haptic(); const now = new Date(); const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1; document.getElementById('brand-days').value = daysLeft; calcBranding(); syncDailyGoal(); }
-        function syncDailyGoal() { haptic(); let remain = Math.max(0, brandingData.target - brandingData.done); let days = parseInt(document.getElementById('brand-days').value) || 1; document.getElementById('set-daily-goal').value = Math.ceil(remain / days); calcBranding(); if(tg && tg.showAlert) tg.showAlert(`✅ Ціль оновлено!`);}
+        function         function syncDailyGoal() { 
+            haptic(); 
+            
+            // 1. Беремо те, що ти вже зробив СЬОГОДНІ
+            let dailyDoneNow = parseInt(document.getElementById('inp-daily-done').value) || 0;
+            
+            // 2. Вираховуємо, скільки в тебе було зроблено НА ПОЧАТОК ДНЯ
+            let totalDoneStartOfDay = brandingData.done - dailyDoneNow;
+            if (totalDoneStartOfDay < 0) totalDoneStartOfDay = 0;
+            
+            // 3. Рахуємо залишок від глобальної цілі саме на ранок сьогоднішнього дня
+            let remainAtStart = Math.max(0, brandingData.target - totalDoneStartOfDay); 
+            
+            // 4. Ділимо на дні (включно із сьогоднішнім)
+            let days = parseInt(document.getElementById('brand-days').value) || 1; 
+            let newDailyGoal = Math.ceil(remainAtStart / days);
+            
+            // Застосовуємо нову правильну ціль
+            document.getElementById('set-daily-goal').value = newDailyGoal; 
+            
+            calcBranding(); 
+            if(tg && tg.showAlert) tg.showAlert(`✅ Денну ціль зафіксовано: ${newDailyGoal}`);
+        }
+
         function updateDailyGoalSlider(val) { document.getElementById('brand-daily-goal-val').innerText = val; document.getElementById('set-daily-goal').value = val; clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => calcBranding(), 300); }
         function resetDailyDone() { haptic(); if(confirm("Скинути прогрес цілі?")) { document.getElementById('inp-daily-done').value = 0; calcBranding(); } }
         function manualDailyDoneInput() { clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => calcBranding(), 500); }
