@@ -1315,6 +1315,7 @@
             let daysToGoal = "∞"; if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
             if (dailyGoal >= perDayReq) { document.getElementById('brand-daily-comment').innerHTML = `Йдете з випередженням! План за ${daysToGoal} дн.`; } else { document.getElementById('brand-daily-comment').innerHTML = `Прискортесь! Мінімум ${perDayReq.toFixed(1)} зам/день.`; }
         }
+    }
 
         function updateFuelLabels(type) { const isElec = type === 'electro'; document.getElementById('set-fuel-cons-label').innerText = isElec ? "Розхід (kWt):" : "Розхід (л):"; document.getElementById('set-fuel-price-label').innerText = isElec ? "Ціна (₴/kWt):" : "Ціна (₴/л):"; }
         
