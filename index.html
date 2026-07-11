@@ -414,7 +414,7 @@
             </div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
                 <div class="input-header" style="margin-bottom:6px;"><span>Ціль на сьогодні: <strong id="brand-daily-goal-val" style="font-size: 18px; color: var(--accent-blue);">0</strong></span></div>
-                <div class="slider-container" style="margin-bottom:18px;"><input type="range" id="set-daily-goal" min="1" max="40" step="1" value="12" oninput="updateDailyGoalSlider(this.value)"></div>
+                <div class="slider-container" style="margin-bottom:18px;"><input type="range" id="set-daily-goal" min="1" max="100" step="1" value="12" oninput="updateDailyGoalSlider(this.value)"></div>
                 <div class="input-header" style="margin-bottom:10px;"><span>Виконано сьогодні:</span><div class="counter"><button class="btn-counter" style="color:var(--accent-danger); font-size:16px;" onclick="resetDailyDone()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button><button class="btn-counter" onclick="changeDailyDone(-1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="manualDailyDoneInput()"><button class="btn-counter" onclick="changeDailyDone(1)">+</button></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: var(--accent-blue);"></div></div>
