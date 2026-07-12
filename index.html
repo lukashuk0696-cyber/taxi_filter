@@ -11,7 +11,6 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
-    <!-- Підключення Chart.js для діаграм -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
@@ -103,7 +102,7 @@
 
         .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; align-items: center; }
         .result-total { border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px; font-size: 18px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--accent-success); }
-        .eff-badge { color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; } .eff-green { background-color: var(--uklon-green); } .eff-yellow { background-color: #FF9500; } .eff-red { background-color: var(--accent-danger); }
+        .eff-badge { color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; } .eff-green { background-color: var(--uklon-green); } .eff-yellow { background-color: #FF9500; } .eff-red { background-color: var(--accent-danger); }
         
         .admin-input { width: 80px; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; font-size: 14px; font-weight: 700; background: var(--bg-color); color: var(--text-color); }
         .save-btn { width: 100%; padding: 14px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 4px 15px rgba(0, 211, 105, 0.3); transition: transform 0.2s, box-shadow 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;} .save-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(0, 211, 105, 0.2); } .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
@@ -236,7 +235,7 @@
                 </div>
                 
                 <div style="display:flex; gap:6px; margin-bottom: 8px;">
-                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0;" onclick="showViaInput()">
+                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0; padding:10px;" onclick="showViaInput()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Додати заїзд
                     </button>
@@ -374,7 +373,7 @@
                 <div class="result-row"><span>Пальне (<span id="lbl-fuel-dist">0</span> км):</span><span id="res-fuel">0 ₴</span></div>
                 <div class="result-row" id="row-res-amort"><span>Амортизація авто:</span><span id="res-amort">0 ₴</span></div>
                 <div class="result-row" id="row-res-extraExp"><span>Витрати:</span><span id="res-extraExp">0 ₴</span></div>
-                <div class="result-row" id="row-res-rent"><span>Оренда:</span><span id="res-rent">0 ₴</span></div>
+                <div class="result-row" id="row-res-rent"><span id="label-res-rent">Оренда / Парк:</span><span id="res-rent">0 ₴</span></div>
                 <div class="result-row" style="margin-top: 12px; align-items: center;"><span style="font-weight: 600;">Ефективність:</span><span class="eff-badge eff-green" id="res-eff">0 ₴/км</span></div>
             </div>
             
@@ -414,7 +413,7 @@
             </div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
                 <div class="input-header" style="margin-bottom:6px;"><span>Ціль на сьогодні: <strong id="brand-daily-goal-val" style="font-size: 18px; color: var(--accent-blue);">0</strong></span></div>
-                <div class="slider-container" style="margin-bottom:18px;"><input type="range" id="set-daily-goal" min="1" max="100" step="1" value="12" oninput="updateDailyGoalSlider(this.value)"></div>
+                <div class="slider-container" style="margin-bottom:18px;"><input type="range" id="set-daily-goal" min="1" max="40" step="1" value="12" oninput="updateDailyGoalSlider(this.value)"></div>
                 <div class="input-header" style="margin-bottom:10px;"><span>Виконано сьогодні:</span><div class="counter"><button class="btn-counter" style="color:var(--accent-danger); font-size:16px;" onclick="resetDailyDone()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button><button class="btn-counter" onclick="changeDailyDone(-1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="manualDailyDoneInput()"><button class="btn-counter" onclick="changeDailyDone(1)">+</button></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: var(--accent-blue);"></div></div>
@@ -455,7 +454,6 @@
             <button class="qe-btn" onclick="addExpense('Перекус')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg> Кава</button>
         </div>
 
-        <!-- Chart.js Graph -->
         <div class="card">
             <div class="card-title">Динаміка прибутку</div>
             <canvas id="profitChart" style="width: 100%; height: 160px;"></canvas>
@@ -472,20 +470,19 @@
             <div class="result-row"><span style="color: var(--text-muted);">Комісія служби:</span><span id="cash-comm" style="color: var(--accent-danger);">-0 ₴</span></div>
             <div class="result-row"><span style="color: var(--text-muted);">Пальне та ТО:</span><span id="cash-fuel" style="color: #ff9500;">-0 ₴</span></div>
             <div class="result-row" id="row-cash-extraExp"><span style="color: var(--text-muted);">Витрати:</span><span id="cash-extraExp" style="color: var(--accent-danger);">-0 ₴</span></div>
-            <div class="result-row" id="row-cash-rent"><span style="color: var(--text-muted);">Оренда:</span><span id="cash-rent" style="color: var(--accent-danger);">-0 ₴</span></div>
+            <div class="result-row" id="row-cash-rent"><span id="label-cash-rent" style="color: var(--text-muted);">Оренда / Парк:</span><span id="cash-rent" style="color: var(--accent-danger);">-0 ₴</span></div>
             <div class="result-total" style="color: var(--uklon-green); font-size: 22px;"><span>Чистий прибуток:</span><span id="cash-net">0 ₴</span></div>
             
             <div style="border-top: 1px solid var(--border-color); margin: 12px 0; padding-top: 12px;">
                 <div class="result-row" style="font-size: 14px;"><span>💵 Всього Готівки:</span><strong id="cash-money-cash">0 ₴</strong></div>
                 <div class="result-row" style="font-size: 14px;"><span>💳 Всього на Картку:</span><strong id="cash-money-card">0 ₴</strong></div>
-                <div class="result-row" style="font-size: 15px; margin-top: 10px;"><span>🏦 Баланс (Кому винен):</span><strong id="cash-balance" style="color: var(--accent-blue);">0 ₴</strong></div>
+                <div class="result-row" style="font-size: 15px; margin-top: 10px;"><span id="label-cash-balance">🏦 Залишок готівки:</span><strong id="cash-balance" style="color: var(--accent-blue);">0 ₴</strong></div>
             </div>
         </div>
         
         <div class="card">
             <div class="card-title">Історія поїздок (Свайп вліво)</div>
             <div id="cash-history-list"></div>
-            <!-- Оновлений порожній стан (Empty State) -->
             <div id="cash-empty-state" style="text-align: center; color: var(--text-muted); padding: 30px 10px;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.8;"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
                 <div style="font-size: 16px; font-weight: 700; color: var(--text-color);">Каса поки порожня</div>
@@ -529,14 +526,13 @@
                 
                 <div class="result-row"><span style="color: var(--text-muted);">Брудними (Оборот):</span><strong id="strat-gross">0 ₴</strong></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Комісія служби:</span><span id="strat-comm-total" style="color: var(--accent-danger);">0 ₴</span></div>
-                <div class="result-row" id="row-strat-park" style="display:none;"><span style="color: var(--text-muted);">Оренда / Парк:</span><span id="strat-park-total" style="color: var(--accent-danger);">0 ₴</span></div>
+                <div class="result-row" id="row-strat-park" style="display:none;"><span id="label-strat-park" style="color: var(--text-muted);">Оренда / Парк:</span><span id="strat-park-total" style="color: var(--accent-danger);">0 ₴</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Пальне та Амортизація:</span><span id="strat-fuel-total" style="color: #ff9500;">0 ₴</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Пробіг:</span><span id="strat-km-total">0 км</span></div>
             </div>
             <div id="strat-warning" style="display:none; color: var(--accent-danger); font-weight: 600; font-size: 13px; text-align: center; margin-top: 12px; padding: 12px; background: rgba(255, 59, 48, 0.1); border-radius: 10px;">⚠️ Фільтр збитковий! Змініть налаштування.</div>
         </div>
 
-        <!-- МАТРИЦЯ ФІЛЬТРІВ -->
         <div class="card" style="border: 1px solid var(--accent-blue); margin-top: 12px;">
             <div class="card-title" style="color: var(--accent-blue); display:flex; justify-content:space-between; cursor: pointer;">
                 <span>🧮 Матриця Фільтрів</span>
@@ -576,7 +572,6 @@
 
             <div style="overflow-x: auto; padding-bottom: 10px; border-radius: 10px; scrollbar-width: none;">
                 <table class="matrix-table" id="matrix-table-body">
-                    <!-- Таблиця генерується автоматично -->
                 </table>
             </div>
         </div>
@@ -672,7 +667,7 @@
         let offDays = [];
         let touchStartX = 0;
         let currentSwipeEl = null;
-        let profitChartInstance = null; // Змінна графіка
+        let profitChartInstance = null;
 
         const defaultTariffs = { standard: { name: 'Стандарт', icon: '🚕', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 }, comfort: { name: 'Комфорт', icon: '🛋️', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 }, business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }, intercity: { name: 'За місто', icon: '🛣️', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 } };
         const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28, amort: 1.5, workMode: 'solo', rentVal: 30, splitPct: 10 };
@@ -725,6 +720,27 @@
             else { body.setAttribute('data-theme', 'light'); }
         }
 
+        function updateWorkModeLabels() {
+            const mode = expenses.workMode || 'solo';
+            let rentText = "Оренда / Парк:";
+            let balText = "🏦 Залишок готівки (після боргів):";
+            
+            if (mode === 'solo') {
+                balText = "🏦 Готівка на руках (мінус комісія):";
+            } else if (mode === 'rent') {
+                rentText = "Оренда авто:";
+                balText = "🏦 Готівка на руках (мінус комісія та оренда):";
+            } else if (mode === 'split') {
+                rentText = "Комісія парку:";
+                balText = "🏦 Готівка на руках (мінус комісія та % парку):";
+            }
+            
+            const lRent1 = document.getElementById('label-res-rent'); if(lRent1) lRent1.innerText = rentText;
+            const lRent2 = document.getElementById('label-cash-rent'); if(lRent2) lRent2.innerText = rentText;
+            const lRent3 = document.getElementById('label-strat-park'); if(lRent3) lRent3.innerText = rentText;
+            const lBal = document.getElementById('label-cash-balance'); if(lBal) lBal.innerText = balText;
+        }
+
         function loadAllData(res) {
             tariffs = safeParse(res.taxi_tariffs_v22, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
             expenses = safeParse(res.taxi_expenses_v22, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
@@ -759,14 +775,16 @@
                 document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('set-daily-goal').value = goals.dailyGoal; document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal; document.getElementById('brand-done').value = brandingData.done; document.getElementById('brand-target').value = brandingData.target; document.getElementById('brand-days').value = brandingData.days;
 
                 if(dailyCashData.shiftActive) {
-                    const btn = document.getElementById('btn-shift-toggle'); btn.innerText = "⏹ Завершити"; btn.classList.remove('start'); btn.classList.add('stop');
+                    const btn = document.getElementById('btn-shift-toggle'); 
+                    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Завершити`; 
+                    btn.classList.remove('start'); btn.classList.add('stop');
                     updateShiftTimerUI(); shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
                 } else if (dailyCashData.shiftHours > 0) {
                     const hrs = Math.floor(dailyCashData.shiftHours).toString().padStart(2, '0'); const mins = Math.floor((dailyCashData.shiftHours % 1) * 60).toString().padStart(2, '0');
                     document.getElementById('shift-timer-display').innerText = `${hrs}:${mins}`;
                 }
 
-                toggleWorkModeInputs(); updateFuelLabels(expenses.type); renderCarSelector(); renderSettings(); loadMatrixParams(); recalc(); calcBranding(); drawMatrix(); updateCashPageUI();
+                toggleWorkModeInputs(); updateWorkModeLabels(); updateFuelLabels(expenses.type); renderCarSelector(); renderSettings(); loadMatrixParams(); recalc(); calcBranding(); drawMatrix(); updateCashPageUI();
             } catch(e) { renderCarSelector(); renderSettings(); recalc(); drawMatrix(); updateCashPageUI(); }
         }
 
@@ -796,7 +814,6 @@
             dailyCashData.shiftHours = totalMins / 60;
         }
 
-        // Візуал Loader-а
         function toggleLoader(show, text = 'Обробка чеків...') {
             const loader = document.getElementById('loader-overlay');
             if (show) {
@@ -1210,11 +1227,9 @@
             const ctx = document.getElementById('profitChart');
             if(!ctx) return;
             
-            // Перевертаємо масив для графіка (старі поїздки зліва, нові справа)
             const data = [...dailyCashData.history].filter(t => t.pay !== 'expense').reverse();
             const labels = data.map(t => t.time);
             
-            // Рахуємо накопичувальний прибуток
             let accNet = 0;
             const values = data.map(t => { accNet += t.net; return accNet; });
 
@@ -1302,7 +1317,23 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        function shareReport() { haptic(); let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01; const text = `Підсумок зміни (${dailyCashData.date}):\n\n✅ Замовлень: ${dailyCashData.orders}\n⏱ Годин: ${hours.toFixed(1)}\n📍 Пробіг: ${dailyCashData.totalKm.toFixed(1)} км\n\n💵 Оборот: ${fmt(dailyCashData.gross)} ₴\n (Гот: ${fmt(dailyCashData.totalCash)} | Карта: ${fmt(dailyCashData.totalCard)})\n🟡 Комісія: -${fmt(dailyCashData.comm)} ₴\n⛽ Пальне: -${fmt(dailyCashData.fuel)} ₴\n\n💰 ЧИСТИМИ: ${fmt(dailyCashData.net)} ₴\n📈 Ставка: ${fmt(dailyCashData.net / hours)} ₴/год\n\n🏦 Баланс (Винен парку): ${fmt(dailyCashData.totalCash - dailyCashData.comm - dailyCashData.rent)} ₴`; if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); }); } }
+        function shareReport() { 
+            haptic(); 
+            let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); 
+            if (hours <= 0) hours = 0.01; 
+            
+            let rentStr = "";
+            if (dailyCashData.rent > 0) {
+                rentStr = `\n🏢 ${expenses.workMode === 'split' ? 'Комісія парку' : 'Оренда авто'}: -${fmt(dailyCashData.rent)} ₴`;
+            }
+            
+            let balText = expenses.workMode === 'solo' ? 'Чиста готівка (-комісія)' : (expenses.workMode === 'split' ? 'Борг парку' : 'Борг за оренду');
+            
+            const text = `Підсумок зміни (${dailyCashData.date}):\n\n✅ Замовлень: ${dailyCashData.orders}\n⏱ Годин: ${hours.toFixed(1)}\n📍 Пробіг: ${dailyCashData.totalKm.toFixed(1)} км\n\n💵 Оборот: ${fmt(dailyCashData.gross)} ₴\n (Гот: ${fmt(dailyCashData.totalCash)} | Карта: ${fmt(dailyCashData.totalCard)})\n🟡 Комісія: -${fmt(dailyCashData.comm)} ₴\n⛽ Пальне: -${fmt(dailyCashData.fuel)} ₴${rentStr}\n\n💰 ЧИСТИМИ: ${fmt(dailyCashData.net)} ₴\n📈 Ставка: ${fmt(dailyCashData.net / hours)} ₴/год\n\n🏦 ${balText}: ${fmt(dailyCashData.totalCash - dailyCashData.comm - dailyCashData.rent)} ₴`; 
+            
+            if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); }); } 
+        }
+
         function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
         function setDaysToEndOfMonth() { haptic(); const now = new Date(); const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1; document.getElementById('brand-days').value = daysLeft; calcBranding(); syncDailyGoal(); }
         
@@ -1387,6 +1418,7 @@
         function autoSaveSettings() {
             Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; });
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0; expenses.type = document.getElementById('set-fuel-type').value; expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0; expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0; expenses.amort = parseFloat(document.getElementById('set-amort').value) || 0; expenses.workMode = document.getElementById('set-work-mode').value; expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0; expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
+            updateWorkModeLabels();
             clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v22', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v22', JSON.stringify(expenses)); }, 500); updateFuelLabels(expenses.type); recalc();
         }
 
