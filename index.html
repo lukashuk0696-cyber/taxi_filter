@@ -23,12 +23,16 @@
     <style>
         :root { 
             --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.1); 
+            --input-bg: rgba(118, 118, 128, 0.08);
             --text-color: #1C1C1E; --text-muted: #8E8E93; 
             --accent-color: #FFCC00; --accent-success: #34C759; --accent-danger: #FF3B30; --accent-blue: #007AFF; --uklon-green: #00D369; 
         }
         
-        html[data-theme="dark"] { --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(255, 255, 255, 0.1); --text-color: #FFFFFF; --text-muted: #EBEBF5; }
-        html[data-theme="light"] { --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.1); --text-color: #1C1C1E; --text-muted: #8E8E93; }
+        html[data-theme="dark"] { 
+            --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(255, 255, 255, 0.1); 
+            --input-bg: rgba(118, 118, 128, 0.18);
+            --text-color: #FFFFFF; --text-muted: #EBEBF5; 
+        }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
@@ -36,136 +40,131 @@
             -webkit-user-select: none; user-select: none; touch-action: manipulation; 
         }
         
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 300px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 250px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
         
-        .app-header { padding: 10px 14px 6px 14px; display: flex; align-items: center; justify-content: space-between; }
-        .app-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, var(--text-color), var(--uklon-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 8px;}
-        .theme-toggle { cursor: pointer; padding: 6px; background: var(--card-bg); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: var(--text-color); }
+        .app-header { padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); background: var(--card-bg);}
+        .app-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, var(--text-color), var(--uklon-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 6px;}
+        .theme-toggle { cursor: pointer; padding: 6px; background: var(--input-bg); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-color); transition: 0.2s;}
         
-        .tabs { display: flex; background: var(--card-bg); padding: 6px; margin: 4px 10px 12px 10px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .tab-btn { flex: 1; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 10px; cursor: pointer; border-radius: 10px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.7; }
-        .tab-icon { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: 0.2s; } 
-        .tab-btn.active { background: var(--text-color); color: var(--bg-color); opacity: 1; transform: scale(1.02); }
+        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 6px 8px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 6px 2px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0.7; }
+        .tab-icon { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: 0.2s; } 
+        .tab-btn.active { background: var(--input-bg); color: var(--text-color); opacity: 1; font-weight: 700;}
         
-        .page { display: none; padding: 0 10px; opacity: 0; } 
-        .page.active { display: block; animation: fadeIn 0.25s ease forwards; }
+        .page { display: none; padding: 0 8px; opacity: 0; } 
+        .page.active { display: block; animation: fadeIn 0.15s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .car-selector { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 10px 0; scrollbar-width: none; } .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { flex: 0 0 auto; background: var(--bg-color); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; transition: 0.2s; min-width: 100px; }
-        .car-card.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3); transform: scale(1.03); }
-        .car-name { font-size: 14px; font-weight: 800; display: flex; justify-content: space-between; width: 100%; align-items: center;} 
-        .car-price-info { font-size: 11px; font-weight: 600; opacity: 0.7; } .car-card.active .car-price-info { opacity: 0.9; color: #000; }
+        .car-selector { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 8px 0; scrollbar-width: none; } .car-selector::-webkit-scrollbar { display: none; }
+        .car-card { flex: 0 0 auto; background: var(--card-bg); padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; transition: 0.2s; min-width: 90px;}
+        .car-card.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); box-shadow: 0 2px 8px rgba(255, 204, 0, 0.3); }
+        .car-name { font-size: 13px; font-weight: 800; display: flex; justify-content: space-between; width: 100%; align-items: center;} 
+        .car-price-info { font-size: 10px; font-weight: 600; opacity: 0.6; } .car-card.active .car-price-info { opacity: 0.8; color: #000; }
         
-        .card { background: var(--card-bg); border-radius: 16px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border-color); box-shadow: 0 2px 12px rgba(0,0,0,0.02); }
-        .card-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--border-color); }
+        .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.5px;}
         
-        .ac-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
-        .map-input-group { display: flex; align-items: center; background: var(--bg-color); border-radius: 12px; padding: 10px 12px; border: 1px solid var(--border-color); }
-        .map-input { flex: 1; background: transparent; border: none; font-size: 14px; color: var(--text-color); outline: none; font-weight: 600; }
+        .ac-wrapper { position: relative; width: 100%; margin-bottom: 6px; }
+        .map-input-group { display: flex; align-items: center; background: var(--input-bg); border-radius: 8px; padding: 8px 10px; border: 1px solid var(--border-color); }
+        .map-input { flex: 1; background: transparent; border: none; font-size: 13px; color: var(--text-color); outline: none; font-weight: 600; }
         .map-input::placeholder { color: var(--text-muted); font-weight: 500;}
-        .ac-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 50; display: none; max-height: 160px; overflow-y: auto; margin-top: 4px; }
-        .ac-item { padding: 12px 14px; border-bottom: 1px solid var(--border-color); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-color); } .ac-item:last-child { border-bottom: none; } .ac-item:active { background: var(--bg-color); }
+        .ac-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 50; display: none; max-height: 150px; overflow-y: auto; margin-top: 4px; }
+        .ac-item { padding: 10px 12px; border-bottom: 1px solid var(--border-color); font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-color); } .ac-item:last-child { border-bottom: none; } .ac-item:active { background: var(--input-bg); }
 
-        .gps-btn { background: transparent; border: none; cursor: pointer; color: var(--accent-blue); padding-left: 10px; border-left: 1px solid var(--border-color); display: flex; align-items: center;}
-        .nav-btn-group { display: none; gap: 8px; margin-top: 10px; } .nav-btn { flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 6px; }
+        .gps-btn { background: transparent; border: none; cursor: pointer; color: var(--accent-blue); padding-left: 8px; border-left: 1px solid var(--border-color); display: flex; align-items: center;}
+        .nav-btn-group { display: none; gap: 6px; margin-top: 8px; } .nav-btn { flex: 1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 4px; }
         
-        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 12px 16px 24px 16px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); transition: transform 0.3s; }
-        @supports (backdrop-filter: blur(10px)) { .sticky-summary { background: rgba(var(--card-bg-rgb, 255,255,255), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); } html[data-theme="dark"] .sticky-summary { background: rgba(28,28,30, 0.85); } }
-        .drag-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 3px; margin: 0 auto 12px auto; }
-        .summary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 6px; }
-        .summary-mini-title { font-size: 18px; font-weight: 800; transition: color 0.3s; }
-        .summary-chevron { font-size: 12px; font-weight: 700; color: var(--accent-success); background: rgba(52, 199, 89, 0.15); padding: 6px 12px; border-radius: 12px; }
+        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card-bg); border-radius: 16px 16px 0 0; padding: 10px 12px 20px 12px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @supports (backdrop-filter: blur(10px)) { .sticky-summary { background: rgba(var(--card-bg-rgb, 255,255,255), 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); } html[data-theme="dark"] .sticky-summary { background: rgba(28,28,30, 0.85); } }
+        .drag-handle { width: 36px; height: 4px; background: var(--border-color); border-radius: 2px; margin: 0 auto 8px auto; }
+        .summary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 4px; }
+        .summary-mini-title { font-size: 16px; font-weight: 800; transition: color 0.3s; }
+        .summary-chevron { font-size: 11px; font-weight: 700; color: var(--accent-success); background: rgba(52, 199, 89, 0.15); padding: 4px 10px; border-radius: 8px; }
         
-        .pay-switch { display: flex; background: var(--bg-color); border-radius: 12px; padding: 4px; margin: 12px 0; }
-        .pay-opt { flex: 1; text-align: center; padding: 10px 0; font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; color: var(--text-muted); transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 6px;}
-        .pay-opt.active { background: var(--card-bg); color: var(--text-color); box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid var(--border-color); }
+        .pay-switch { display: flex; background: var(--input-bg); border-radius: 8px; padding: 3px; margin: 8px 0; }
+        .pay-opt { flex: 1; text-align: center; padding: 8px 0; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 4px;}
+        .pay-opt.active { background: var(--card-bg); color: var(--text-color); box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 1px solid var(--border-color); }
         
-        .input-block { padding: 12px 0; border-bottom: 1px solid var(--border-color); } .input-block:last-child { border-bottom: none; padding-bottom: 0; }
+        .input-block { padding: 8px 0; border-bottom: 1px solid var(--border-color); } .input-block:last-child { border-bottom: none; padding-bottom: 0; }
         .input-header { display: flex; justify-content: space-between; align-items: center; }
-        .icon-wrap { display: flex; align-items: center; gap: 10px; } .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: currentColor;}
+        .icon-wrap { display: flex; align-items: center; gap: 8px; } .icon-box { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: currentColor;}
         .ib-blue { background: rgba(0, 122, 255, 0.15); color: var(--accent-blue); } .ib-purple { background: rgba(175, 82, 222, 0.15); color: #AF52DE; } .ib-cyan { background: rgba(50, 173, 230, 0.15); color: #32ADE6; } .ib-orange { background: rgba(255, 149, 0, 0.15); color: #FF9500; } .ib-yellow { background: rgba(255, 204, 0, 0.2); color: #FFCC00; } .ib-red { background: rgba(255, 59, 48, 0.15); color: var(--accent-danger); } .ib-green { background: rgba(52, 199, 89, 0.15); color: var(--accent-success); }
-        .input-label { font-size: 14px; font-weight: 600; }
+        .input-label { font-size: 13px; font-weight: 600; }
         
-        .counter { display: flex; align-items: center; gap: 6px; }
-        .btn-counter { width: 36px; height: 36px; border-radius: 10px; border: none; background: var(--bg-color); color: var(--text-color); font-size: 20px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s;} .btn-counter:active { background: var(--border-color); transform: scale(0.92); }
-        .btn-x2 { font-size: 13px; width: auto; padding: 0 12px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-weight: 800; }
-        .counter-value { font-size: 16px; font-weight: 800; width: 50px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; }
-        ::selection { background: var(--accent-blue); color: #fff; }
+        .counter { display: flex; align-items: center; gap: 4px; }
+        .btn-counter { width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--input-bg); color: var(--text-color); font-size: 16px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s;} .btn-counter:active { background: var(--border-color); transform: scale(0.92); }
+        .btn-x2 { font-size: 11px; width: auto; padding: 0 8px; background: rgba(0, 122, 255, 0.15); color: var(--accent-blue); font-weight: 800; }
+        .counter-value { font-size: 14px; font-weight: 800; width: 44px; text-align: center; background: none; border: none; color: var(--text-color); padding: 0; outline: none; }
         
-        .slider-container { padding-top: 8px; width: 100%; } input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; } input[type=range]:focus { outline: none; } 
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.25); cursor: pointer; margin-top: -11px; transition: transform 0.1s;} 
-        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.15); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; }
+        .slider-container { padding-top: 6px; width: 100%; } input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; } input[type=range]:focus { outline: none; } 
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; margin-top: -8px; } 
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--input-bg); border-radius: 2px; }
         
-        .quick-coef-container { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; } .quick-coef-btn { flex: 1; padding: 10px 0; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.1s; display: flex; justify-content: center; align-items: center; gap: 4px;} .quick-coef-btn:active { background: var(--accent-color); color: #000; border-color: var(--accent-color); transform: scale(0.95); } .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); flex: 0 0 44px; border: none; }
+        .quick-coef-container { display: flex; gap: 6px; margin-top: 6px; margin-bottom: 2px; } .quick-coef-btn { flex: 1; padding: 8px 0; border-radius: 8px; border: none; background: var(--input-bg); color: var(--text-color); font-weight: 800; font-size: 11px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 4px;} .quick-coef-btn:active { background: var(--accent-color); color: #000; } .btn-clear { background: rgba(255, 59, 48, 0.15); color: var(--accent-danger); flex: 0 0 36px; }
 
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; align-items: center; }
-        .result-total { border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px; font-size: 18px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--accent-success); }
-        .eff-badge { color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; } .eff-green { background-color: var(--uklon-green); } .eff-yellow { background-color: #FF9500; } .eff-red { background-color: var(--accent-danger); }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; font-weight: 600; align-items: center; }
+        .result-total { border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 10px; font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--accent-success); }
+        .eff-badge { color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; } .eff-green { background-color: var(--uklon-green); } .eff-yellow { background-color: #FF9500; } .eff-red { background-color: var(--accent-danger); }
         
-        .admin-input { width: 80px; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; font-size: 14px; font-weight: 700; background: var(--bg-color); color: var(--text-color); }
-        .save-btn { width: 100%; padding: 14px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; box-shadow: 0 4px 15px rgba(0, 211, 105, 0.3); transition: transform 0.2s, box-shadow 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;} .save-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(0, 211, 105, 0.2); } .save-btn-alt { background: var(--text-color); color: var(--bg-color); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .admin-input { width: 70px; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); text-align: center; font-size: 13px; font-weight: 700; color: var(--text-color); outline: none;}
+        .admin-input:focus { border-color: var(--accent-blue); }
         
-        .reset-btn { width: 100%; padding: 14px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 6px;} .reset-btn:active{ transform: scale(0.97); }
-        .toggle-btn { width: 100%; padding: 12px; background: rgba(0, 122, 255, 0.08); color: var(--accent-blue); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 6px;}
+        .save-btn { width: 100%; padding: 12px; background: var(--uklon-green); color: #FFF; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 6px;} .save-btn-alt { background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+        .reset-btn { width: 100%; padding: 12px; background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border: none; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 6px;}
+        .toggle-btn { width: 100%; padding: 10px; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); border: none; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 6px;}
         
-        .progress-container { width: 100%; background-color: var(--border-color); border-radius: 8px; margin: 10px 0; overflow: hidden; height: 8px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
+        .progress-container { width: 100%; background-color: var(--input-bg); border-radius: 6px; margin: 8px 0; overflow: hidden; height: 6px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px; }
         
-        /* Свайп-UI для історії каси */
-        .history-item-wrapper { position: relative; overflow: hidden; border-bottom: 1px solid var(--border-color); margin-bottom: 8px; border-radius: 12px; background: var(--accent-danger); }
-        .swipe-bg { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; }
-        .swipe-bg svg { width: 24px; height: 24px; margin-bottom: 2px;}
-        .swipe-content { position: relative; background: var(--card-bg); width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 16px 14px; z-index: 2; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .history-item-wrapper { position: relative; overflow: hidden; border-bottom: 1px solid var(--border-color); margin-bottom: 6px; border-radius: 10px; background: var(--accent-danger); }
+        .swipe-bg { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; }
+        .swipe-bg svg { width: 20px; height: 20px; margin-bottom: 2px;}
+        .swipe-content { position: relative; background: var(--card-bg); width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; z-index: 2; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); border-radius: 10px;}
         
-        .shift-timer-box { background: var(--bg-color); border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border-color); }
-        .timer-text { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
-        .btn-shift { padding: 10px 20px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; border: none; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
-        .btn-shift.start { background: var(--uklon-green); color: #fff; box-shadow: 0 4px 12px rgba(0, 211, 105, 0.3); }
-        .btn-shift.stop { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); }
+        .shift-timer-box { background: var(--card-bg); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .timer-text { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .btn-shift { padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
+        .btn-shift.start { background: var(--uklon-green); color: #fff; }
+        .btn-shift.stop { background: rgba(255, 59, 48, 0.15); color: var(--accent-danger); }
         
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); } .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 20px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(8px); } .modal-content { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 16px; padding: 16px; max-height: 85vh; overflow-y: auto; }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .spinner { animation: spin 1.2s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite; display: inline-block; }
-        .loader-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: #fff; backdrop-filter: blur(10px); }
+        .loader-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: #fff; backdrop-filter: blur(10px); }
 
-        .quick-expense-row { display: flex; gap: 8px; margin-bottom: 14px; }
-        .qe-btn { flex: 1; padding: 12px 4px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.1s; display: flex; flex-direction: column; align-items: center; gap: 4px; } .qe-btn svg { width: 24px; height: 24px; } .qe-btn:active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); transform: scale(0.95);}
+        .quick-expense-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .qe-btn { flex: 1; padding: 10px 4px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; } .qe-btn svg { width: 20px; height: 20px; } 
         
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 14px; }
-        .cal-day { padding: 8px 0 12px 0; text-align: center; background: var(--bg-color); border-radius: 10px; cursor: pointer; border: 1px solid transparent; transition: 0.1s;}
-        .cal-day-name { font-size: 11px; opacity: 0.8; margin-bottom: 4px; font-weight: 600;}
-        .cal-day-num { font-size: 16px; font-weight: 800; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+        .cal-day { padding: 6px 0 8px 0; text-align: center; background: var(--input-bg); border-radius: 8px; cursor: pointer; border: 1px solid transparent;}
+        .cal-day-name { font-size: 10px; opacity: 0.7; margin-bottom: 2px; font-weight: 700;}
+        .cal-day-num { font-size: 14px; font-weight: 800; }
         .cal-day.active { background: var(--uklon-green); color: #fff; }
-        .cal-day.off { background: rgba(255, 59, 48, 0.1); color: var(--accent-danger); border-color: rgba(255, 59, 48, 0.3); }
-        .donate-card { background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(52, 199, 89, 0.05)); border: 1px dashed var(--accent-blue); margin-top: 20px; padding: 18px; border-radius: 16px;}
+        .cal-day.off { background: rgba(255, 59, 48, 0.15); color: var(--accent-danger); border-color: rgba(255, 59, 48, 0.3); }
 
-        /* СТИЛІ ДЛЯ МАТРИЦІ ФІЛЬТРІВ */
-        .matrix-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin-top: 10px; }
-        .matrix-table th, .matrix-table td { border: 1px solid var(--border-color); padding: 8px 4px; }
-        .matrix-table th { background: rgba(0, 122, 255, 0.1); font-weight: 700; color: var(--accent-blue); }
-        .matrix-table td:first-child { font-weight: 800; background: var(--bg-color); }
-        .val-price { font-weight: 700; color: var(--text-color); }
-        .val-eff { font-weight: 800; }
-        .eff-low { color: var(--accent-danger); }
-        .eff-mid { color: #FF9500; }
-        .eff-high { color: var(--uklon-green); }
-        .matrix-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;}
-        .matrix-controls input { flex: 1; min-width: 0; border: 1px solid var(--border-color); }
+        /* ПРО-МАТРИЦЯ ФІЛЬТРІВ */
+        .matrix-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; margin-top: 8px; }
+        .matrix-table th, .matrix-table td { border: 1px solid var(--border-color); padding: 4px 2px; }
+        .matrix-table th { background: rgba(0, 122, 255, 0.08); font-weight: 700; color: var(--accent-blue); font-size: 10px;}
+        .matrix-table td:first-child { font-weight: 800; background: var(--input-bg); }
+        .eff-low { background: rgba(255, 59, 48, 0.1); }
+        .eff-mid { background: rgba(255, 149, 0, 0.1); }
+        .eff-high { background: rgba(52, 199, 89, 0.15); }
+        .matrix-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .matrix-controls input { width: 100%; }
         
-        .action-row { display: flex; gap: 8px; margin-bottom: 14px; margin-top: 6px; }
+        .action-row { display: flex; gap: 8px; margin-bottom: 10px; margin-top: 4px; }
     </style>
 </head>
 <body>
 
     <div class="app-header">
         <div class="app-title">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.4-1.7-1-2.2l-3.2-2.6C17.2 7.6 16.5 7 15.6 7H8.4c-.9 0-1.6.6-2.2 1.2L3 10.8c-.6.5-1 1.3-1 2.2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M14 7v4H6"/></svg>
-            DriverHub Pro
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.4-1.7-1-2.2l-3.2-2.6C17.2 7.6 16.5 7 15.6 7H8.4c-.9 0-1.6.6-2.2 1.2L3 10.8c-.6.5-1 1.3-1 2.2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M14 7v4H6"/></svg>
+            DriverHub
         </div>
-        <div class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         </div>
     </div>
 
@@ -194,8 +193,8 @@
 
     <!-- Вікно завантаження (Loader) -->
     <div class="loader-modal" id="loader-overlay">
-        <svg class="spinner" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
-        <div id="loader-text" style="margin-top: 24px; font-weight: 800; font-size: 18px; text-align: center; line-height: 1.4;">Обробка чеків...<br><span style="font-size: 13px; opacity: 0.8; font-weight: 500;">Магія AI працює</span></div>
+        <svg class="spinner" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+        <div id="loader-text" style="margin-top: 16px; font-weight: 800; font-size: 16px; text-align: center;">Обробка чеків...<br><span style="font-size: 12px; opacity: 0.8;">Магія AI працює</span></div>
     </div>
 
     <div id="page-calc" class="page active">
@@ -203,48 +202,40 @@
 
         <div class="card" style="border: 1px solid var(--accent-blue);">
             <div class="card-title" style="color: var(--accent-blue); cursor: pointer; margin-bottom: 0;" onclick="toggleNavigator()">
-                <span>🗺️ Смарт-Навігатор (Міжмісто)</span><span id="nav-chevron">▼</span>
+                <span>🗺️ Смарт-Навігатор</span><span id="nav-chevron">▼</span>
             </div>
             
-            <div id="navigator-container" style="display: none; padding-top: 12px; margin-top: 10px; border-top: 1px solid var(--border-color);">
+            <div id="navigator-container" style="display: none; padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--border-color);">
                 <div class="ac-wrapper">
                     <div class="map-input-group">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--uklon-green); margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-                        <input type="text" id="route-from" class="map-input" placeholder="Звідки (напр: Келецька)" onkeyup="handleAutocomplete(event, 'route-from')" autocomplete="off">
-                        <button class="gps-btn" onclick="getGPSLocation()" title="Моя локація">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-                        </button>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--uklon-green); margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                        <input type="text" id="route-from" class="map-input" placeholder="Звідки" onkeyup="handleAutocomplete(event, 'route-from')" autocomplete="off">
+                        <button class="gps-btn" onclick="getGPSLocation()" title="Моя локація"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg></button>
                     </div>
                     <div id="route-from-ac" class="ac-dropdown"></div>
                 </div>
                 
                 <div class="ac-wrapper" id="via-wrapper" style="display: none;">
                     <div class="map-input-group">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #FF9500; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-                        <input type="text" id="route-via" class="map-input" placeholder="Через (напр: Барське шосе)" onkeyup="handleAutocomplete(event, 'route-via')" autocomplete="off">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #FF9500; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                        <input type="text" id="route-via" class="map-input" placeholder="Через" onkeyup="handleAutocomplete(event, 'route-via')" autocomplete="off">
                     </div>
                     <div id="route-via-ac" class="ac-dropdown"></div>
                 </div>
 
                 <div class="ac-wrapper">
                     <div class="map-input-group">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-danger); margin-right: 8px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        <input type="text" id="route-to" class="map-input" placeholder="Куди (напр: Хрещатик)" onkeyup="handleAutocomplete(event, 'route-to')" autocomplete="off">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-danger); margin-right: 8px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <input type="text" id="route-to" class="map-input" placeholder="Куди" onkeyup="handleAutocomplete(event, 'route-to')" autocomplete="off">
                     </div>
                     <div id="route-to-ac" class="ac-dropdown"></div>
                 </div>
                 
                 <div style="display:flex; gap:6px; margin-bottom: 8px;">
-                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0; padding:10px;" onclick="showViaInput()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Додати заїзд
-                    </button>
+                    <button class="toggle-btn" id="btn-add-via" style="flex:1; border: 1px dashed var(--accent-blue); background: transparent; margin-top:0;" onclick="showViaInput()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Додати заїзд</button>
                 </div>
 
-                <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); margin-top:6px;" onclick="calculateSmartRoute()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    Прокласти маршрут
-                </button>
+                <button class="save-btn save-btn-alt" id="btn-calc-route" style="background: var(--accent-blue); margin-top:4px;" onclick="calculateSmartRoute()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Прокласти</button>
                 <div class="nav-btn-group" id="nav-btn-group"><button class="nav-btn" style="background: #33CCFF; color: #fff;" onclick="openWaze()">🚀 Waze</button><button class="nav-btn" style="background: #34A853; color: #fff;" onclick="openGmaps()">🗺️ G-Maps</button></div>
             </div>
         </div>
@@ -253,10 +244,7 @@
             <div class="card-title" style="cursor: pointer;" onclick="toggleRouteParams()">
                 <span>Параметри маршруту</span>
                 <div>
-                    <span style="color: var(--accent-danger); text-transform: none; font-weight: 700; margin-right: 12px; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); resetCalc()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                        Скинути
-                    </span>
+                    <span style="color: var(--accent-danger); text-transform: none; font-weight: 700; margin-right: 10px; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); resetCalc()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Скинути</span>
                     <span id="params-chevron">▲</span>
                 </div>
             </div>
@@ -264,7 +252,7 @@
             <div id="params-body">
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box ib-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><span class="input-label">Км місто</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><span class="input-label">Км місто</span></div>
                         <div class="counter"><button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')"><button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button></div>
                     </div>
                     <div class="slider-container"><input type="range" id="slider-dist" min="0" max="50" step="0.1" value="0.0" oninput="syncSliderToInput('dist')"></div>
@@ -272,7 +260,7 @@
 
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box ib-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg></div><span class="input-label">Км за містом</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-purple"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg></div><span class="input-label">Км за містом</span></div>
                         <div class="counter"><button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')"><button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button></div>
                     </div>
                     <div class="slider-container"><input type="range" id="slider-distOut" min="0" max="250" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')"></div>
@@ -280,7 +268,7 @@
 
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box ib-cyan"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></div><span class="input-label">Порожній пробіг</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></div><span class="input-label">Порожній пробіг</span></div>
                         <div class="counter"><button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button><button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-emptyKm" value="0" oninput="syncInputToSlider('emptyKm')"><button class="btn-counter" onclick="changeVal('emptyKm', 1)">+</button></div>
                     </div>
                     <div class="slider-container"><input type="range" id="slider-emptyKm" min="0" max="250" step="1" value="0" oninput="syncSliderToInput('emptyKm')"></div>
@@ -288,7 +276,7 @@
 
                 <div class="input-block">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box ib-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><span class="input-label">Подача (км)</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><span class="input-label">Подача (км)</span></div>
                         <div class="counter"><button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')"><button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button></div>
                     </div>
                     <div class="slider-container"><input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="0.0" oninput="syncSliderToInput('delivery')"></div>
@@ -296,7 +284,7 @@
 
                 <div class="input-block" style="border-bottom:none;">
                     <div class="input-header">
-                        <div class="icon-wrap"><div class="icon-box ib-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div><span class="input-label">Коефіцієнт</span></div>
+                        <div class="icon-wrap"><div class="icon-box ib-yellow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div><span class="input-label">Коефіцієнт</span></div>
                         <div class="counter"><button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" style="color:var(--accent-success)" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')"><button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button></div>
                     </div>
                     <div class="quick-coef-container"><button class="quick-coef-btn" onclick="setQuickCoef(1.0)">1.0x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.2)">1.2x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.5)">1.5x</button><button class="quick-coef-btn" onclick="setQuickCoef(2.0)">2.0x</button></div>
@@ -304,16 +292,16 @@
                 </div>
 
                 <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    Показати додаткові налаштування
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Додаткові налаштування
                 </button>
                 
                 <div id="extra-params" style="display: none; margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
-                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
-                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><span class="input-label">Дод. точки</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('stops', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')"><button class="btn-counter" onclick="changeVal('stops', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')"></div></div>
-                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div><span class="input-label">Витрати (₴)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')"><button class="btn-counter" onclick="changeVal('extraExp', 5)">+</button></div></div><div class="slider-container"><input type="range" id="slider-extraExp" min="0" max="200" step="5" value="0" oninput="syncSliderToInput('extraExp')"></div></div>
-                    <div class="input-block" style="border-bottom:none;"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg></div><span class="input-label">Доплата (Чайові)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')"><button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button></div></div>
-                        <div class="quick-coef-container"><button class="quick-coef-btn" onclick="addTip(10)">+10 ₴</button><button class="quick-coef-btn" onclick="addTip(20)">+20 ₴</button><button class="quick-coef-btn" onclick="addTip(50)">+50 ₴</button><button class="quick-coef-btn btn-clear" onclick="clearTip()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><span class="input-label">Дод. точки</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('stops', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')"><button class="btn-counter" onclick="changeVal('stops', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')"></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div><span class="input-label">Витрати (₴)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')"><button class="btn-counter" onclick="changeVal('extraExp', 5)">+</button></div></div><div class="slider-container"><input type="range" id="slider-extraExp" min="0" max="200" step="5" value="0" oninput="syncSliderToInput('extraExp')"></div></div>
+                    <div class="input-block" style="border-bottom:none;"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg></div><span class="input-label">Доплата (Чайові)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')"><button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button></div></div>
+                        <div class="quick-coef-container"><button class="quick-coef-btn" onclick="addTip(10)">+10 ₴</button><button class="quick-coef-btn" onclick="addTip(20)">+20 ₴</button><button class="quick-coef-btn" onclick="addTip(50)">+50 ₴</button><button class="quick-coef-btn btn-clear" onclick="clearTip()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
                         <div class="slider-container"><input type="range" id="slider-clientBonus" min="0" max="100" step="1" value="0" oninput="syncSliderToInput('clientBonus')"></div>
                     </div>
                 </div>
@@ -324,15 +312,15 @@
             <div class="card-title" style="color: var(--accent-blue);">
                 <span>📈 Аналізатор вигідності</span>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                <span style="font-weight: 600; font-size: 14px;">Мій мінімум (₴/км):</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 13px;">Мій мінімум (₴/км):</span>
                 <input type="number" class="admin-input" id="set-target-km" value="40" oninput="saveCurrentRouteParams(); recalc(); drawMatrix();" style="border-color: var(--accent-blue);">
             </div>
-            <div class="result-row"><span>Фактична ставка:</span><strong id="analyzer-current-rate" style="font-size: 16px;">0 ₴/км</strong></div>
-            <div class="result-row"><span style="color: var(--text-muted);">Бажана ціна за маршрут:</span><span id="analyzer-target-price">0 ₴</span></div>
-            <div class="result-row" style="margin-top: 10px;"><span style="font-weight: 700;">Не вистачає до цілі:</span><span id="analyzer-diff" style="color: var(--accent-danger); font-weight: 800; font-size: 16px;">0 ₴</span></div>
-            <button class="save-btn save-btn-alt" id="btn-apply-diff" style="width: 100%; margin-top: 12px; display: none; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue);" onclick="applyAnalyzerDiff()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <div class="result-row"><span>Фактична ставка:</span><strong id="analyzer-current-rate" style="font-size: 14px;">0 ₴/км</strong></div>
+            <div class="result-row"><span style="color: var(--text-muted);">Бажана ціна:</span><span id="analyzer-target-price">0 ₴</span></div>
+            <div class="result-row" style="margin-top: 8px;"><span style="font-weight: 700;">Не вистачає до цілі:</span><span id="analyzer-diff" style="color: var(--accent-danger); font-weight: 800; font-size: 15px;">0 ₴</span></div>
+            <button class="save-btn save-btn-alt" id="btn-apply-diff" style="width: 100%; margin-top: 8px; padding: 10px; display: none; background: rgba(0, 122, 255, 0.1); color: var(--accent-blue); font-size:13px;" onclick="applyAnalyzerDiff()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Додати різницю як доплату
             </button>
         </div>
@@ -349,15 +337,15 @@
         <!-- КАЛЬКУЛЯТОР РЕШТИ -->
         <div class="card" id="change-calculator-card" style="display:none; border: 1px dashed var(--uklon-green); background: rgba(0, 211, 105, 0.05);">
             <div style="display:flex; justify-content:space-between; align-items: center;">
-                <span style="font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                <span style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
                     Клієнт дає:
                 </span>
                 <input type="number" class="admin-input" id="calc-given-cash" placeholder="500" oninput="calcChange()" style="border-color: var(--uklon-green);">
             </div>
             <div style="display:flex; justify-content:space-between; align-items: center; margin-top: 10px;">
-                <span style="font-size: 14px; font-weight: 600;">Здача:</span>
-                <strong id="calc-change-res" style="font-size: 20px; color: var(--uklon-green);">0 ₴</strong>
+                <span style="font-size: 13px; font-weight: 600;">Здача:</span>
+                <strong id="calc-change-res" style="font-size: 18px; color: var(--uklon-green);">0 ₴</strong>
             </div>
         </div>
 
@@ -368,22 +356,22 @@
                 <div class="summary-chevron" id="summary-chevron">Деталі</div>
             </div>
             
-            <div id="summary-details" style="display: none; padding-top: 12px; margin-top: 8px; border-top: 1px solid var(--border-color);">
+            <div id="summary-details" style="display: none; padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--border-color);">
                 <div class="result-row"><span>Комісія (<span id="lbl-comm">17</span>%):</span><span id="res-comm">0 ₴</span></div>
                 <div class="result-row"><span>Пальне (<span id="lbl-fuel-dist">0</span> км):</span><span id="res-fuel">0 ₴</span></div>
                 <div class="result-row" id="row-res-amort"><span>Амортизація авто:</span><span id="res-amort">0 ₴</span></div>
                 <div class="result-row" id="row-res-extraExp"><span>Витрати:</span><span id="res-extraExp">0 ₴</span></div>
                 <div class="result-row" id="row-res-rent"><span id="label-res-rent">Оренда / Парк:</span><span id="res-rent">0 ₴</span></div>
-                <div class="result-row" style="margin-top: 12px; align-items: center;"><span style="font-weight: 600;">Ефективність:</span><span class="eff-badge eff-green" id="res-eff">0 ₴/км</span></div>
+                <div class="result-row" style="margin-top: 10px; align-items: center;"><span style="font-weight: 600;">Ефективність:</span><span class="eff-badge eff-green" id="res-eff">0 ₴/км</span></div>
             </div>
             
             <div class="pay-switch">
                 <div class="pay-opt active" id="pay-opt-cash" onclick="setPaymentMode('cash')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
                     Готівка
                 </div>
                 <div class="pay-opt" id="pay-opt-card" onclick="setPaymentMode('card')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                     Картка
                 </div>
             </div>
@@ -395,43 +383,41 @@
         <div class="card">
             <div class="card-title">Програма лояльності</div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
-                <div class="input-header" style="margin-bottom:10px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:10px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:10px;"><span>Залишилось днів:</span><div style="display:flex; gap:8px;"><button class="quick-coef-btn" style="padding:6px 10px; font-size:12px; flex: 0 0 auto;" onclick="openCalendar()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Календар</button><input type="number" enterkeyhint="done" class="admin-input" style="width: 60px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Залишилось днів:</span><div style="display:flex; gap:8px;"><button class="quick-coef-btn" style="padding:6px 10px; font-size:11px; flex: 0 0 auto; border: 1px solid var(--border-color); background: var(--card-bg);" onclick="openCalendar()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Календар</button><input type="number" enterkeyhint="done" class="admin-input" style="width: 50px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-progress"></div></div>
-            <div style="margin-top: 12px; font-size: 14px; font-weight: 600; line-height: 1.5;">Прогрес: <strong id="brand-pct">0%</strong><br>Залишилось: <strong id="brand-remain">0</strong><br>Темп: <strong id="brand-perday" style="color:var(--uklon-green);">0 зам/день</strong></div>
+            <div style="margin-top: 10px; font-size: 13px; font-weight: 600; line-height: 1.4;">Прогрес: <strong id="brand-pct">0%</strong><br>Залишилось: <strong id="brand-remain">0</strong><br>Темп: <strong id="brand-perday" style="color:var(--uklon-green);">0 зам/день</strong></div>
         </div>
 
         <div class="card">
             <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
                 Щоденна Ціль
-                <button class="quick-coef-btn" style="padding:6px 10px; font-size:11px; flex: 0 0 auto; margin:0;" onclick="syncDailyGoal()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                    Синхронізувати
+                <button class="quick-coef-btn" style="padding:4px 8px; font-size:10px; flex: 0 0 auto; margin:0; border: 1px solid var(--border-color); background: var(--card-bg);" onclick="syncDailyGoal()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Синхронізувати
                 </button>
             </div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
-                <div class="input-header" style="margin-bottom:6px;"><span>Ціль на сьогодні: <strong id="brand-daily-goal-val" style="font-size: 18px; color: var(--accent-blue);">0</strong></span></div>
-                <div class="slider-container" style="margin-bottom:18px;"><input type="range" id="set-daily-goal" min="1" max="100" step="1" value="12" oninput="updateDailyGoalSlider(this.value)"></div>
-                <div class="input-header" style="margin-bottom:10px;"><span>Виконано сьогодні:</span><div class="counter"><button class="btn-counter" style="color:var(--accent-danger); font-size:16px;" onclick="resetDailyDone()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button><button class="btn-counter" onclick="changeDailyDone(-1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="manualDailyDoneInput()"><button class="btn-counter" onclick="changeDailyDone(1)">+</button></div></div>
+                <div class="input-header" style="margin-bottom:6px;"><span>Ціль на сьогодні: <strong id="brand-daily-goal-val" style="font-size: 16px; color: var(--accent-blue);">0</strong></span></div>
+                <div class="slider-container" style="margin-bottom:14px;"><input type="range" id="set-daily-goal" min="1" max="100" step="1" value="12" oninput="updateDailyGoalSlider(this.value)"></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Виконано сьогодні:</span><div class="counter"><button class="btn-counter" style="color:var(--accent-danger); font-size:16px;" onclick="resetDailyDone()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button><button class="btn-counter" onclick="changeDailyDone(-1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="manualDailyDoneInput()"><button class="btn-counter" onclick="changeDailyDone(1)">+</button></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: var(--accent-blue);"></div></div>
-            <div style="margin-top: 12px; font-size: 14px; line-height: 1.5; color: var(--text-muted);">Прогрес: <strong id="brand-daily-pct" style="color:var(--text-color);">0%</strong><br>Темп: <strong id="brand-perday-required" style="color:var(--uklon-green)">0 зам/день</strong><br><br><span id="brand-daily-comment" style="font-weight: 700; color:var(--text-color);"></span></div>
+            <div style="margin-top: 10px; font-size: 13px; line-height: 1.4; color: var(--text-muted);">Прогрес: <strong id="brand-daily-pct" style="color:var(--text-color);">0%</strong><br>Темп: <strong id="brand-perday-required" style="color:var(--uklon-green)">0 зам/день</strong><br><br><span id="brand-daily-comment" style="font-weight: 700; color:var(--text-color);"></span></div>
         </div>
     </div>
 
     <div id="page-cash" class="page">
         <div class="action-row">
-            <button class="save-btn" id="btn-import" style="flex: 2; margin-top: 0;" onclick="processScreenshot()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                Скан Чеків
+            <button class="save-btn" id="btn-import" style="flex: 2; margin-top: 0; padding: 10px; font-size: 13px;" onclick="processScreenshot()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> Скан Чеків
             </button>
-            <button class="save-btn" style="flex: 1; margin-top: 0; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); box-shadow: none;" onclick="exportToCSV()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <button class="save-btn" style="flex: 1; margin-top: 0; padding: 10px; background: var(--input-bg); color: var(--text-color); border: none; box-shadow: none;" onclick="exportToCSV()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             </button>
-            <button class="save-btn" style="flex: 1; margin-top: 0; background: var(--card-bg); color: var(--accent-blue); border: 1px solid var(--border-color); box-shadow: none;" onclick="shareReport()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <button class="save-btn" style="flex: 1; margin-top: 0; padding: 10px; background: var(--input-bg); color: var(--accent-blue); border: none; box-shadow: none;" onclick="shareReport()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
             </button>
         </div>
         
@@ -439,12 +425,11 @@
 
         <div class="shift-timer-box">
             <div>
-                <div style="font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Годин на лінії</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Годин на лінії</div>
                 <div class="timer-text" id="shift-timer-display">00:00</div>
             </div>
             <button class="btn-shift start" id="btn-shift-toggle" onclick="toggleShiftTimer()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                Почати
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати
             </button>
         </div>
 
@@ -455,15 +440,24 @@
         </div>
 
         <div class="card">
+            <div class="card-title">Прогрес зміни (Гроші)</div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:6px;">
+                <span id="cash-progress-text">0 / 2000 ₴</span>
+                <span id="cash-progress-pct" style="color:var(--uklon-green);">0%</span>
+            </div>
+            <div class="progress-container"><div class="progress-bar" id="cash-progress-bar" style="background:var(--uklon-green);"></div></div>
+        </div>
+
+        <div class="card">
             <div class="card-title">Динаміка прибутку</div>
-            <canvas id="profitChart" style="width: 100%; height: 160px;"></canvas>
+            <canvas id="profitChart" style="width: 100%; height: 140px;"></canvas>
         </div>
         
         <div class="card">
             <div class="card-title">Підсумок зміни</div>
-            <div class="result-row"><span>Виконано замовлень:</span><strong id="cash-orders-count" style="font-size:16px;">0</strong></div>
+            <div class="result-row"><span>Виконано замовлень:</span><strong id="cash-orders-count" style="font-size:14px;">0</strong></div>
             <div class="result-row" style="color: var(--accent-success);"><span>Середня ставка:</span><strong id="cash-hourly-rate">0 ₴/год</strong></div>
-            <div style="border-top: 1px solid var(--border-color); margin: 12px 0;"></div>
+            <div style="border-top: 1px solid var(--border-color); margin: 10px 0;"></div>
             
             <div class="result-row"><span style="color: var(--text-muted);">Загальний пробіг:</span><strong id="cash-total-km" style="color: var(--text-color);">0 км</strong></div>
             <div class="result-row"><span style="color: var(--text-muted);">Загальний оборот:</span><span id="cash-gross" style="font-weight:700;">0 ₴</span></div>
@@ -471,28 +465,28 @@
             <div class="result-row"><span style="color: var(--text-muted);">Пальне та ТО:</span><span id="cash-fuel" style="color: #ff9500;">-0 ₴</span></div>
             <div class="result-row" id="row-cash-extraExp"><span style="color: var(--text-muted);">Витрати:</span><span id="cash-extraExp" style="color: var(--accent-danger);">-0 ₴</span></div>
             <div class="result-row" id="row-cash-rent"><span id="label-cash-rent" style="color: var(--text-muted);">Оренда / Парк:</span><span id="cash-rent" style="color: var(--accent-danger);">-0 ₴</span></div>
-            <div class="result-total" style="color: var(--uklon-green); font-size: 22px;"><span>Чистий прибуток:</span><span id="cash-net">0 ₴</span></div>
+            <div class="result-total" style="color: var(--uklon-green); font-size: 20px;"><span>Чистий прибуток:</span><span id="cash-net">0 ₴</span></div>
             
-            <div style="border-top: 1px solid var(--border-color); margin: 12px 0; padding-top: 12px;">
-                <div class="result-row" style="font-size: 14px;"><span>💵 Всього Готівки:</span><strong id="cash-money-cash">0 ₴</strong></div>
-                <div class="result-row" style="font-size: 14px;"><span>💳 Всього на Картку:</span><strong id="cash-money-card">0 ₴</strong></div>
-                <div class="result-row" style="font-size: 15px; margin-top: 10px;"><span id="label-cash-balance">🏦 Залишок готівки:</span><strong id="cash-balance" style="color: var(--accent-blue);">0 ₴</strong></div>
+            <div style="border-top: 1px solid var(--border-color); margin: 10px 0; padding-top: 10px;">
+                <div class="result-row" style="font-size: 12px;"><span>💵 Всього Готівки:</span><strong id="cash-money-cash">0 ₴</strong></div>
+                <div class="result-row" style="font-size: 12px;"><span>💳 Всього на Картку:</span><strong id="cash-money-card">0 ₴</strong></div>
+                <div class="result-row" style="font-size: 13px; margin-top: 8px;"><span id="label-cash-balance">🏦 Залишок готівки:</span><strong id="cash-balance" style="color: var(--accent-blue);">0 ₴</strong></div>
             </div>
         </div>
         
         <div class="card">
-            <div class="card-title">Історія поїздок (Свайп вліво)</div>
+            <div class="card-title">Історія (Свайп вліво)</div>
             <div id="cash-history-list"></div>
-            <div id="cash-empty-state" style="text-align: center; color: var(--text-muted); padding: 30px 10px;">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.8;"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
-                <div style="font-size: 16px; font-weight: 700; color: var(--text-color);">Каса поки порожня</div>
-                <div style="font-size: 13px; margin-top: 6px;">Час брати перше замовлення! 🚕💨</div>
+            <div id="cash-empty-state" style="text-align: center; color: var(--text-muted); padding: 20px 10px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px; opacity: 0.8;"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                <div style="font-size: 14px; font-weight: 700; color: var(--text-color);">Каса поки порожня</div>
+                <div style="font-size: 11px; margin-top: 4px;">Час брати перше замовлення! 🚕</div>
             </div>
         </div>
         
         <button class="reset-btn" onclick="resetDailyCashClick()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-            Почати нову зміну (Скинути касу)
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+            Почати нову зміну (Скинути)
         </button>
     </div>
 
@@ -501,16 +495,16 @@
         <div class="card">
             <div class="card-title">Симулятор плану</div>
             <div class="input-block" style="border:none;">
-                <div class="input-header" style="margin-bottom: 12px;">
-                    <span style="font-weight: 600; font-size: 14px;">Хочу чистими (₴):</span>
-                    <input type="number" enterkeyhint="done" class="admin-input" style="border-color: var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
+                <div class="input-header" style="margin-bottom: 10px;">
+                    <span style="font-weight: 600; font-size: 13px;">Хочу чистими (₴):</span>
+                    <input type="number" enterkeyhint="done" class="admin-input" style="border: 1px solid var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy(); updateCashPageUI();">
                 </div>
-                <div class="input-header" style="margin-bottom: 12px;">
-                    <span style="font-weight: 600; font-size: 14px;">Середня поїздка (км):</span>
+                <div class="input-header" style="margin-bottom: 10px;">
+                    <span style="font-weight: 600; font-size: 13px;">Середня поїздка (км):</span>
                     <input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="strat-km" value="6.5" oninput="calcStrategy()">
                 </div>
                 <div class="input-header">
-                    <span style="font-weight: 600; font-size: 14px;">Час 1 поїздки (хв):</span>
+                    <span style="font-weight: 600; font-size: 13px;">Час 1 поїздки (хв):</span>
                     <input type="number" enterkeyhint="done" step="1" class="admin-input" id="strat-min" value="25" oninput="calcStrategy()">
                 </div>
             </div>
@@ -519,10 +513,10 @@
         <div class="card" id="strat-result-container">
             <div class="card-title">Що для цього потрібно:</div>
             <div id="strat-result-data">
-                <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 22px; color: var(--accent-blue);">0</strong></div>
-                <div class="result-row"><span>Час на лінії:</span><strong id="strat-hours-total" style="font-size: 18px; color: var(--text-color);">0 год</strong></div>
+                <div class="result-row"><span>Поїздок:</span><strong id="strat-trips" style="font-size: 20px; color: var(--accent-blue);">0</strong></div>
+                <div class="result-row"><span>Час на лінії:</span><strong id="strat-hours-total" style="font-size: 16px; color: var(--text-color);">0 год</strong></div>
                 
-                <div style="border-top: 1px solid var(--border-color); margin: 12px 0;"></div>
+                <div style="border-top: 1px solid var(--border-color); margin: 10px 0;"></div>
                 
                 <div class="result-row"><span style="color: var(--text-muted);">Брудними (Оборот):</span><strong id="strat-gross">0 ₴</strong></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Комісія служби:</span><span id="strat-comm-total" style="color: var(--accent-danger);">0 ₴</span></div>
@@ -530,47 +524,47 @@
                 <div class="result-row"><span style="color: var(--text-muted);">Пальне та Амортизація:</span><span id="strat-fuel-total" style="color: #ff9500;">0 ₴</span></div>
                 <div class="result-row"><span style="color: var(--text-muted);">Пробіг:</span><span id="strat-km-total">0 км</span></div>
             </div>
-            <div id="strat-warning" style="display:none; color: var(--accent-danger); font-weight: 600; font-size: 13px; text-align: center; margin-top: 12px; padding: 12px; background: rgba(255, 59, 48, 0.1); border-radius: 10px;">⚠️ Фільтр збитковий! Змініть налаштування.</div>
+            <div id="strat-warning" style="display:none; color: var(--accent-danger); font-weight: 600; font-size: 12px; text-align: center; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1); border-radius: 8px;">⚠️ Фільтр збитковий! Змініть налаштування.</div>
         </div>
 
-        <div class="card" style="border: 1px solid var(--accent-blue); margin-top: 12px;">
+        <div class="card" style="border: 1px solid var(--accent-blue); margin-top: 10px;">
             <div class="card-title" style="color: var(--accent-blue); display:flex; justify-content:space-between; cursor: pointer;">
-                <span>🧮 Матриця Фільтрів</span>
-                <span style="font-size: 12px; font-weight: 700; color: var(--accent-danger); text-transform: none; display: flex; align-items: center; gap: 4px;" onclick="resetMatrix()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Скинути
+                <span>🧮 Фінансова Матриця</span>
+                <span style="font-size: 11px; font-weight: 700; color: var(--accent-danger); text-transform: none; display: flex; align-items: center; gap: 4px;" onclick="resetMatrix()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Скинути
                 </span>
             </div>
             
             <div class="matrix-controls">
                 <div style="flex: 1 1 30%;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Мінімалка (₴)</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Мінімалка ₴</div>
                     <input type="number" class="admin-input" id="mx-min-price" value="120" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
                 <div style="flex: 1 1 30%;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Км у мін.</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Км мін.</div>
                     <input type="number" step="0.1" class="admin-input" id="mx-min-km" value="1.5" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
                 <div style="flex: 1 1 30%;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Подача (км)</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Подача км</div>
                     <input type="number" step="0.1" class="admin-input" id="mx-delivery" value="1.5" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
                 <div style="flex: 1 1 30%;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">⚡ Коеф. попиту</div>
-                    <input type="number" step="0.1" class="admin-input" id="mx-coef" value="1.0" style="width: 100%; color: var(--accent-success); border-color: var(--accent-success);" oninput="saveMatrixParams(); drawMatrix();">
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">⚡ Коефіцієнт</div>
+                    <input type="number" step="0.1" class="admin-input" id="mx-coef" value="1.0" style="width: 100%; color: var(--accent-success); border-color: transparent;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
                 <div style="flex: 1 1 30%;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Довжина (км)</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Довжина км</div>
                     <input type="number" class="admin-input" id="mx-max-dist" value="15" style="width: 100%;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
                 <div style="flex: 1 1 100%;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Тарифи ₴/км (через кому)</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px;">Тарифи ₴/км (через кому)</div>
                     <input type="text" class="admin-input" id="mx-custom-rates" value="20, 25, 30, 35, 45" style="width: 100%; text-align: left;" oninput="saveMatrixParams(); drawMatrix();">
                 </div>
             </div>
             
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">*Зеленим підсвічуються тарифи з ефективністю вище <strong id="mx-target-label" style="color:var(--text-color);">40</strong> ₴/км.</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">*Верхня цифра - тариф (грязними), Нижня - чистий прибуток. Зелений > <strong id="mx-target-label" style="color:var(--text-color);">40</strong> ₴/км.</div>
 
-            <div style="overflow-x: auto; padding-bottom: 10px; border-radius: 10px; scrollbar-width: none;">
+            <div style="overflow-x: auto; padding-bottom: 8px; border-radius: 8px; scrollbar-width: none;">
                 <table class="matrix-table" id="matrix-table-body">
                 </table>
             </div>
@@ -579,80 +573,79 @@
 
     <div id="page-settings" class="page">
         <div class="card">
-            <h3 style="margin-bottom:12px; font-size:13px; text-transform: uppercase; color: var(--text-muted);">Витрати</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 14px;">Комісія (%):</span><input type="number" step="0.1" class="admin-input" id="set-comm" value="17" oninput="autoSaveSettings()"></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 14px;">Тип пального:</span><select class="admin-input" style="width:110px;" id="set-fuel-type" onchange="autoSaveSettings()"><option value="gas">Газ</option><option value="petrol">Бензин</option><option value="diesel">Дизель</option><option value="electro">Електро</option></select></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span id="set-fuel-cons-label" style="font-weight: 600; font-size: 14px;">Розхід (на 100км):</span><input type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="10" oninput="autoSaveSettings()"></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span id="set-fuel-price-label" style="font-weight: 600; font-size: 14px;">Ціна (₴):</span><input type="number" step="0.1" class="admin-input" id="set-fuel-price" value="28" oninput="autoSaveSettings()"></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items: center;"><span style="font-weight: 600; font-size: 14px;">Амортизація ТО (₴/км):</span><input type="number" step="0.1" class="admin-input" id="set-amort" value="1.5" oninput="autoSaveSettings()"></div>
+            <h3 style="margin-bottom:10px; font-size:12px; text-transform: uppercase; color: var(--text-muted);">Витрати</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Комісія (%):</span><input type="number" step="0.1" class="admin-input" id="set-comm" value="17" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Тип пального:</span><select class="admin-input" style="width:100px;" id="set-fuel-type" onchange="autoSaveSettings()"><option value="gas">Газ</option><option value="petrol">Бензин</option><option value="diesel">Дизель</option><option value="electro">Електро</option></select></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span id="set-fuel-cons-label" style="font-weight: 600; font-size: 13px;">Розхід (на 100км):</span><input type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="14" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span id="set-fuel-price-label" style="font-weight: 600; font-size: 13px;">Ціна (₴):</span><input type="number" step="0.1" class="admin-input" id="set-fuel-price" value="41.9" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Амортизація ТО (₴/км):</span><input type="number" step="0.1" class="admin-input" id="set-amort" value="0" oninput="autoSaveSettings()"></div>
         </div>
 
         <div class="card">
-            <h3 style="margin-bottom:12px; font-size:13px; text-transform: uppercase; color: var(--text-muted);">Режим роботи</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 14px;">Режим:</span><select class="admin-input" style="width:130px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();"><option value="solo">Власне авто</option><option value="rent">Оренда (фікс)</option><option value="split">Парк (%)</option></select></div>
-            <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 14px;">Сума плану (₴):</span><input type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()"></div>
-            <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 14px;">Відсоток парку:</span><input type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()"></div>
+            <h3 style="margin-bottom:10px; font-size:12px; text-transform: uppercase; color: var(--text-muted);">Режим роботи</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Режим:</span><select class="admin-input" style="width:120px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();"><option value="solo">Власне авто</option><option value="rent">Оренда (фікс)</option><option value="split">Парк (%)</option></select></div>
+            <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Сума плану (₴):</span><input type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()"></div>
+            <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:10px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Відсоток парку:</span><input type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()"></div>
         </div>
 
         <div class="card" style="border: 1px solid var(--uklon-green);">
             <div class="card-title" style="color: var(--uklon-green);">🔧 Трекер ТО (Мастило / Ходова)</div>
             <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;">
-                <span style="font-weight: 600; font-size: 14px;">Загальний пробіг в авто:</span>
-                <input type="number" class="admin-input" id="set-odometer" value="0" style="width: 110px;" oninput="updateMaintenance()">
+                <span style="font-weight: 600; font-size: 13px;">Загальний пробіг:</span>
+                <input type="number" class="admin-input" id="set-odometer" value="0" style="width: 100px;" oninput="updateMaintenance()">
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items: center;">
-                <span style="font-weight: 600; font-size: 14px;">Наступне ТО на (км):</span>
-                <input type="number" class="admin-input" id="set-next-service" value="10000" style="width: 110px;" oninput="updateMaintenance()">
+                <span style="font-weight: 600; font-size: 13px;">Наступне ТО на (км):</span>
+                <input type="number" class="admin-input" id="set-next-service" value="10000" style="width: 100px;" oninput="updateMaintenance()">
             </div>
             <div class="progress-container"><div class="progress-bar" id="service-progress" style="background: var(--uklon-green);"></div></div>
-            <div style="font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 6px;">
+            <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 6px;">
                 Залишилось до заміни: <strong id="service-left" style="color: var(--text-color);">0 км</strong>
             </div>
         </div>
 
-        <h3 style="margin: 24px 0 12px 4px; font-size:13px; text-transform: uppercase; color: var(--text-muted); font-weight: 800;">Налаштування Тарифів</h3>
+        <h3 style="margin: 20px 0 10px 4px; font-size:12px; text-transform: uppercase; color: var(--text-muted); font-weight: 800;">Налаштування Тарифів</h3>
         <div id="settings-container"></div>
         
-        <button class="save-btn" onclick="saveTariffsClick()">Зберегти налаштування</button>
-        <button class="reset-btn" onclick="resetToFactoryTariffs()">Відновити стандартні</button>
+        <button class="save-btn" onclick="saveTariffsClick()" style="padding: 14px; font-size:14px;">Зберегти налаштування</button>
+        <button class="reset-btn" onclick="resetToFactoryTariffs()" style="padding: 14px; font-size:13px;">Відновити стандартні</button>
         
         <div class="card donate-card">
-            <div style="text-align: center; margin-bottom: 12px;">
+            <div style="text-align: center; margin-bottom: 10px;">
                 <span style="font-size: 24px;">☕</span>
-                <div style="font-size: 15px; font-weight: 800; color: var(--text-color); margin-top: 6px;">Підтримати розробника</div>
-                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Якщо додаток допомагає, пригостіть автора кавою!</div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-color); margin-top: 6px;">Підтримати розробника</div>
             </div>
-            <div style="background: var(--bg-color); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);">
+            <div style="background: var(--bg-color); border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);">
                 <div>
-                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">КАРТКА (MONOBANK)</div>
-                    <div style="font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--text-color);">4441 1144 2469 9245</div>
+                    <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px;">КАРТКА (MONOBANK)</div>
+                    <div style="font-size: 14px; font-weight: 800; letter-spacing: 1px; color: var(--text-color);">4441 1144 2469 9245</div>
                 </div>
-                <button onclick="copyDonateCard()" style="background: var(--accent-blue); color: #fff; border: none; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.15s;">Копіювати</button>
+                <button onclick="copyDonateCard()" style="background: var(--accent-blue); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;">Копіювати</button>
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 16px;"><button class="toggle-btn" onclick="openManual()" style="border:none;">📖 Інструкція користувача</button></div>
+        <div style="text-align: center; margin-top: 16px;"><button class="toggle-btn" onclick="openManual()" style="border:none; padding:10px;">📖 Інструкція користувача</button></div>
     </div>
 
     <div class="modal-overlay" id="manual-modal">
         <div class="modal-content">
-            <div class="card-title" style="font-size: 15px;">Посібник Водія</div>
-            <div class="modal-text" style="font-size: 14px; line-height: 1.5;">
+            <div class="card-title" style="font-size: 14px;">Посібник Водія</div>
+            <div class="modal-text" style="font-size: 13px; line-height: 1.6;">
                 <strong>🗺️ СМАРТ-МАРШРУТИ:</strong> Введіть адресу, щоб підтягнути варіанти. Можна додати проміжну точку "через".<br><br>
                 <strong>🧮 ТАРИФ:</strong> Обирайте тип оплати прямо у шторці для зведення балансу. "Деталі" покажуть комісію.<br><br>
                 <strong>💰 КАСА:</strong> Тисніть "Почати зміну". Розрахунок ставки за годину тепер автоматичний. Використовуй кнопку "Імпорт", щоб розпізнавати суму з чеків! Свайп вліво по чеку видаляє його.<br><br>
                 <strong>📊 АНАЛІЗ:</strong> Вкажіть скільки хочете чистими. Бот розрахує потрібний час і відніме всі комісії.
             </div>
-            <button class="save-btn" style="margin-top:20px;" onclick="closeManual()">Зрозуміло</button>
+            <button class="save-btn" style="margin-top:16px; padding:12px;" onclick="closeManual()">Зрозуміло</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="calendar-modal">
         <div class="modal-content">
-            <div class="card-title" style="font-size: 15px; color: var(--text-color); margin-bottom: 6px; display: flex; justify-content: space-between;">Робочі дні <span onclick="closeCalendar()" style="cursor: pointer; color: var(--accent-danger); font-size: 18px;">✖</span></div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Натисніть на день, щоб зробити його вихідним.</div>
+            <div class="card-title" style="font-size: 14px; color: var(--text-color); margin-bottom: 6px; display: flex; justify-content: space-between;">Робочі дні <span onclick="closeCalendar()" style="cursor: pointer; color: var(--accent-danger); font-size: 18px;">✖</span></div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">Натисніть на день, щоб зробити його вихідним.</div>
             <div class="calendar-grid" id="cal-grid"></div>
-            <button class="save-btn" style="margin-top:20px;" onclick="closeCalendar()">Застосувати</button>
+            <button class="save-btn" style="margin-top:20px; padding:12px;" onclick="closeCalendar()">Застосувати</button>
         </div>
     </div>
 
@@ -670,7 +663,8 @@
         let profitChartInstance = null;
 
         const defaultTariffs = { standard: { name: 'Стандарт', icon: '🚕', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 }, comfort: { name: 'Комфорт', icon: '🛋️', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 }, business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }, intercity: { name: 'За місто', icon: '🛣️', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 } };
-        const defaultExpenses = { comm: 17, type: 'gas', cons: 10, price: 28, amort: 1.5, workMode: 'solo', rentVal: 30, splitPct: 10 };
+        // ОНОВЛЕНІ НАЛАШТУВАННЯ (Газ 41.9, Розхід 14, Аморт 0)
+        const defaultExpenses = { comm: 17, type: 'gas', cons: 14, price: 41.9, amort: 0, workMode: 'solo', rentVal: 30, splitPct: 10 };
         const defaultGoals = { dailyGoal: 12, dailyDone: 0 };
         const defaultBranding = { done: 0, target: 700, days: 0 };
         const defaultDailyCash = { orders: 0, gross: 0, comm: 0, fuel: 0, extraExp: 0, rent: 0, net: 0, totalKm: 0, date: new Date().toLocaleDateString(), history: [], totalCash: 0, totalCard: 0, shiftActive: false, shiftStart: null, shiftHours: 0 };
@@ -709,7 +703,8 @@
         function initApp() {
             autoThemeSwitch();
             const res = {}; 
-            ['taxi_tariffs_v22', 'taxi_expenses_v22', 'taxi_goals_v22', 'taxi_branding_v22', 'taxi_daily_cash_data_v22', 'taxi_theme', 'taxi_route_params_v22', 'taxi_strat_params_v22', 'taxi_offdays_v22'].forEach(k => res[k] = localStorage.getItem(k)); 
+            // ВИКОРИСТОВУЄМО КЛЮЧІ V3 ДЛЯ СКИДАННЯ НА НОВІ ДЕФОЛТИ (Газ 41.9, 14л)
+            ['taxi_tariffs_v3', 'taxi_expenses_v3', 'taxi_goals_v3', 'taxi_branding_v3', 'taxi_daily_cash_data_v3', 'taxi_theme', 'taxi_route_params_v3', 'taxi_strat_params_v3', 'taxi_offdays_v3'].forEach(k => res[k] = localStorage.getItem(k)); 
             loadAllData(res);
         }
 
@@ -742,13 +737,13 @@
         }
 
         function loadAllData(res) {
-            tariffs = safeParse(res.taxi_tariffs_v22, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
-            expenses = safeParse(res.taxi_expenses_v22, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
-            goals = safeParse(res.taxi_goals_v22, defaultGoals);
-            brandingData = safeParse(res.taxi_branding_v22, defaultBranding);
-            offDays = safeParse(res.taxi_offdays_v22, []);
+            tariffs = safeParse(res.taxi_tariffs_v3, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
+            expenses = safeParse(res.taxi_expenses_v3, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
+            goals = safeParse(res.taxi_goals_v3, defaultGoals);
+            brandingData = safeParse(res.taxi_branding_v3, defaultBranding);
+            offDays = safeParse(res.taxi_offdays_v3, []);
             
-            const cachedCash = safeParse(res.taxi_daily_cash_data_v22, defaultDailyCash);
+            const cachedCash = safeParse(res.taxi_daily_cash_data_v3, defaultDailyCash);
             if (cachedCash.date === new Date().toLocaleDateString()) {
                 dailyCashData = cachedCash;
                 if(!dailyCashData.history) dailyCashData.history = [];
@@ -759,7 +754,7 @@
             try {
                 if(brandingData.days === 0) setDaysToEndOfMonth();
 
-                const savedParams = safeParse(res.taxi_route_params_v22, {});
+                const savedParams = safeParse(res.taxi_route_params_v3, {});
                 ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { 
                     if(savedParams[id] !== undefined && document.getElementById('inp-'+id)) { document.getElementById('inp-'+id).value = savedParams[id]; document.getElementById('slider-'+id).value = savedParams[id]; } 
                 });
@@ -767,16 +762,16 @@
                     document.getElementById('set-target-km').value = savedParams['targetKm'];
                 }
                 
-                const strat = safeParse(res.taxi_strat_params_v22, {target: 2000, km: 6.5, min: 25});
+                const strat = safeParse(res.taxi_strat_params_v3, {target: 2000, km: 6.5, min: 25});
                 document.getElementById('strat-target').value = strat.target || 2000; document.getElementById('strat-km').value = strat.km || 6.5; 
                 if(document.getElementById('strat-min')) document.getElementById('strat-min').value = strat.min || 25;
 
-                document.getElementById('set-comm').value = expenses.comm; document.getElementById('set-fuel-type').value = expenses.type; document.getElementById('set-fuel-cons').value = expenses.cons; document.getElementById('set-fuel-price').value = expenses.price; document.getElementById('set-amort').value = expenses.amort || 1.5; document.getElementById('set-work-mode').value = expenses.workMode || 'solo'; document.getElementById('set-rent-val').value = expenses.rentVal || 30; document.getElementById('set-split-pct').value = expenses.splitPct || 10;
+                document.getElementById('set-comm').value = expenses.comm; document.getElementById('set-fuel-type').value = expenses.type; document.getElementById('set-fuel-cons').value = expenses.cons; document.getElementById('set-fuel-price').value = expenses.price; document.getElementById('set-amort').value = expenses.amort; document.getElementById('set-work-mode').value = expenses.workMode || 'solo'; document.getElementById('set-rent-val').value = expenses.rentVal || 30; document.getElementById('set-split-pct').value = expenses.splitPct || 10;
                 document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('set-daily-goal').value = goals.dailyGoal; document.getElementById('brand-daily-goal-val').innerText = goals.dailyGoal; document.getElementById('brand-done').value = brandingData.done; document.getElementById('brand-target').value = brandingData.target; document.getElementById('brand-days').value = brandingData.days;
 
                 if(dailyCashData.shiftActive) {
                     const btn = document.getElementById('btn-shift-toggle'); 
-                    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Завершити`; 
+                    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Завершити`; 
                     btn.classList.remove('start'); btn.classList.add('stop');
                     updateShiftTimerUI(); shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
                 } else if (dailyCashData.shiftHours > 0) {
@@ -788,7 +783,7 @@
             } catch(e) { renderCarSelector(); renderSettings(); recalc(); drawMatrix(); updateCashPageUI(); }
         }
 
-        function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData)); }
+        function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData)); }
 
         function toggleTheme() { haptic(); const body = document.documentElement; const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', newTheme); localStorage.setItem('taxi_theme', newTheme); }
 
@@ -796,15 +791,15 @@
             haptic(); const btn = document.getElementById('btn-shift-toggle');
             if (dailyCashData.shiftActive) {
                 dailyCashData.shiftActive = false; clearInterval(shiftTimerInterval); 
-                btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; 
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; 
                 btn.classList.remove('stop'); btn.classList.add('start');
             } else {
                 dailyCashData.shiftActive = true; if (!dailyCashData.shiftStart) dailyCashData.shiftStart = Date.now();
-                btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Завершити`; 
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Завершити`; 
                 btn.classList.remove('start'); btn.classList.add('stop');
                 shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
             }
-            localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData)); updateShiftTimerUI(); updateCashPageUI();
+            localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData)); updateShiftTimerUI(); updateCashPageUI();
         }
 
         function updateShiftTimerUI() {
@@ -817,7 +812,7 @@
         function toggleLoader(show, text = 'Обробка чеків...') {
             const loader = document.getElementById('loader-overlay');
             if (show) {
-                document.getElementById('loader-text').innerHTML = `${text}<br><span style="font-size: 13px; opacity: 0.8; font-weight: 500;">Магія AI працює</span>`;
+                document.getElementById('loader-text').innerHTML = `${text}<br><span style="font-size: 12px; opacity: 0.8; font-weight: 500;">Магія AI працює</span>`;
                 loader.style.display = 'flex';
                 if(tg && tg.MainButton) { tg.MainButton.setText(text); tg.MainButton.show(); }
             } else {
@@ -835,7 +830,7 @@
 
             for (let i = 0; i < files.length; i++) {
                 try {
-                    document.getElementById('loader-text').innerHTML = `Обробка ${i+1}/${files.length}...<br><span style="font-size: 13px; opacity: 0.8; font-weight: 500;">Магія AI працює</span>`;
+                    document.getElementById('loader-text').innerHTML = `Обробка ${i+1}/${files.length}...<br><span style="font-size: 12px; opacity: 0.8; font-weight: 500;">Магія AI працює</span>`;
                     const { data: { text } } = await Tesseract.recognize(files[i], 'ukr');
                     
                     let textClean = text.replace(/\n/g, ' ').replace(/o|о|q|@/gi, '0').replace(/,/g, '.').replace(/\s\.\s/g, '.');
@@ -862,7 +857,7 @@
                             const pPrice = prices[p]; const pKm = kms[p];
                             const commCost = pPrice * (expenses.comm / 100);
                             const fuelCost = (pKm / 100) * expenses.cons * expenses.price;
-                            const amortCost = pKm * (expenses.amort || 1.5);
+                            const amortCost = pKm * (expenses.amort || 0);
                             const netIncome = pPrice - commCost - fuelCost - amortCost;
                             
                             dailyCashData.orders += 1; dailyCashData.gross += pPrice; dailyCashData.comm += commCost; dailyCashData.fuel += fuelCost; dailyCashData.extraExp += amortCost; dailyCashData.net += netIncome; dailyCashData.totalKm += pKm; dailyCashData.totalCash += pPrice;
@@ -899,12 +894,12 @@
                             }
                             
                             successCount++; switchTab('calc');
-                            if(tg.showAlert) tg.showAlert("✅ Розпізнано! (Маршрут + Подача). Перевірте та зафіксуйте.");
+                            if(tg.showAlert) tg.showAlert("✅ Розпізнано! Перевірте дані.");
                         } else {
                             const commCost = targetPrice * (expenses.comm / 100);
                             const totalKm = cityKm + deliveryKm;
                             const fuelCost = (totalKm / 100) * expenses.cons * expenses.price;
-                            const amortCost = totalKm * (expenses.amort || 1.5);
+                            const amortCost = totalKm * (expenses.amort || 0);
                             const netIncome = targetPrice - commCost - fuelCost - amortCost;
                             
                             dailyCashData.orders += 1; dailyCashData.gross += targetPrice; dailyCashData.comm += commCost; dailyCashData.fuel += fuelCost; dailyCashData.extraExp += amortCost; dailyCashData.net += netIncome; dailyCashData.totalKm += totalKm;
@@ -922,13 +917,13 @@
             toggleLoader(false);
 
             if (files.length > 1 || successCount > 1) {
-                localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
+                localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
                 document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-                localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
+                localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData));
                 updateCashPageUI(); calcBranding(); switchTab('cash');
                 if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано: ${successCount}`);
             } else if (successCount === 0) {
-                 if(tg.showAlert) tg.showAlert("❌ Не вдалося розпізнати цифри. Спробуйте інший скріншот.");
+                 if(tg.showAlert) tg.showAlert("❌ Не вдалося розпізнати цифри.");
                  else alert("❌ Не вдалося розпізнати цифри.");
             }
 
@@ -946,7 +941,7 @@
                     dailyCashData.extraExp += amount; dailyCashData.net -= amount;
                     const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
                     dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: name });
-                    localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
+                    localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
                     updateCashPageUI();
                     if(tg.showAlert) tg.showAlert(`💸 Витрату додано!`);
                 }
@@ -970,7 +965,7 @@
             document.getElementById('brand-days').value = workingDaysLeft > 0 ? workingDaysLeft : 1; calcBranding(); syncDailyGoal();
         }
 
-        function toggleDayOff(day, el) { haptic(); const idx = offDays.indexOf(day); if (idx > -1) { offDays.splice(idx, 1); el.classList.remove('off'); el.classList.add('active'); } else { offDays.push(day); el.classList.remove('active'); el.classList.add('off'); } localStorage.setItem('taxi_offdays_v22', JSON.stringify(offDays)); }
+        function toggleDayOff(day, el) { haptic(); const idx = offDays.indexOf(day); if (idx > -1) { offDays.splice(idx, 1); el.classList.remove('off'); el.classList.add('active'); } else { offDays.push(day); el.classList.remove('active'); el.classList.add('off'); } localStorage.setItem('taxi_offdays_v3', JSON.stringify(offDays)); }
         function copyDonateCard() { haptic(); const cardNumber = "4441114424699245"; if (navigator.clipboard) { navigator.clipboard.writeText(cardNumber).then(() => { if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано!'); }); } else { const t = document.createElement("input"); t.value = cardNumber; document.body.appendChild(t); t.select(); document.execCommand("copy"); document.body.removeChild(t); if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано!'); } }
 
         function toggleSummary() { 
@@ -1009,7 +1004,7 @@
         async function calculateSmartRoute() {
             haptic(); const fromStr = document.getElementById('route-from').value; const toStr = document.getElementById('route-to').value; const viaStr = document.getElementById('route-via').value; const btn = document.getElementById('btn-calc-route');
             if(!fromStr || !toStr) { alert("Заповніть початкову і кінцеву точки!"); return; }
-            btn.innerText = "⏳ Рахую..."; btn.style.opacity = "0.7";
+            btn.innerHTML = `⏳ Рахую...`; btn.style.opacity = "0.7";
             try {
                 if(fromStr !== "📍 Моя поточна локація" && !routeCoords.lat1) { const c1 = await geocodeAddress(fromStr); if(!c1) throw new Error("Не знайдено старт"); routeCoords.lat1 = c1.lat; routeCoords.lon1 = c1.lon; }
                 if(!routeCoords.lat2) { const c2 = await geocodeAddress(toStr); if(!c2) throw new Error("Не знайдено фініш"); routeCoords.lat2 = c2.lat; routeCoords.lon2 = c2.lon; }
@@ -1026,7 +1021,7 @@
                     recalc(); document.getElementById('nav-btn-group').style.display = 'flex'; toggleRouteParams(true); 
                     if(tg && tg.showAlert) tg.showAlert(`✅ Відстань: ${totalKm.toFixed(1)} км.`);
                 } else { throw new Error("Маршрут не знайдено."); }
-            } catch (err) { alert(err.message || "Помилка розрахунку."); } finally { btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Прокласти маршрут`; btn.style.opacity = "1"; }
+            } catch (err) { alert(err.message || "Помилка розрахунку."); } finally { btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Прокласти`; btn.style.opacity = "1"; }
         }
 
         function openWaze() { haptic(); if(routeCoords.lat2 && routeCoords.lon2) window.open(`https://waze.com/ul?ll=${routeCoords.lat2},${routeCoords.lon2}&navigate=yes`, '_blank'); }
@@ -1047,7 +1042,7 @@
                 const params = {}; 
                 ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { params[id] = document.getElementById('inp-'+id).value; }); 
                 if (document.getElementById('set-target-km')) params['targetKm'] = document.getElementById('set-target-km').value;
-                localStorage.setItem('taxi_route_params_v22', JSON.stringify(params)); 
+                localStorage.setItem('taxi_route_params_v3', JSON.stringify(params)); 
             }, 500); 
         }
         
@@ -1116,7 +1111,7 @@
 
         function calcStrategy() {
             const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5; const avgMin = parseFloat(document.getElementById('strat-min').value) || 25;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_strat_params_v22', JSON.stringify({target: targetNet, km: avgKm, min: avgMin})); }, 500);
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_strat_params_v3', JSON.stringify({target: targetNet, km: avgKm, min: avgMin})); }, 500);
             
             const t = tariffs[currentClass]; 
             let extraKm = Math.max(0, avgKm - t.minKm); let tripGross = t.minPrice + (extraKm * t.perKmCity); let tripComm = tripGross * (expenses.comm / 100); let tripFuel = (avgKm / 100) * expenses.cons * expenses.price; let tripAmort = avgKm * (expenses.amort || 0);
@@ -1135,9 +1130,9 @@
             document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; document.getElementById('strat-fuel-total').innerText = '-' + fmt(totalFuelCost + totalAmort) + ' ₴';
         }
 
-        // ЛОГІКА МАТРИЦІ ФІЛЬТРІВ
-        function saveMatrixParams() { const params = { minPrice: document.getElementById('mx-min-price').value, minKm: document.getElementById('mx-min-km').value, delivery: document.getElementById('mx-delivery').value, coef: document.getElementById('mx-coef').value, maxDist: document.getElementById('mx-max-dist').value, customRates: document.getElementById('mx-custom-rates').value }; localStorage.setItem('taxi_matrix_params_v2', JSON.stringify(params)); }
-        function loadMatrixParams() { const params = safeParse(localStorage.getItem('taxi_matrix_params_v2'), {minPrice: 120, minKm: 1.5, delivery: 1.5, coef: 1.0, maxDist: 15, customRates: "20, 25, 30, 35, 45"}); if(document.getElementById('mx-min-price')) document.getElementById('mx-min-price').value = params.minPrice; if(document.getElementById('mx-min-km')) document.getElementById('mx-min-km').value = params.minKm; if(document.getElementById('mx-delivery')) document.getElementById('mx-delivery').value = params.delivery; if(document.getElementById('mx-coef')) document.getElementById('mx-coef').value = params.coef; if(document.getElementById('mx-max-dist')) document.getElementById('mx-max-dist').value = params.maxDist; if(document.getElementById('mx-custom-rates')) document.getElementById('mx-custom-rates').value = params.customRates; }
+        // ЛОГІКА МАТРИЦІ ФІЛЬТРІВ (ПРО-ВЕРСІЯ)
+        function saveMatrixParams() { const params = { minPrice: document.getElementById('mx-min-price').value, minKm: document.getElementById('mx-min-km').value, delivery: document.getElementById('mx-delivery').value, coef: document.getElementById('mx-coef').value, maxDist: document.getElementById('mx-max-dist').value, customRates: document.getElementById('mx-custom-rates').value }; localStorage.setItem('taxi_matrix_params_v3', JSON.stringify(params)); }
+        function loadMatrixParams() { const params = safeParse(localStorage.getItem('taxi_matrix_params_v3'), {minPrice: 120, minKm: 1.5, delivery: 1.5, coef: 1.0, maxDist: 15, customRates: "20, 25, 30, 35, 45"}); if(document.getElementById('mx-min-price')) document.getElementById('mx-min-price').value = params.minPrice; if(document.getElementById('mx-min-km')) document.getElementById('mx-min-km').value = params.minKm; if(document.getElementById('mx-delivery')) document.getElementById('mx-delivery').value = params.delivery; if(document.getElementById('mx-coef')) document.getElementById('mx-coef').value = params.coef; if(document.getElementById('mx-max-dist')) document.getElementById('mx-max-dist').value = params.maxDist; if(document.getElementById('mx-custom-rates')) document.getElementById('mx-custom-rates').value = params.customRates; }
         function resetMatrix() { haptic(); document.getElementById('mx-min-price').value = 120; document.getElementById('mx-min-km').value = 1.5; document.getElementById('mx-delivery').value = 1.5; document.getElementById('mx-coef').value = 1.0; document.getElementById('mx-max-dist').value = 15; document.getElementById('mx-custom-rates').value = "20, 25, 30, 35, 45"; saveMatrixParams(); drawMatrix(); }
 
         function drawMatrix() {
@@ -1145,16 +1140,31 @@
             const ratesStr = document.getElementById('mx-custom-rates').value || "20"; let rates = ratesStr.split(',').map(r => parseFloat(r.trim())).filter(r => !isNaN(r) && r > 0); if(rates.length === 0) rates = [20];
             const targetEl = document.getElementById('set-target-km'); const targetRate = targetEl ? parseFloat(targetEl.value) : 40; const label = document.getElementById('mx-target-label'); if(label) label.innerText = targetRate;
 
+            const comm = parseFloat(document.getElementById('set-comm').value) || 17;
+            const fPrice = parseFloat(document.getElementById('set-fuel-price').value) || 41.9;
+            const cons = parseFloat(document.getElementById('set-fuel-cons').value) || 14;
+            const amort = parseFloat(document.getElementById('set-amort').value) || 0;
+
             let html = `<thead><tr><th style="min-width: 45px;">Маршрут</th>`;
-            rates.forEach(r => html += `<th colspan="2">${r} ₴/км ${coef > 1.0 ? `<br><span style="color:var(--accent-danger);font-size:9px;">(⚡${coef}x)</span>` : ''}</th>`);
-            html += `</tr><tr><th>(Км)</th>`; rates.forEach(() => html += `<th>Сума</th><th>Ефект.</th>`); html += `</tr></thead><tbody>`;
+            rates.forEach(r => html += `<th>${r} ₴/км ${coef > 1.0 ? `<br><span style="color:var(--accent-danger);font-size:9px;">(⚡${coef}x)</span>` : ''}</th>`);
+            html += `</tr></thead><tbody>`;
 
             for (let tripDist = 2; tripDist <= maxDist; tripDist++) {
                 html += `<tr><td>${tripDist} км</td>`;
                 rates.forEach(rate => {
                     let extraKm = Math.max(0, tripDist - minKm); let basePrice = minPrice + (extraKm * rate); let totalPrice = basePrice * coef; let totalDist = tripDist + delivery; let eff = totalPrice / totalDist;
+                    
+                    let commCost = totalPrice * (comm / 100);
+                    let fuelCost = (totalDist / 100) * cons * fPrice;
+                    let amortCost = totalDist * amort;
+                    let net = totalPrice - commCost - fuelCost - amortCost;
+
                     let colorClass = eff >= targetRate ? 'eff-high' : (eff >= (targetRate * 0.75) ? 'eff-mid' : 'eff-low');
-                    html += `<td class="val-price">${Math.ceil(totalPrice)}</td><td class="val-eff ${colorClass}">${eff.toFixed(1)}</td>`;
+                    
+                    html += `<td class="${colorClass}">
+                        <div style="font-weight:800; font-size:13px; color:var(--text-color);">${Math.ceil(totalPrice)}</div>
+                        <div style="font-weight:600; font-size:10px; opacity:0.8;">${Math.ceil(net)} чист.</div>
+                    </td>`;
                 });
                 html += `</tr>`;
             }
@@ -1171,16 +1181,16 @@
         function handleSwipeMove(e) {
             if(!currentSwipeEl) return;
             let diff = e.changedTouches[0].screenX - touchStartX;
-            if(diff < 0 && diff > -100) { currentSwipeEl.style.transform = `translateX(${diff}px)`; }
+            if(diff < 0 && diff > -90) { currentSwipeEl.style.transform = `translateX(${diff}px)`; }
         }
         function handleSwipeEnd(e) {
             if(!currentSwipeEl) return;
-            currentSwipeEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            currentSwipeEl.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
             let diff = e.changedTouches[0].screenX - touchStartX;
             if(diff < -40) { 
-                currentSwipeEl.style.transform = `translateX(-80px)`; 
+                currentSwipeEl.style.transform = `translateX(-70px)`; 
                 let el = currentSwipeEl;
-                setTimeout(() => { if(el) el.style.transform = `translateX(0px)`; }, 3000); 
+                setTimeout(() => { if(el) el.style.transform = `translateX(0px)`; }, 4000); 
             } else { 
                 currentSwipeEl.style.transform = `translateX(0px)`; 
             }
@@ -1195,13 +1205,13 @@
             if (currentPaymentMode === 'cash') dailyCashData.totalCash += gross; else dailyCashData.totalCard += gross;
             const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode });
-            localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
+            localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
             
             const currentOdo = parseFloat(document.getElementById('set-odometer').value) || 0;
             document.getElementById('set-odometer').value = (currentOdo + tripKm).toFixed(1); updateMaintenance();
             
             goals.dailyDone += 1; brandingData.done += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-            localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
+            localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData));
             
             updateCashPageUI(); calcBranding(); toggleRouteParams(true);
         }
@@ -1212,12 +1222,12 @@
             if(idx > -1) {
                 const t = dailyCashData.history[idx]; dailyCashData.orders = Math.max(0, dailyCashData.orders - 1); dailyCashData.gross -= t.gross; dailyCashData.comm -= t.comm; dailyCashData.fuel -= t.fuel; dailyCashData.extraExp -= t.extraExp; dailyCashData.rent -= t.rent; dailyCashData.net -= t.net; dailyCashData.totalKm = Math.max(0, dailyCashData.totalKm - t.km);
                 if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
-                dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
+                dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
                 
                 if(t.pay !== 'expense') {
                     goals.dailyDone = Math.max(0, goals.dailyDone - 1); brandingData.done = Math.max(0, brandingData.done - 1);
                     document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-                    localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData));
+                    localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData));
                 }
                 updateCashPageUI(); calcBranding();
             }
@@ -1275,6 +1285,14 @@
             let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01;
             document.getElementById('cash-hourly-rate').innerText = fmt(dailyCashData.net / hours) + ' ₴/год';
             
+            // Оновлення прогрес-бару каси
+            const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000;
+            let pct = Math.min(100, (dailyCashData.net / targetNet) * 100);
+            if(pct < 0) pct = 0;
+            document.getElementById('cash-progress-text').innerText = `${fmt(dailyCashData.net)} / ${fmt(targetNet)} ₴`;
+            document.getElementById('cash-progress-pct').innerText = pct.toFixed(1) + '%';
+            document.getElementById('cash-progress-bar').style.width = pct + '%';
+            
             const list = document.getElementById('cash-history-list'); const empty = document.getElementById('cash-empty-state'); list.innerHTML = '';
             
             if(dailyCashData.history.length > 0) {
@@ -1282,15 +1300,15 @@
                 dailyCashData.history.forEach(trip => { 
                     let innerHtml = '';
                     if(trip.pay === 'expense') { 
-                        innerHtml = `<div><div style="color:var(--accent-danger)"><strong>💸 ${trip.name}</strong><br><span style="font-size: 11px;">Витрати</span></div></div><div style="text-align: right;"><strong style="font-size: 16px; color: var(--accent-danger);">${trip.net} ₴</strong></div>`; 
+                        innerHtml = `<div><div style="color:var(--accent-danger)"><strong>💸 ${trip.name}</strong><br><span style="font-size: 11px; font-weight:600;">Витрати</span></div></div><div style="text-align: right;"><strong style="font-size: 16px; color: var(--accent-danger);">${trip.net} ₴</strong></div>`; 
                     } else { 
-                        let icon = trip.pay === 'cash' ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:text-bottom"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle></svg>` : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:text-bottom"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`;
-                        innerHtml = `<div><strong>${trip.time} ${icon}</strong><br><span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Пробіг: ${trip.km.toFixed(1)} км | Об: ${fmt(trip.gross)} ₴</span></div><div style="text-align: right;"><strong style="font-size: 18px; color: var(--uklon-green);">+${fmt(trip.net)} ₴</strong></div>`; 
+                        let icon = trip.pay === 'cash' ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:text-bottom; margin-left:2px;"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle></svg>` : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:text-bottom; margin-left:2px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`;
+                        innerHtml = `<div><strong>${trip.time} ${icon}</strong><br><span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Пробіг: ${trip.km.toFixed(1)} км | Об: ${fmt(trip.gross)} ₴</span></div><div style="text-align: right;"><strong style="font-size: 16px; color: var(--uklon-green);">+${fmt(trip.net)} ₴</strong></div>`; 
                     }
                     
                     list.innerHTML += `
                     <div class="history-item-wrapper">
-                        <div class="swipe-bg" onclick="removeTrip(${trip.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Видалити</div>
+                        <div class="swipe-bg" onclick="removeTrip(${trip.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
                         <div class="swipe-content" ontouchstart="handleSwipeStart(event)" ontouchmove="handleSwipeMove(event)" ontouchend="handleSwipeEnd(event)">
                             ${innerHtml}
                         </div>
@@ -1334,7 +1352,7 @@
             if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); }); } 
         }
 
-        function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
+        function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
         function setDaysToEndOfMonth() { haptic(); const now = new Date(); const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1; document.getElementById('brand-days').value = daysLeft; calcBranding(); syncDailyGoal(); }
         
         function syncDailyGoal() { 
@@ -1357,12 +1375,12 @@
 
         function calcBranding() {
             brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData)); }, 500);
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData)); }, 500);
             let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); let remain = Math.max(0, brandingData.target - brandingData.done); let perDayReq = remain / brandingData.days;
             document.getElementById('brand-progress').style.width = pct + '%'; document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; document.getElementById('brand-remain').innerText = remain; document.getElementById('brand-perday').innerText = perDayReq.toFixed(1) + ' зам/день';
             const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12; const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
             goals.dailyGoal = dailyGoal; goals.dailyDone = dailyDone;
-            localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
+            localStorage.setItem('taxi_goals_v3', JSON.stringify(goals));
             document.getElementById('brand-daily-goal-val').innerText = dailyGoal; let dPct = Math.min(100, (dailyDone / dailyGoal) * 100);
             document.getElementById('brand-daily-progress').style.width = dPct + '%'; document.getElementById('brand-daily-pct').innerText = dPct.toFixed(1) + '%'; document.getElementById('brand-perday-required').innerText = perDayReq.toFixed(1) + ' зам/день';
             let daysToGoal = "∞"; if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
@@ -1399,17 +1417,17 @@
             Object.keys(tariffs).forEach(key => {
                 const t = tariffs[key];
                 container.innerHTML += `
-                <div class="card" style="margin-bottom: 10px; padding: 0; border: 1px solid var(--border-color);">
-                    <div class="card-title" style="margin: 0; padding: 14px; cursor: pointer; text-transform: none; font-size: 15px; color: var(--text-color); display:flex; justify-content:space-between;" onclick="toggleSettingAccordion('${key}')">
-                        <span><span style="font-size:18px; margin-right:8px;">${t.icon}</span> ${t.name}</span><span id="set-chev-${key}" style="color:var(--text-muted);">▼</span>
+                <div class="card" style="margin-bottom: 8px; padding: 0; border: 1px solid var(--border-color);">
+                    <div class="card-title" style="margin: 0; padding: 12px; cursor: pointer; text-transform: none; font-size: 14px; color: var(--text-color); display:flex; justify-content:space-between;" onclick="toggleSettingAccordion('${key}')">
+                        <span><span style="font-size:16px; margin-right:6px;">${t.icon}</span> ${t.name}</span><span id="set-chev-${key}" style="color:var(--text-muted);">▼</span>
                     </div>
-                    <div id="set-body-${key}" style="display:none; padding: 0 14px 14px 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span style="font-size: 14px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span style="font-size: 14px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span style="font-size: 14px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span style="font-size: 14px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;"><span style="font-size: 14px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 14px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
+                    <div id="set-body-${key}" style="display:none; padding: 0 12px 12px 12px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
                     </div>
                 </div>`;
             });
@@ -1419,11 +1437,11 @@
             Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; });
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0; expenses.type = document.getElementById('set-fuel-type').value; expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0; expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0; expenses.amort = parseFloat(document.getElementById('set-amort').value) || 0; expenses.workMode = document.getElementById('set-work-mode').value; expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0; expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
             updateWorkModeLabels();
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v22', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v22', JSON.stringify(expenses)); }, 500); updateFuelLabels(expenses.type); recalc();
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v3', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v3', JSON.stringify(expenses)); }, 500); updateFuelLabels(expenses.type); recalc();
         }
 
         function saveTariffsClick() { haptic(); autoSaveSettings(); switchTab('calc'); }
-        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); localStorage.setItem('taxi_tariffs_v22', JSON.stringify(tariffs)); renderSettings(); } }
+        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); localStorage.setItem('taxi_tariffs_v3', JSON.stringify(tariffs)); renderSettings(); } }
         function openManual() { document.getElementById('manual-modal').style.display = 'flex'; }
         function closeManual() { document.getElementById('manual-modal').style.display = 'none'; }
 
