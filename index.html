@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DriverHub Pro</title>
+    <title>DriverHub</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,15 +22,15 @@
 
     <style>
         :root { 
-            --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.1); 
+            --bg-color: #F2F2F7; --card-bg: #FFFFFF; --border-color: rgba(60, 60, 67, 0.12); 
             --input-bg: rgba(118, 118, 128, 0.08);
             --text-color: #1C1C1E; --text-muted: #8E8E93; 
             --accent-color: #FFCC00; --accent-success: #34C759; --accent-danger: #FF3B30; --accent-blue: #007AFF; --uklon-green: #00D369; 
         }
         
         html[data-theme="dark"] { 
-            --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(255, 255, 255, 0.1); 
-            --input-bg: rgba(118, 118, 128, 0.18);
+            --bg-color: #000000; --card-bg: #1C1C1E; --border-color: rgba(255, 255, 255, 0.15); 
+            --input-bg: rgba(118, 118, 128, 0.24);
             --text-color: #FFFFFF; --text-muted: #EBEBF5; 
         }
         
@@ -40,29 +40,30 @@
             -webkit-user-select: none; user-select: none; touch-action: manipulation; 
         }
         
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 250px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 220px; transition: background-color 0.2s, color 0.2s; overscroll-behavior-y: none; }
         
         .app-header { padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); background: var(--card-bg);}
         .app-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, var(--text-color), var(--uklon-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 6px;}
-        .theme-toggle { cursor: pointer; padding: 6px; background: var(--input-bg); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-color); transition: 0.2s;}
+        .theme-toggle { cursor: pointer; padding: 6px; background: var(--input-bg); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--text-color); transition: 0.2s;}
+        .theme-toggle:active { transform: scale(0.9); }
         
-        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 6px 8px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 6px 2px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0.7; }
+        .tabs { display: flex; background: var(--card-bg); padding: 4px; margin: 6px 8px 10px 8px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 6px 2px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 3px; opacity: 0.7; }
         .tab-icon { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: 0.2s; } 
         .tab-btn.active { background: var(--input-bg); color: var(--text-color); opacity: 1; font-weight: 700;}
         
         .page { display: none; padding: 0 8px; opacity: 0; } 
-        .page.active { display: block; animation: fadeIn 0.15s ease forwards; }
+        .page.active { display: block; animation: fadeIn 0.2s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .car-selector { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 8px 0; scrollbar-width: none; } .car-selector::-webkit-scrollbar { display: none; }
-        .car-card { flex: 0 0 auto; background: var(--card-bg); padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; transition: 0.2s; min-width: 90px;}
+        .car-card { flex: 0 0 auto; background: var(--card-bg); padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; transition: 0.2s; min-width: 95px;}
         .car-card.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); box-shadow: 0 2px 8px rgba(255, 204, 0, 0.3); }
         .car-name { font-size: 13px; font-weight: 800; display: flex; justify-content: space-between; width: 100%; align-items: center;} 
-        .car-price-info { font-size: 10px; font-weight: 600; opacity: 0.6; } .car-card.active .car-price-info { opacity: 0.8; color: #000; }
+        .car-price-info { font-size: 11px; font-weight: 700; opacity: 0.7; } .car-card.active .car-price-info { opacity: 0.9; color: #000; }
         
         .card { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--border-color); }
-        .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.5px;}
+        .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.5px;}
         
         .ac-wrapper { position: relative; width: 100%; margin-bottom: 6px; }
         .map-input-group { display: flex; align-items: center; background: var(--input-bg); border-radius: 8px; padding: 8px 10px; border: 1px solid var(--border-color); }
@@ -144,7 +145,7 @@
 
         /* ПРО-МАТРИЦЯ ФІЛЬТРІВ */
         .matrix-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; margin-top: 8px; }
-        .matrix-table th, .matrix-table td { border: 1px solid var(--border-color); padding: 4px 2px; }
+        .matrix-table th, .matrix-table td { border: 1px solid var(--border-color); padding: 6px 2px; }
         .matrix-table th { background: rgba(0, 122, 255, 0.08); font-weight: 700; color: var(--accent-blue); font-size: 10px;}
         .matrix-table td:first-child { font-weight: 800; background: var(--input-bg); }
         .eff-low { background: rgba(255, 59, 48, 0.1); }
@@ -383,9 +384,9 @@
         <div class="card">
             <div class="card-title">Програма лояльності</div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
-                <div class="input-header" style="margin-bottom:8px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:8px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:8px;"><span>Залишилось днів:</span><div style="display:flex; gap:8px;"><button class="quick-coef-btn" style="padding:6px 10px; font-size:11px; flex: 0 0 auto; border: 1px solid var(--border-color); background: var(--card-bg);" onclick="openCalendar()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Календар</button><input type="number" enterkeyhint="done" class="admin-input" style="width: 50px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:10px;"><span>Залишилось днів:</span><div style="display:flex; gap:8px;"><button class="quick-coef-btn" style="padding:6px 10px; font-size:11px; flex: 0 0 auto; border: 1px solid var(--border-color); background: var(--card-bg);" onclick="openCalendar()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Календар</button><input type="number" enterkeyhint="done" class="admin-input" style="width: 50px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-progress"></div></div>
             <div style="margin-top: 10px; font-size: 13px; font-weight: 600; line-height: 1.4;">Прогрес: <strong id="brand-pct">0%</strong><br>Залишилось: <strong id="brand-remain">0</strong><br>Темп: <strong id="brand-perday" style="color:var(--uklon-green);">0 зам/день</strong></div>
@@ -662,8 +663,12 @@
         let currentSwipeEl = null;
         let profitChartInstance = null;
 
-        const defaultTariffs = { standard: { name: 'Стандарт', icon: '🚕', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 }, comfort: { name: 'Комфорт', icon: '🛋️', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 }, business: { name: 'Бізнес', icon: '🎩', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }, intercity: { name: 'За місто', icon: '🛣️', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 } };
-        // ОНОВЛЕНІ НАЛАШТУВАННЯ (Газ 41.9, Розхід 14, Аморт 0)
+        const defaultTariffs = { 
+            standard: { name: 'Стандарт', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.4-1.7-1-2.2l-3.2-2.6C17.2 7.6 16.5 7 15.6 7H8.4c-.9 0-1.6.6-2.2 1.2L3 10.8c-.6.5-1 1.3-1 2.2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M14 7v4H6"/></svg>`, minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 }, 
+            comfort: { name: 'Комфорт', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M3 12h18M3 7h18"/></svg>`, minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 }, 
+            business: { name: 'Бізнес', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`, minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }, 
+            intercity: { name: 'За місто', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 22H5.16a2 2 0 0 1-1.99-1.85L2 6h20l-1.17 14.15A2 2 0 0 1 18.84 22H14"/><path d="M10 22V12h4v10"/></svg>`, minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 } 
+        };
         const defaultExpenses = { comm: 17, type: 'gas', cons: 14, price: 41.9, amort: 0, workMode: 'solo', rentVal: 30, splitPct: 10 };
         const defaultGoals = { dailyGoal: 12, dailyDone: 0 };
         const defaultBranding = { done: 0, target: 700, days: 0 };
@@ -703,8 +708,7 @@
         function initApp() {
             autoThemeSwitch();
             const res = {}; 
-            // ВИКОРИСТОВУЄМО КЛЮЧІ V3 ДЛЯ СКИДАННЯ НА НОВІ ДЕФОЛТИ (Газ 41.9, 14л)
-            ['taxi_tariffs_v3', 'taxi_expenses_v3', 'taxi_goals_v3', 'taxi_branding_v3', 'taxi_daily_cash_data_v3', 'taxi_theme', 'taxi_route_params_v3', 'taxi_strat_params_v3', 'taxi_offdays_v3'].forEach(k => res[k] = localStorage.getItem(k)); 
+            ['taxi_tariffs_v4', 'taxi_expenses_v4', 'taxi_goals_v4', 'taxi_branding_v4', 'taxi_daily_cash_data_v4', 'taxi_theme', 'taxi_route_params_v4', 'taxi_strat_params_v4', 'taxi_offdays_v4'].forEach(k => res[k] = localStorage.getItem(k)); 
             loadAllData(res);
         }
 
@@ -737,13 +741,16 @@
         }
 
         function loadAllData(res) {
-            tariffs = safeParse(res.taxi_tariffs_v3, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
-            expenses = safeParse(res.taxi_expenses_v3, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
-            goals = safeParse(res.taxi_goals_v3, defaultGoals);
-            brandingData = safeParse(res.taxi_branding_v3, defaultBranding);
-            offDays = safeParse(res.taxi_offdays_v3, []);
+            tariffs = safeParse(res.taxi_tariffs_v4, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
+            expenses = safeParse(res.taxi_expenses_v4, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
             
-            const cachedCash = safeParse(res.taxi_daily_cash_data_v3, defaultDailyCash);
+            expenses.amort = 0;
+            
+            goals = safeParse(res.taxi_goals_v4, defaultGoals);
+            brandingData = safeParse(res.taxi_branding_v4, defaultBranding);
+            offDays = safeParse(res.taxi_offdays_v4, []);
+            
+            const cachedCash = safeParse(res.taxi_daily_cash_data_v4, defaultDailyCash);
             if (cachedCash.date === new Date().toLocaleDateString()) {
                 dailyCashData = cachedCash;
                 if(!dailyCashData.history) dailyCashData.history = [];
@@ -754,7 +761,7 @@
             try {
                 if(brandingData.days === 0) setDaysToEndOfMonth();
 
-                const savedParams = safeParse(res.taxi_route_params_v3, {});
+                const savedParams = safeParse(res.taxi_route_params_v4, {});
                 ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { 
                     if(savedParams[id] !== undefined && document.getElementById('inp-'+id)) { document.getElementById('inp-'+id).value = savedParams[id]; document.getElementById('slider-'+id).value = savedParams[id]; } 
                 });
@@ -762,7 +769,7 @@
                     document.getElementById('set-target-km').value = savedParams['targetKm'];
                 }
                 
-                const strat = safeParse(res.taxi_strat_params_v3, {target: 2000, km: 6.5, min: 25});
+                const strat = safeParse(res.taxi_strat_params_v4, {target: 2000, km: 6.5, min: 25});
                 document.getElementById('strat-target').value = strat.target || 2000; document.getElementById('strat-km').value = strat.km || 6.5; 
                 if(document.getElementById('strat-min')) document.getElementById('strat-min').value = strat.min || 25;
 
@@ -780,10 +787,11 @@
                 }
 
                 toggleWorkModeInputs(); updateWorkModeLabels(); updateFuelLabels(expenses.type); renderCarSelector(); renderSettings(); loadMatrixParams(); recalc(); calcBranding(); drawMatrix(); updateCashPageUI();
+                autoSaveSettings(); 
             } catch(e) { renderCarSelector(); renderSettings(); recalc(); drawMatrix(); updateCashPageUI(); }
         }
 
-        function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData)); }
+        function createNewShift() { dailyCashData = JSON.parse(JSON.stringify(defaultDailyCash)); dailyCashData.date = new Date().toLocaleDateString(); localStorage.setItem('taxi_daily_cash_data_v4', JSON.stringify(dailyCashData)); }
 
         function toggleTheme() { haptic(); const body = document.documentElement; const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', newTheme); localStorage.setItem('taxi_theme', newTheme); }
 
@@ -799,7 +807,7 @@
                 btn.classList.remove('start'); btn.classList.add('stop');
                 shiftTimerInterval = setInterval(updateShiftTimerUI, 60000);
             }
-            localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData)); updateShiftTimerUI(); updateCashPageUI();
+            localStorage.setItem('taxi_daily_cash_data_v4', JSON.stringify(dailyCashData)); updateShiftTimerUI(); updateCashPageUI();
         }
 
         function updateShiftTimerUI() {
@@ -917,9 +925,9 @@
             toggleLoader(false);
 
             if (files.length > 1 || successCount > 1) {
-                localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
+                localStorage.setItem('taxi_daily_cash_data_v4', JSON.stringify(dailyCashData));
                 document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-                localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData));
+                localStorage.setItem('taxi_goals_v4', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v4', JSON.stringify(brandingData));
                 updateCashPageUI(); calcBranding(); switchTab('cash');
                 if(tg.showAlert) tg.showAlert(`✅ Успішно імпортовано: ${successCount}`);
             } else if (successCount === 0) {
@@ -941,7 +949,7 @@
                     dailyCashData.extraExp += amount; dailyCashData.net -= amount;
                     const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
                     dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: name });
-                    localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
+                    localStorage.setItem('taxi_daily_cash_data_v4', JSON.stringify(dailyCashData));
                     updateCashPageUI();
                     if(tg.showAlert) tg.showAlert(`💸 Витрату додано!`);
                 }
@@ -965,7 +973,7 @@
             document.getElementById('brand-days').value = workingDaysLeft > 0 ? workingDaysLeft : 1; calcBranding(); syncDailyGoal();
         }
 
-        function toggleDayOff(day, el) { haptic(); const idx = offDays.indexOf(day); if (idx > -1) { offDays.splice(idx, 1); el.classList.remove('off'); el.classList.add('active'); } else { offDays.push(day); el.classList.remove('active'); el.classList.add('off'); } localStorage.setItem('taxi_offdays_v3', JSON.stringify(offDays)); }
+        function toggleDayOff(day, el) { haptic(); const idx = offDays.indexOf(day); if (idx > -1) { offDays.splice(idx, 1); el.classList.remove('off'); el.classList.add('active'); } else { offDays.push(day); el.classList.remove('active'); el.classList.add('off'); } localStorage.setItem('taxi_offdays_v4', JSON.stringify(offDays)); }
         function copyDonateCard() { haptic(); const cardNumber = "4441114424699245"; if (navigator.clipboard) { navigator.clipboard.writeText(cardNumber).then(() => { if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано!'); }); } else { const t = document.createElement("input"); t.value = cardNumber; document.body.appendChild(t); t.select(); document.execCommand("copy"); document.body.removeChild(t); if(tg && tg.showAlert) tg.showAlert('✅ Номер картки скопійовано!'); } }
 
         function toggleSummary() { 
@@ -1042,7 +1050,7 @@
                 const params = {}; 
                 ['dist', 'distOut', 'emptyKm', 'delivery', 'wait', 'stops', 'extraExp', 'coef', 'clientBonus'].forEach(id => { params[id] = document.getElementById('inp-'+id).value; }); 
                 if (document.getElementById('set-target-km')) params['targetKm'] = document.getElementById('set-target-km').value;
-                localStorage.setItem('taxi_route_params_v3', JSON.stringify(params)); 
+                localStorage.setItem('taxi_route_params_v4', JSON.stringify(params)); 
             }, 500); 
         }
         
@@ -1111,7 +1119,7 @@
 
         function calcStrategy() {
             const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000; const avgKm = parseFloat(document.getElementById('strat-km').value) || 6.5; const avgMin = parseFloat(document.getElementById('strat-min').value) || 25;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_strat_params_v3', JSON.stringify({target: targetNet, km: avgKm, min: avgMin})); }, 500);
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_strat_params_v4', JSON.stringify({target: targetNet, km: avgKm, min: avgMin})); }, 500);
             
             const t = tariffs[currentClass]; 
             let extraKm = Math.max(0, avgKm - t.minKm); let tripGross = t.minPrice + (extraKm * t.perKmCity); let tripComm = tripGross * (expenses.comm / 100); let tripFuel = (avgKm / 100) * expenses.cons * expenses.price; let tripAmort = avgKm * (expenses.amort || 0);
@@ -1130,9 +1138,8 @@
             document.getElementById('strat-km-total').innerText = totalKm.toFixed(1) + ' км'; document.getElementById('strat-fuel-total').innerText = '-' + fmt(totalFuelCost + totalAmort) + ' ₴';
         }
 
-        // ЛОГІКА МАТРИЦІ ФІЛЬТРІВ (ПРО-ВЕРСІЯ)
-        function saveMatrixParams() { const params = { minPrice: document.getElementById('mx-min-price').value, minKm: document.getElementById('mx-min-km').value, delivery: document.getElementById('mx-delivery').value, coef: document.getElementById('mx-coef').value, maxDist: document.getElementById('mx-max-dist').value, customRates: document.getElementById('mx-custom-rates').value }; localStorage.setItem('taxi_matrix_params_v3', JSON.stringify(params)); }
-        function loadMatrixParams() { const params = safeParse(localStorage.getItem('taxi_matrix_params_v3'), {minPrice: 120, minKm: 1.5, delivery: 1.5, coef: 1.0, maxDist: 15, customRates: "20, 25, 30, 35, 45"}); if(document.getElementById('mx-min-price')) document.getElementById('mx-min-price').value = params.minPrice; if(document.getElementById('mx-min-km')) document.getElementById('mx-min-km').value = params.minKm; if(document.getElementById('mx-delivery')) document.getElementById('mx-delivery').value = params.delivery; if(document.getElementById('mx-coef')) document.getElementById('mx-coef').value = params.coef; if(document.getElementById('mx-max-dist')) document.getElementById('mx-max-dist').value = params.maxDist; if(document.getElementById('mx-custom-rates')) document.getElementById('mx-custom-rates').value = params.customRates; }
+        function saveMatrixParams() { const params = { minPrice: document.getElementById('mx-min-price').value, minKm: document.getElementById('mx-min-km').value, delivery: document.getElementById('mx-delivery').value, coef: document.getElementById('mx-coef').value, maxDist: document.getElementById('mx-max-dist').value, customRates: document.getElementById('mx-custom-rates').value }; localStorage.setItem('taxi_matrix_params_v4', JSON.stringify(params)); }
+        function loadMatrixParams() { const params = safeParse(localStorage.getItem('taxi_matrix_params_v4'), {minPrice: 120, minKm: 1.5, delivery: 1.5, coef: 1.0, maxDist: 15, customRates: "20, 25, 30, 35, 45"}); if(document.getElementById('mx-min-price')) document.getElementById('mx-min-price').value = params.minPrice; if(document.getElementById('mx-min-km')) document.getElementById('mx-min-km').value = params.minKm; if(document.getElementById('mx-delivery')) document.getElementById('mx-delivery').value = params.delivery; if(document.getElementById('mx-coef')) document.getElementById('mx-coef').value = params.coef; if(document.getElementById('mx-max-dist')) document.getElementById('mx-max-dist').value = params.maxDist; if(document.getElementById('mx-custom-rates')) document.getElementById('mx-custom-rates').value = params.customRates; }
         function resetMatrix() { haptic(); document.getElementById('mx-min-price').value = 120; document.getElementById('mx-min-km').value = 1.5; document.getElementById('mx-delivery').value = 1.5; document.getElementById('mx-coef').value = 1.0; document.getElementById('mx-max-dist').value = 15; document.getElementById('mx-custom-rates').value = "20, 25, 30, 35, 45"; saveMatrixParams(); drawMatrix(); }
 
         function drawMatrix() {
@@ -1172,30 +1179,9 @@
             const tb = document.getElementById('matrix-table-body'); if(tb) tb.innerHTML = html;
         }
 
-        // --- ЛОГІКА СВАЙПІВ ---
-        function handleSwipeStart(e) {
-            touchStartX = e.changedTouches[0].screenX;
-            currentSwipeEl = e.currentTarget;
-            currentSwipeEl.style.transition = 'none';
-        }
-        function handleSwipeMove(e) {
-            if(!currentSwipeEl) return;
-            let diff = e.changedTouches[0].screenX - touchStartX;
-            if(diff < 0 && diff > -90) { currentSwipeEl.style.transform = `translateX(${diff}px)`; }
-        }
-        function handleSwipeEnd(e) {
-            if(!currentSwipeEl) return;
-            currentSwipeEl.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            let diff = e.changedTouches[0].screenX - touchStartX;
-            if(diff < -40) { 
-                currentSwipeEl.style.transform = `translateX(-70px)`; 
-                let el = currentSwipeEl;
-                setTimeout(() => { if(el) el.style.transform = `translateX(0px)`; }, 4000); 
-            } else { 
-                currentSwipeEl.style.transform = `translateX(0px)`; 
-            }
-            currentSwipeEl = null;
-        }
+        function handleSwipeStart(e) { touchStartX = e.changedTouches[0].screenX; currentSwipeEl = e.currentTarget; currentSwipeEl.style.transition = 'none'; }
+        function handleSwipeMove(e) { if(!currentSwipeEl) return; let diff = e.changedTouches[0].screenX - touchStartX; if(diff < 0 && diff > -90) { currentSwipeEl.style.transform = `translateX(${diff}px)`; } }
+        function handleSwipeEnd(e) { if(!currentSwipeEl) return; currentSwipeEl.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)'; let diff = e.changedTouches[0].screenX - touchStartX; if(diff < -40) { currentSwipeEl.style.transform = `translateX(-70px)`; let el = currentSwipeEl; setTimeout(() => { if(el) el.style.transform = `translateX(0px)`; }, 4000); } else { currentSwipeEl.style.transform = `translateX(0px)`; } currentSwipeEl = null; }
 
         function addToDailyCash() {
             haptic(); const gross = Math.ceil(parseFloat(document.getElementById('res-total').innerText.replace(/ /g,'').replace('₴',''))) || 0; const comm = parseFloat(document.getElementById('res-comm').innerText.replace('-','').replace(/ /g,'').replace('₴','')) || 0; const fuel = parseFloat(document.getElementById('res-fuel').innerText.split(' ')[0].replace('-','').replace(/ /g,'')) || 0; const amort = parseFloat(document.getElementById('res-amort').innerText.split(' ')[0].replace('-','').replace(/ /g,'')) || 0; const extraExp = parseInt(document.getElementById('inp-extraExp').value) || 0; const net = parseFloat(document.getElementById('res-net').innerText.replace(/ /g,'').replace('₴','')) || 0;
@@ -1205,13 +1191,13 @@
             if (currentPaymentMode === 'cash') dailyCashData.totalCash += gross; else dailyCashData.totalCard += gross;
             const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
             dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode });
-            localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
+            localStorage.setItem('taxi_daily_cash_data_v4', JSON.stringify(dailyCashData));
             
             const currentOdo = parseFloat(document.getElementById('set-odometer').value) || 0;
             document.getElementById('set-odometer').value = (currentOdo + tripKm).toFixed(1); updateMaintenance();
             
             goals.dailyDone += 1; brandingData.done += 1; document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-            localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData));
+            localStorage.setItem('taxi_goals_v4', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v4', JSON.stringify(brandingData));
             
             updateCashPageUI(); calcBranding(); toggleRouteParams(true);
         }
@@ -1222,12 +1208,12 @@
             if(idx > -1) {
                 const t = dailyCashData.history[idx]; dailyCashData.orders = Math.max(0, dailyCashData.orders - 1); dailyCashData.gross -= t.gross; dailyCashData.comm -= t.comm; dailyCashData.fuel -= t.fuel; dailyCashData.extraExp -= t.extraExp; dailyCashData.rent -= t.rent; dailyCashData.net -= t.net; dailyCashData.totalKm = Math.max(0, dailyCashData.totalKm - t.km);
                 if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
-                dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v3', JSON.stringify(dailyCashData));
+                dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v4', JSON.stringify(dailyCashData));
                 
                 if(t.pay !== 'expense') {
                     goals.dailyDone = Math.max(0, goals.dailyDone - 1); brandingData.done = Math.max(0, brandingData.done - 1);
                     document.getElementById('inp-daily-done').value = goals.dailyDone; document.getElementById('brand-done').value = brandingData.done;
-                    localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData));
+                    localStorage.setItem('taxi_goals_v4', JSON.stringify(goals)); localStorage.setItem('taxi_branding_v4', JSON.stringify(brandingData));
                 }
                 updateCashPageUI(); calcBranding();
             }
@@ -1285,7 +1271,6 @@
             let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01;
             document.getElementById('cash-hourly-rate').innerText = fmt(dailyCashData.net / hours) + ' ₴/год';
             
-            // Оновлення прогрес-бару каси
             const targetNet = parseFloat(document.getElementById('strat-target').value) || 2000;
             let pct = Math.min(100, (dailyCashData.net / targetNet) * 100);
             if(pct < 0) pct = 0;
@@ -1352,7 +1337,7 @@
             if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(tg && tg.showAlert) tg.showAlert('Звіт скопійовано!'); }); } 
         }
 
-        function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v3', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
+        function resetDailyCashClick() { haptic(); if (confirm('Обнулити зміну?')) { clearInterval(shiftTimerInterval); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v4', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Почати`; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; } }
         function setDaysToEndOfMonth() { haptic(); const now = new Date(); const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1; document.getElementById('brand-days').value = daysLeft; calcBranding(); syncDailyGoal(); }
         
         function syncDailyGoal() { 
@@ -1375,12 +1360,12 @@
 
         function calcBranding() {
             brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v3', JSON.stringify(brandingData)); }, 500);
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v4', JSON.stringify(brandingData)); }, 500);
             let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); let remain = Math.max(0, brandingData.target - brandingData.done); let perDayReq = remain / brandingData.days;
             document.getElementById('brand-progress').style.width = pct + '%'; document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; document.getElementById('brand-remain').innerText = remain; document.getElementById('brand-perday').innerText = perDayReq.toFixed(1) + ' зам/день';
             const dailyGoal = parseInt(document.getElementById('set-daily-goal').value) || 12; const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
             goals.dailyGoal = dailyGoal; goals.dailyDone = dailyDone;
-            localStorage.setItem('taxi_goals_v3', JSON.stringify(goals));
+            localStorage.setItem('taxi_goals_v4', JSON.stringify(goals));
             document.getElementById('brand-daily-goal-val').innerText = dailyGoal; let dPct = Math.min(100, (dailyDone / dailyGoal) * 100);
             document.getElementById('brand-daily-progress').style.width = dPct + '%'; document.getElementById('brand-daily-pct').innerText = dPct.toFixed(1) + '%'; document.getElementById('brand-perday-required').innerText = perDayReq.toFixed(1) + ' зам/день';
             let daysToGoal = "∞"; if (dailyGoal > 0) daysToGoal = (remain / dailyGoal).toFixed(1);
@@ -1419,7 +1404,7 @@
                 container.innerHTML += `
                 <div class="card" style="margin-bottom: 8px; padding: 0; border: 1px solid var(--border-color);">
                     <div class="card-title" style="margin: 0; padding: 12px; cursor: pointer; text-transform: none; font-size: 14px; color: var(--text-color); display:flex; justify-content:space-between;" onclick="toggleSettingAccordion('${key}')">
-                        <span><span style="font-size:16px; margin-right:6px;">${t.icon}</span> ${t.name}</span><span id="set-chev-${key}" style="color:var(--text-muted);">▼</span>
+                        <span style="display:flex; align-items:center; gap:8px;"><div style="width:20px; height:20px; color:var(--accent-color);">${t.icon}</div> ${t.name}</span><span id="set-chev-${key}" style="color:var(--text-muted);">▼</span>
                     </div>
                     <div id="set-body-${key}" style="display:none; padding: 0 12px 12px 12px; border-top: 1px solid var(--border-color); padding-top: 10px;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
@@ -1437,11 +1422,11 @@
             Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; });
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0; expenses.type = document.getElementById('set-fuel-type').value; expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0; expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0; expenses.amort = parseFloat(document.getElementById('set-amort').value) || 0; expenses.workMode = document.getElementById('set-work-mode').value; expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0; expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
             updateWorkModeLabels();
-            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v3', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v3', JSON.stringify(expenses)); }, 500); updateFuelLabels(expenses.type); recalc();
+            clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v4', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v4', JSON.stringify(expenses)); }, 500); updateFuelLabels(expenses.type); recalc();
         }
 
         function saveTariffsClick() { haptic(); autoSaveSettings(); switchTab('calc'); }
-        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); localStorage.setItem('taxi_tariffs_v3', JSON.stringify(tariffs)); renderSettings(); } }
+        function resetToFactoryTariffs() { haptic(); if (confirm('Скинути тарифи?')) { tariffs = JSON.parse(JSON.stringify(defaultTariffs)); localStorage.setItem('taxi_tariffs_v4', JSON.stringify(tariffs)); renderSettings(); } }
         function openManual() { document.getElementById('manual-modal').style.display = 'flex'; }
         function closeManual() { document.getElementById('manual-modal').style.display = 'none'; }
 
