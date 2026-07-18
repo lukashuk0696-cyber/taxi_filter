@@ -360,7 +360,23 @@
                 <div class="input-header" style="margin-bottom:8px;"><span>Залишилось днів:</span><div style="display:flex; gap:6px;"><button class="quick-coef-btn" style="padding:4px 8px; font-size:11px; flex: 0 0 auto;" onclick="openCalendar()">📅 Календар</button><input type="number" enterkeyhint="done" class="admin-input" style="width: 50px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-progress"></div></div>
-            <div style="margin-top: 10px; font-size: 13px; font-weight: 600; line-height: 1.5;">Прогрес: <strong id="brand-pct">0%</strong><br>Залишилось: <strong id="brand-remain">0</strong><br>Темп: <strong id="brand-perday" style="color:var(--uklon-green);">0 зам/день</strong></div>
+            <div class="stat-tile-grid" style="margin-top: 12px; margin-bottom: 0;">
+                <div class="stat-tile">
+                    <div class="stat-tile-icon ib-blue" data-icon="target"></div>
+                    <div class="stat-tile-value" id="brand-pct">0%</div>
+                    <div class="stat-tile-label">Прогрес</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-tile-icon ib-red" data-icon="pinplus"></div>
+                    <div class="stat-tile-value" id="brand-remain">0</div>
+                    <div class="stat-tile-label">Залишилось</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-tile-icon ib-green" data-icon="trendup"></div>
+                    <div class="stat-tile-value" id="brand-perday" style="color: var(--uklon-green);">0/д</div>
+                    <div class="stat-tile-label">Темп</div>
+                </div>
+            </div>
         </div>
 
         <div class="card">
@@ -386,7 +402,7 @@
                 <div class="stat-tile" style="grid-column: span 2;">
                     <div class="stat-tile-icon ib-green" data-icon="calendar"></div>
                     <div class="stat-tile-value" id="brand-perday-required" style="color: var(--uklon-green);">0 /день</div>
-                    <div class="stat-tile-label">Темп на наступні дні</div>
+                    <div class="stat-tile-label">Темп зараз (живий)</div>
                 </div>
             </div>
             <div style="margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--text-muted); text-align: center;"><span id="brand-daily-comment" style="font-weight: 700; color:var(--text-color);"></span></div>
@@ -1931,7 +1947,7 @@
             brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
             clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData)); }, 500);
             let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); let remain = Math.max(0, brandingData.target - brandingData.done); let perDayReq = remain / brandingData.days;
-            document.getElementById('brand-progress').style.width = pct + '%'; document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; document.getElementById('brand-remain').innerText = remain; document.getElementById('brand-perday').innerText = perDayReq.toFixed(1) + ' зам/день';
+            document.getElementById('brand-progress').style.width = pct + '%'; document.getElementById('brand-pct').innerText = pct.toFixed(1) + '%'; document.getElementById('brand-remain').innerText = remain; document.getElementById('brand-perday').innerText = perDayReq.toFixed(1) + '/д';
 
             const dailyDone = parseInt(document.getElementById('inp-daily-done').value) || 0;
             goals.dailyDone = dailyDone;
@@ -1954,13 +1970,8 @@
             const remainToday = Math.max(0, dailyGoal - dailyDone);
             document.getElementById('brand-daily-remain').innerText = remainToday;
 
-            // Темп на наступні дні: скільки треба буде виконувати ЗАВТРА і далі, якщо сьогодні дотягнете до цілі
-            const doneBeforeToday = brandingData.done - dailyDone;
-            const projectedDoneToday = Math.max(dailyDone, dailyGoal);
-            const remainAfterToday = Math.max(0, brandingData.target - (doneBeforeToday + projectedDoneToday));
-            const daysAfterToday = Math.max(0, brandingData.days - 1);
-            const nextDaysPace = daysAfterToday > 0 ? (remainAfterToday / daysAfterToday) : 0;
-            document.getElementById('brand-perday-required').innerText = daysAfterToday > 0 ? `${nextDaysPace.toFixed(1)} /день` : '🎉 Фініш!';
+            // Темп: той самий живий показник, що й у місячній картці (не "прогноз", а реальний темп зараз, з урахуванням прогресу)
+            document.getElementById('brand-perday-required').innerText = remain > 0 ? `${perDayReq.toFixed(1)} /день` : '🎉 Фініш!';
 
             if (remainToday === 0) {
                 document.getElementById('brand-daily-comment').innerHTML = `✅ Сьогоднішню ціль виконано!`;
