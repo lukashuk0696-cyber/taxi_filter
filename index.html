@@ -151,7 +151,7 @@
         .toggle-btn { width: 100%; padding: 10px; background: rgba(31, 122, 224, 0.08); color: var(--accent-blue); border: 1px solid rgba(31, 122, 224, 0.2); border-radius: var(--radius-md); font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 8px;}
         
         .progress-container { width: 100%; background-color: var(--border-color); border-radius: 6px; margin: 8px 0; overflow: hidden; height: 7px; } .progress-bar { height: 100%; background-color: var(--uklon-green); width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px; }
-        .history-item { padding: 9px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; animation: pageIn 0.25s ease; } .history-item:last-child { border-bottom: none; } .del-btn { background: rgba(224, 69, 61, 0.1); color: var(--accent-danger); border: none; border-radius: var(--radius-sm); width: 30px; height: 30px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .history-item { padding: 9px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; animation: pageIn 0.25s ease; } .history-item:last-child { border-bottom: none; } .del-btn { background: rgba(224, 69, 61, 0.1); color: var(--accent-danger); border: none; border-radius: var(--radius-sm); width: 38px; height: 38px; font-size: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
         
         .shift-timer-box { background: var(--bg-color); border-radius: var(--radius-md); padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid var(--border-color); position: relative; overflow: hidden; }
         .timer-text { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.3px; }
@@ -279,27 +279,27 @@
             
             <div id="params-body">
                 <div class="input-block">
-                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-blue" data-icon="pin"></div><span class="input-label">Км місто</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')"><button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button></div></div>
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-blue" data-icon="pin"></div><span class="input-label">Км місто</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('dist', -0.1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-dist" value="0.0" oninput="syncInputToSlider('dist')"><button class="btn-counter" onclick="changeVal('dist', 0.1)">+</button></div></div>
                     <div class="slider-container"><input type="range" id="slider-dist" min="0" max="50" step="0.1" value="0.0" oninput="syncSliderToInput('dist')"></div>
                 </div>
 
                 <div class="input-block">
-                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-purple" data-icon="road"></div><span class="input-label">Км за містом</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')"><button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button></div></div>
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-purple" data-icon="road"></div><span class="input-label">Км за містом</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('distOut', -0.1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-distOut" value="0.0" oninput="syncInputToSlider('distOut')"><button class="btn-counter" onclick="changeVal('distOut', 0.1)">+</button></div></div>
                     <div class="slider-container"><input type="range" id="slider-distOut" min="0" max="250" step="0.1" value="0.0" oninput="syncSliderToInput('distOut')"></div>
                 </div>
 
                 <div class="input-block">
-                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-cyan" data-icon="repeat"></div><span class="input-label">Порожній пробіг</span></div><div class="counter"><button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button><button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-emptyKm" value="0" oninput="syncInputToSlider('emptyKm')"><button class="btn-counter" onclick="changeVal('emptyKm', 1)">+</button></div></div>
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-cyan" data-icon="repeat"></div><span class="input-label">Порожній пробіг</span></div><div class="counter"><button class="btn-counter btn-x2" onclick="copyOutToEmpty()">x2</button><button class="btn-counter" onclick="changeVal('emptyKm', -1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" class="counter-value" id="inp-emptyKm" value="0" oninput="syncInputToSlider('emptyKm')"><button class="btn-counter" onclick="changeVal('emptyKm', 1)">+</button></div></div>
                     <div class="slider-container"><input type="range" id="slider-emptyKm" min="0" max="250" step="1" value="0" oninput="syncSliderToInput('emptyKm')"></div>
                 </div>
 
                 <div class="input-block">
-                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange" data-icon="car"></div><span class="input-label">Подача (км)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')"><button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button></div></div>
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange" data-icon="car"></div><span class="input-label">Подача (км)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('delivery', -0.1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="counter-value" id="inp-delivery" value="0.0" oninput="syncInputToSlider('delivery')"><button class="btn-counter" onclick="changeVal('delivery', 0.1)">+</button></div></div>
                     <div class="slider-container"><input type="range" id="slider-delivery" min="0" max="20" step="0.1" value="0.0" oninput="syncSliderToInput('delivery')"></div>
                 </div>
 
                 <div class="input-block" style="border-bottom:none;">
-                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-yellow" data-icon="zap"></div><span class="input-label">Коефіцієнт</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button><input type="number" enterkeyhint="done" step="0.1" class="counter-value" style="color:var(--accent-success)" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')"><button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button></div></div>
+                    <div class="input-header"><div class="icon-wrap"><div class="icon-box ib-yellow" data-icon="zap"></div><span class="input-label">Коефіцієнт</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('coef', -0.1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="counter-value" style="color:var(--accent-success)" id="inp-coef" value="1.0" oninput="syncInputToSlider('coef')"><button class="btn-counter" onclick="changeVal('coef', 0.1)">+</button></div></div>
                     <div class="quick-coef-container"><button class="quick-coef-btn" onclick="setQuickCoef(1.0)">1.0x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.2)">1.2x</button><button class="quick-coef-btn" onclick="setQuickCoef(1.5)">1.5x</button><button class="quick-coef-btn" onclick="setQuickCoef(2.0)">2.0x</button></div>
                     <div class="slider-container"><input type="range" id="slider-coef" min="1.0" max="4.0" step="0.1" value="1.0" oninput="syncSliderToInput('coef')"></div>
                 </div>
@@ -307,10 +307,10 @@
                 <button class="toggle-btn" id="toggle-extra-btn" onclick="toggleExtraParams()">⚙️ Показати додаткові налаштування</button>
                 
                 <div id="extra-params" style="display: none; margin-top: 4px; border-top: 1px solid var(--border-color); padding-top: 4px;">
-                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange" data-icon="clock"></div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
-                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-red" data-icon="pinplus"></div><span class="input-label">Дод. точки</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('stops', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')"><button class="btn-counter" onclick="changeVal('stops', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')"></div></div>
-                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-gray" data-icon="receipt"></div><span class="input-label">Витрати (₴)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')"><button class="btn-counter" onclick="changeVal('extraExp', 5)">+</button></div></div><div class="slider-container"><input type="range" id="slider-extraExp" min="0" max="200" step="5" value="0" oninput="syncSliderToInput('extraExp')"></div></div>
-                    <div class="input-block" style="border-bottom:none;"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-green" data-icon="trend"></div><span class="input-label">Доплата (Чайові)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')"><button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-orange" data-icon="clock"></div><span class="input-label">Очікування (хв)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('wait', -1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" class="counter-value" id="inp-wait" value="0" oninput="syncInputToSlider('wait')"><button class="btn-counter" onclick="changeVal('wait', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-wait" min="0" max="60" step="1" value="0" oninput="syncSliderToInput('wait')"></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-red" data-icon="pinplus"></div><span class="input-label">Дод. точки</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('stops', -1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" class="counter-value" id="inp-stops" value="0" oninput="syncInputToSlider('stops')"><button class="btn-counter" onclick="changeVal('stops', 1)">+</button></div></div><div class="slider-container"><input type="range" id="slider-stops" min="0" max="10" step="1" value="0" oninput="syncSliderToInput('stops')"></div></div>
+                    <div class="input-block"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-gray" data-icon="receipt"></div><span class="input-label">Витрати (₴)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('extraExp', -5)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" class="counter-value" id="inp-extraExp" value="0" oninput="syncInputToSlider('extraExp')"><button class="btn-counter" onclick="changeVal('extraExp', 5)">+</button></div></div><div class="slider-container"><input type="range" id="slider-extraExp" min="0" max="200" step="5" value="0" oninput="syncSliderToInput('extraExp')"></div></div>
+                    <div class="input-block" style="border-bottom:none;"><div class="input-header"><div class="icon-wrap"><div class="icon-box ib-green" data-icon="trend"></div><span class="input-label">Доплата (Чайові)</span></div><div class="counter"><button class="btn-counter" onclick="changeVal('clientBonus', -1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" class="counter-value" id="inp-clientBonus" value="0" oninput="syncInputToSlider('clientBonus')"><button class="btn-counter" onclick="changeVal('clientBonus', 1)">+</button></div></div>
                         <div class="quick-coef-container"><button class="quick-coef-btn" onclick="addTip(10)">+10 ₴</button><button class="quick-coef-btn" onclick="addTip(20)">+20 ₴</button><button class="quick-coef-btn" onclick="addTip(50)">+50 ₴</button><button class="quick-coef-btn btn-clear" onclick="clearTip()">✕</button></div>
                         <div class="slider-container"><input type="range" id="slider-clientBonus" min="0" max="100" step="1" value="0" oninput="syncSliderToInput('clientBonus')"></div>
                     </div>
@@ -355,9 +355,9 @@
         <div class="card">
             <div class="card-title">Програма лояльності</div>
             <div class="input-block" style="border-bottom:none; padding: 0;">
-                <div class="input-header" style="margin-bottom:8px;"><span>Виконано замовлень:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:8px;"><span>Цільовий план:</span><input type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
-                <div class="input-header" style="margin-bottom:8px;"><span>Залишилось днів:</span><div style="display:flex; gap:6px;"><button class="quick-coef-btn" style="padding:4px 8px; font-size:11px; flex: 0 0 auto;" onclick="openCalendar()">📅 Календар</button><input type="number" enterkeyhint="done" class="admin-input" style="width: 50px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Виконано замовлень:</span><input inputmode="decimal" type="number" enterkeyhint="done" class="admin-input" id="brand-done" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Цільовий план:</span><input inputmode="decimal" type="number" enterkeyhint="done" class="admin-input" id="brand-target" value="0" oninput="calcBranding()"></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Залишилось днів:</span><div style="display:flex; gap:6px;"><button class="quick-coef-btn" style="padding:4px 8px; font-size:11px; flex: 0 0 auto;" onclick="openCalendar()">📅 Календар</button><input inputmode="decimal" type="number" enterkeyhint="done" class="admin-input" style="width: 50px;" id="brand-days" value="0" oninput="calcBranding()"></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-progress"></div></div>
             <div class="stat-tile-grid" style="margin-top: 12px; margin-bottom: 0;">
@@ -389,8 +389,8 @@
                     <span>Ціль на сьогодні: <strong id="brand-daily-goal-val" style="font-size: 16px; color: var(--accent-blue);">0</strong> <span id="brand-daily-goal-auto-badge" style="font-size: 10px; color: var(--text-muted); font-weight: 700;">(авто)</span></span>
                     <button id="brand-daily-goal-reset-btn" onclick="resetDailyGoalToAuto()" style="display:none; background: none; border: none; color: var(--accent-blue); font-size: 11px; font-weight: 700; cursor: pointer; padding: 2px 6px;">↺ Авто</button>
                 </div>
-                <div class="input-header" style="margin-bottom:8px;"><span>Виконано сьогодні:</span><div class="counter"><button class="btn-counter" style="color:var(--accent-danger); font-size:14px;" onclick="resetDailyDone()">🔄</button><button class="btn-counter" onclick="changeDailyDone(-1)">-</button><input type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="manualDailyDoneInput()"><button class="btn-counter" onclick="changeDailyDone(1)">+</button></div></div>
-                <div class="input-header" style="margin-bottom:8px;"><span style="font-size: 12px; color: var(--text-muted);">Планова тривалість зміни:</span><div style="display:flex; align-items:center; gap:4px;"><input type="number" enterkeyhint="done" step="0.5" class="admin-input" style="width: 54px;" id="inp-planned-hours" value="10" oninput="plannedHoursInput()"><span style="font-size:12px; color:var(--text-muted);">год</span></div></div>
+                <div class="input-header" style="margin-bottom:8px;"><span>Виконано сьогодні:</span><div class="counter"><button class="btn-counter" style="color:var(--accent-danger); font-size:14px;" onclick="resetDailyDone()">🔄</button><button class="btn-counter" onclick="changeDailyDone(-1)">-</button><input inputmode="decimal" type="number" enterkeyhint="done" class="counter-value" id="inp-daily-done" value="0" oninput="manualDailyDoneInput()"><button class="btn-counter" onclick="changeDailyDone(1)">+</button></div></div>
+                <div class="input-header" style="margin-bottom:8px;"><span style="font-size: 12px; color: var(--text-muted);">Планова тривалість зміни:</span><div style="display:flex; align-items:center; gap:4px;"><input inputmode="decimal" type="number" enterkeyhint="done" step="0.5" class="admin-input" style="width: 54px;" id="inp-planned-hours" value="10" oninput="plannedHoursInput()"><span style="font-size:12px; color:var(--text-muted);">год</span></div></div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="brand-daily-progress" style="background: var(--accent-blue);"></div></div>
 
@@ -414,6 +414,7 @@
 
     <div id="page-cash" class="page">
         <button class="save-btn" id="btn-import" style="background: var(--accent-blue); margin-bottom: 8px; margin-top: 0; padding: 12px;" onclick="openQuickInputModal()">⚡ Швидкий ввід</button>
+        <button class="save-btn" style="background: #009688; margin-bottom: 8px; padding: 12px;" onclick="pasteFromClipboard()">📋 Вставити з буфера</button>
         <button class="save-btn" style="background: #9B59B6; margin-bottom: 8px; padding: 12px;" onclick="processScreenshot()">📸 Розпізнати чек (OCR)</button>
         <input type="file" id="screenshot-input" accept="image/*" multiple style="display:none" onchange="handleFile(event)">
 
@@ -470,8 +471,8 @@
 
         <div class="card">
             <div class="card-title" style="display:flex; align-items:center; gap:6px;"><span>📊</span> Дані з таксі-сервісу (вручну)</div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Час за замовленнями (хв):</span><input type="number" enterkeyhint="done" class="admin-input" id="inp-order-minutes" value="0" oninput="manualServiceStatsInput()"></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Неприйняті/скасовані (%):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="inp-cancel-pct" value="0" oninput="manualServiceStatsInput()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Час за замовленнями (хв):</span><input inputmode="decimal" type="number" enterkeyhint="done" class="admin-input" id="inp-order-minutes" value="0" oninput="manualServiceStatsInput()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Неприйняті/скасовані (%):</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="inp-cancel-pct" value="0" oninput="manualServiceStatsInput()"></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">Ці два показники додаток не рахує сам — впишіть їх зі статистики сервісу (Uklon/Bolt/Uber), щоб бачити повну картину дня в архіві.</div>
         </div>
         
@@ -549,18 +550,18 @@
             <div class="input-block" style="border:none;">
                 <div class="input-header" style="margin-bottom: 10px;">
                     <span style="font-weight: 600; font-size: 13px;">Хочу чистими (₴):</span>
-                    <input type="number" enterkeyhint="done" class="admin-input" style="width: 80px; border-color: var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
+                    <input inputmode="decimal" type="number" enterkeyhint="done" class="admin-input" style="width: 80px; border-color: var(--accent-success);" id="strat-target" value="2000" oninput="calcStrategy()">
                 </div>
                 <div class="input-header" style="margin-bottom: 4px;">
                     <span style="font-weight: 600; font-size: 13px;">Середня поїздка (км):</span>
-                    <input type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 80px;" id="strat-km" value="6.5" oninput="calcStrategy()">
+                    <input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" style="width: 80px;" id="strat-km" value="6.5" oninput="calcStrategy()">
                 </div>
                 <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;">
                     <button onclick="pullAvgKmFromArchive()" style="background: rgba(78,161,255,0.12); border:1px solid rgba(78,161,255,0.3); color: var(--accent-blue); border-radius: var(--radius-sm); padding: 4px 10px; font-size: 11px; font-weight: 700; cursor:pointer;">📊 Підтягнути з архіву</button>
                 </div>
                 <div class="input-header">
                     <span style="font-weight: 600; font-size: 13px;">Час 1 поїздки (хв):</span>
-                    <input type="number" enterkeyhint="done" step="1" class="admin-input" style="width: 80px;" id="strat-min" value="25" oninput="calcStrategy()">
+                    <input inputmode="decimal" type="number" enterkeyhint="done" step="1" class="admin-input" style="width: 80px;" id="strat-min" value="25" oninput="calcStrategy()">
                 </div>
             </div>
         </div>
@@ -589,12 +590,12 @@
             </div>
             <div id="fm-mode-badge" style="font-size: 11px; font-weight: 700; color: var(--accent-blue); background: rgba(78,161,255,0.1); border-radius: var(--radius-sm); padding: 6px 10px; margin-bottom: 10px;">🔗 Власне авто</div>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
-                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Мінімалка ₴</label><input type="number" class="admin-input" style="width:100%;" id="fm-minPrice" value="120" oninput="renderFinMatrix()"></div>
-                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Км мін.</label><input type="number" step="0.1" class="admin-input" style="width:100%;" id="fm-minKm" value="1.5" oninput="renderFinMatrix()"></div>
-                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Подача км</label><input type="number" step="0.1" class="admin-input" style="width:100%;" id="fm-deliveryKm" value="1.5" oninput="renderFinMatrix()"></div>
-                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Коефіцієнт</label><input type="number" step="0.1" class="admin-input" style="width:100%; color:var(--accent-success);" id="fm-coef" value="1" oninput="renderFinMatrix()"></div>
-                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Довжина км</label><input type="number" class="admin-input" style="width:100%;" id="fm-maxKm" value="15" oninput="renderFinMatrix()"></div>
-                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Поріг зел. ₴/км</label><input type="number" class="admin-input" style="width:100%;" id="fm-threshold" value="40" oninput="renderFinMatrix()"></div>
+                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Мінімалка ₴</label><input inputmode="decimal" type="number" class="admin-input" style="width:100%;" id="fm-minPrice" value="120" oninput="renderFinMatrix()"></div>
+                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Км мін.</label><input inputmode="decimal" type="number" step="0.1" class="admin-input" style="width:100%;" id="fm-minKm" value="1.5" oninput="renderFinMatrix()"></div>
+                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Подача км</label><input inputmode="decimal" type="number" step="0.1" class="admin-input" style="width:100%;" id="fm-deliveryKm" value="1.5" oninput="renderFinMatrix()"></div>
+                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Коефіцієнт</label><input inputmode="decimal" type="number" step="0.1" class="admin-input" style="width:100%; color:var(--accent-success);" id="fm-coef" value="1" oninput="renderFinMatrix()"></div>
+                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Довжина км</label><input inputmode="decimal" type="number" class="admin-input" style="width:100%;" id="fm-maxKm" value="15" oninput="renderFinMatrix()"></div>
+                <div><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Поріг зел. ₴/км</label><input inputmode="decimal" type="number" class="admin-input" style="width:100%;" id="fm-threshold" value="40" oninput="renderFinMatrix()"></div>
             </div>
             <div style="margin-bottom: 10px;"><label style="font-size:10.5px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Тарифи ₴/км (через кому)</label><input type="text" class="admin-input" style="width:100%; text-align:left; padding-left:10px;" id="fm-rates" value="20, 25, 30, 35, 45" oninput="renderFinMatrix()"></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height:1.4;">*Верхня цифра — тариф (брудними), нижня — чистий прибуток з урахуванням комісії й пального. Зелений фон — якщо чистими ₴/км ≥ поріг.</div>
@@ -607,18 +608,18 @@
     <div id="page-settings" class="page">
         <div class="card">
             <div class="card-title" style="display:flex; align-items:center; gap:6px;"><span>⛽</span> Витрати</div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Комісія (%):</span><input type="number" step="0.1" class="admin-input" id="set-comm" value="17" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Комісія (%):</span><input inputmode="decimal" type="number" step="0.1" class="admin-input" id="set-comm" value="17" oninput="autoSaveSettings()"></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Тип пального:</span><select class="admin-input" style="width:100px;" id="set-fuel-type" onchange="autoSaveSettings()"><option value="gas">Газ</option><option value="petrol">Бензин</option><option value="diesel">Дизель</option><option value="electro">Електро</option></select></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span id="set-fuel-cons-label" style="font-weight: 600; font-size: 13px;">Розхід (на 100км):</span><input type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="14" oninput="autoSaveSettings()"></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span id="set-fuel-price-label" style="font-weight: 600; font-size: 13px;">Ціна (₴):</span><input type="number" step="0.1" class="admin-input" id="set-fuel-price" value="41.9" oninput="autoSaveSettings()"></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Амортизація ТО (₴/км):</span><input type="number" step="0.1" class="admin-input" id="set-amort" value="0" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span id="set-fuel-cons-label" style="font-weight: 600; font-size: 13px;">Розхід (на 100км):</span><input inputmode="decimal" type="number" step="0.1" class="admin-input" id="set-fuel-cons" value="14" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span id="set-fuel-price-label" style="font-weight: 600; font-size: 13px;">Ціна (₴):</span><input inputmode="decimal" type="number" step="0.1" class="admin-input" id="set-fuel-price" value="41.9" oninput="autoSaveSettings()"></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Амортизація ТО (₴/км):</span><input inputmode="decimal" type="number" step="0.1" class="admin-input" id="set-amort" value="0" oninput="autoSaveSettings()"></div>
         </div>
 
         <div class="card">
             <div class="card-title" style="display:flex; align-items:center; gap:6px;"><span>🧑‍✈️</span> Режим роботи</div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Режим:</span><select class="admin-input" style="width:120px;" id="set-work-mode" onchange="toggleWorkModeInputs(); autoSaveSettings();"><option value="solo">Власне авто</option><option value="rent">Оренда (фікс)</option><option value="split">Парк (%)</option></select></div>
-            <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Сума плану (₴):</span><input type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()"></div>
-            <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Відсоток парку:</span><input type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()"></div>
+            <div id="box-set-rent" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Сума плану (₴):</span><input inputmode="decimal" type="number" class="admin-input" id="set-rent-val" value="30" oninput="autoSaveSettings()"></div>
+            <div id="box-set-split" style="display:none; justify-content:space-between; margin-bottom:8px; align-items: center;"><span style="font-weight: 600; font-size: 13px;">Відсоток парку:</span><input inputmode="decimal" type="number" class="admin-input" id="set-split-pct" value="10" oninput="autoSaveSettings()"></div>
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0 10px 4px;">
@@ -678,6 +679,18 @@
                 <strong>📊 АНАЛІЗ:</strong> Вкажіть скільки хочете чистими. Бот розрахує потрібний час і відніме всі комісії.
             </div>
             <button class="save-btn" style="margin-top:16px;" onclick="closeManual()">Зрозуміло</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="paste-fallback-modal">
+        <div class="modal-content" style="max-width: 360px;">
+            <div class="card-title" style="font-size: 14px; margin-bottom: 6px;">📋 Встав скопійований текст</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">Не вдалось прочитати буфер автоматично. Скопіюй текст замовлення з таксі-застосунку і встав тут вручну (довге натискання → Вставити).</div>
+            <textarea id="paste-fallback-text" rows="5" class="dlg-input" style="text-align:left; margin-top:0; resize: vertical;" placeholder="Наприклад: До сплати 245 ₴, 5.4 км..."></textarea>
+            <div class="dlg-btn-row" style="margin-top: 14px;">
+                <button class="reset-btn" style="flex:1;" onclick="closePasteFallbackModal()">Скасувати</button>
+                <button class="save-btn" style="flex:1; margin: 0;" onclick="confirmPasteFallback()">Розпізнати</button>
+            </div>
         </div>
     </div>
 
@@ -955,15 +968,62 @@
         // ==== ШВИДКИЙ ВВІД ====
         let quickInputPayment = 'cash';
 
-        function openQuickInputModal() {
+        function openQuickInputModal(prefill) {
             haptic();
             document.getElementById('quick-input-modal').style.display = 'flex';
+            if (prefill) {
+                document.getElementById('qi-gross').value = prefill.price > 0 ? prefill.price : '';
+                document.getElementById('qi-city').value = prefill.cityKm > 0 ? prefill.cityKm : '';
+                document.getElementById('qi-out').value = prefill.outKm > 0 ? prefill.outKm : '';
+                quickInputSetPayment(prefill.isCash === false ? 'card' : 'cash');
+            }
             setTimeout(() => {
                 document.getElementById('qi-gross').focus();
                 document.getElementById('qi-gross').select();
             }, 150);
         }
 
+        // ==== ВСТАВКА З БУФЕРА ОБМІНУ (швидше за OCR, без ручного вводу) ====
+        function parseTextForTripData(text) {
+            const clean = text.replace(/\n/g, ' ').replace(/,/g, '.');
+            const prices = [...clean.matchAll(/(\d{1,5}(?:\.\d{1,3})?)\s*(?:₴|грн|€|\$|uah|usd)/gi)]
+                            .map(m => parseFloat(m[1])).filter(p => p > 0 && p < 10000);
+            if (prices.length === 0) return null;
+            const targetPrice = Math.max(...prices);
+            const kmMatches = [...clean.matchAll(/(\d{1,4}(?:\.\d{1,2})?)\s*(?:км|km)/gi)].map(m => parseFloat(m[1]));
+            const isCash = !/картк|card/i.test(clean) || /готівк|cash/i.test(clean);
+            return { price: targetPrice, cityKm: kmMatches[0] || 0, outKm: kmMatches[1] || 0, isCash };
+        }
+
+        async function pasteFromClipboard() {
+            haptic();
+            try {
+                const text = await navigator.clipboard.readText();
+                if (!text || text.trim() === '') { openPasteFallbackModal(); return; }
+                const parsed = parseTextForTripData(text);
+                if (!parsed) { notify('У буфері не знайдено суми. Спробуй вставити текст вручну', 'error'); openPasteFallbackModal(); return; }
+                openQuickInputModal(parsed);
+                notify('Дані розпізнано з буфера — перевір і додай', 'success');
+            } catch (err) {
+                openPasteFallbackModal();
+            }
+        }
+
+        function openPasteFallbackModal() {
+            document.getElementById('paste-fallback-modal').style.display = 'flex';
+            document.getElementById('paste-fallback-text').value = '';
+            setTimeout(() => document.getElementById('paste-fallback-text').focus(), 150);
+        }
+        function closePasteFallbackModal() { haptic(); document.getElementById('paste-fallback-modal').style.display = 'none'; }
+        function confirmPasteFallback() {
+            haptic();
+            const text = document.getElementById('paste-fallback-text').value;
+            const parsed = parseTextForTripData(text);
+            closePasteFallbackModal();
+            if (!parsed) { notify('Не знайдено суми в тексті. Спробуй Швидкий ввід', 'error'); return; }
+            openQuickInputModal(parsed);
+            notify('Дані розпізнано — перевір і додай', 'success');
+        }
         function closeQuickInputModal() {
             haptic();
             document.getElementById('quick-input-modal').style.display = 'none';
@@ -1167,7 +1227,7 @@
                 dailyCashData.totalCash += price;
 
                 const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: price, net: netIncome, km: totalKm, pay: 'cash' });
+                dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: price, net: netIncome, km: totalKm, pay: 'cash', comm: commCost, fuel: fuelCost, extraExp: amortCost, rent: 0 });
 
                 goals.dailyDone += 1;
                 brandingData.done += 1;
@@ -1213,7 +1273,7 @@
                     dailyCashData.actualFuel += amount;
                     dailyCashData.net -= amount;
                     const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                    dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: '⛽ Заправка' });
+                    dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: '⛽ Заправка', comm: 0, fuel: 0, extraExp: 0, rent: 0, actualFuel: amount });
                     localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
                     updateCashPageUI();
                     notify('Заправку додано', 'success');
@@ -1241,7 +1301,7 @@
                     dailyCashData.extraExp += amount;
                     dailyCashData.net -= amount;
                     const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-                    dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: name });
+                    dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: 0, net: -amount, km: 0, pay: 'expense', name: name, comm: 0, fuel: 0, extraExp: amount, rent: 0 });
                     localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
                     updateCashPageUI();
                     notify('Витрату додано', 'success');
@@ -1596,7 +1656,7 @@
             dailyCashData.orders += 1; dailyCashData.gross += gross; dailyCashData.comm += comm; dailyCashData.fuel += fuel; dailyCashData.extraExp += (extraExp + amort); dailyCashData.rent += rentCost; dailyCashData.net += net; dailyCashData.totalKm += tripKm;
             if (currentPaymentMode === 'cash') dailyCashData.totalCash += gross; else dailyCashData.totalCard += gross;
             const timeStr = new Date().getHours().toString().padStart(2, '0') + ':' + new Date().getMinutes().toString().padStart(2, '0');
-            dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode });
+            dailyCashData.history.unshift({ id: Date.now(), time: timeStr, gross: gross, net: net, km: tripKm, pay: currentPaymentMode, comm: comm, fuel: fuel, extraExp: (extraExp + amort), rent: rentCost });
             localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
             
             // СИНХРОНІЗАЦІЯ ЦІЛЕЙ (ДЕНЬ + МІСЯЦЬ)
@@ -1611,8 +1671,8 @@
             if(ok) {
                 const idx = dailyCashData.history.findIndex(t => t.id === id);
                 if(idx > -1) {
-                    const t = dailyCashData.history[idx]; dailyCashData.orders = Math.max(0, dailyCashData.orders - 1); dailyCashData.gross -= t.gross; dailyCashData.comm -= t.comm; dailyCashData.fuel -= t.fuel; dailyCashData.extraExp -= t.extraExp; dailyCashData.rent -= t.rent; dailyCashData.net -= t.net; dailyCashData.totalKm = Math.max(0, dailyCashData.totalKm - t.km);
-                    if(t.pay === 'cash') dailyCashData.totalCash -= t.gross; else dailyCashData.totalCard -= t.gross;
+                    const t = dailyCashData.history[idx]; dailyCashData.orders = Math.max(0, dailyCashData.orders - (t.pay !== 'expense' ? 1 : 0)); dailyCashData.gross -= (t.gross || 0); dailyCashData.comm -= (t.comm || 0); dailyCashData.fuel -= (t.fuel || 0); dailyCashData.extraExp -= (t.extraExp || 0); dailyCashData.rent -= (t.rent || 0); dailyCashData.net -= (t.net || 0); dailyCashData.totalKm = Math.max(0, dailyCashData.totalKm - (t.km || 0)); dailyCashData.actualFuel = Math.max(0, (dailyCashData.actualFuel || 0) - (t.actualFuel || 0));
+                    if(t.pay === 'cash') dailyCashData.totalCash -= (t.gross || 0); else if(t.pay === 'card') dailyCashData.totalCard -= (t.gross || 0);
                     dailyCashData.history.splice(idx, 1); localStorage.setItem('taxi_daily_cash_data_v22', JSON.stringify(dailyCashData));
                     
                     if(t.pay !== 'expense') {
@@ -1938,7 +1998,7 @@
             const list = document.getElementById('cash-history-list'); const empty = document.getElementById('cash-empty-state'); list.innerHTML = '';
             if(dailyCashData.history.length > 0) {
                 empty.style.display = 'none'; dailyCashData.history.forEach(trip => { 
-                    if(trip.pay === 'expense') { list.innerHTML += `<div class="history-item"><div style="color:var(--accent-danger)"><strong>💸 ${trip.name}</strong><br><span style="font-size: 11px;">Витрати</span></div><div style="text-align: right;"><strong style="font-size: 16px; color: var(--accent-danger);">${trip.net} ₴</strong><br><button class="del-btn" style="width:24px; height:24px; font-size:12px; display:inline-block; margin-top:4px;" onclick="removeTrip(${trip.id})">✕</button></div></div>`; } 
+                    if(trip.pay === 'expense') { list.innerHTML += `<div class="history-item"><div style="color:var(--accent-danger)"><strong>💸 ${trip.name}</strong><br><span style="font-size: 11px;">Витрати</span></div><div style="text-align: right; display:flex; align-items:center; gap:8px;"><strong style="font-size: 16px; color: var(--accent-danger);">${trip.net} ₴</strong><button class="del-btn" onclick="removeTrip(${trip.id})">✕</button></div></div>`; } 
                     else { list.innerHTML += `<div class="history-item"><div><strong>${trip.time} ${trip.pay === 'cash' ? '💵' : '💳'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">Пробіг: ${trip.km.toFixed(1)} км | Оборот: ${fmt(trip.gross)} ₴</span></div><div style="text-align: right; margin-right: 12px;"><strong style="font-size: 16px; color: var(--uklon-green);">+${fmt(trip.net)} ₴</strong></div><button class="del-btn" onclick="removeTrip(${trip.id})">✕</button></div>`; }
                 });
             } else { empty.style.display = 'block'; }
@@ -2072,12 +2132,12 @@
                             <button onclick="openEditTariffModal('${key}')" style="flex:1; background: var(--bg-color); border:1px solid var(--border-color); border-radius: var(--radius-sm); padding:8px; font-size:12px; font-weight:700; color: var(--text-color); cursor:pointer;">✏️ Назва / іконка</button>
                             ${canDelete ? `<button onclick="deleteTariff('${key}')" style="background: rgba(255,92,87,0.12); border:1px solid rgba(255,92,87,0.3); border-radius: var(--radius-sm); padding:8px 12px; font-size:12px; font-weight:700; color: var(--accent-danger); cursor:pointer;">🗑</button>` : ''}
                         </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Мінімалка (₴):</span><input inputmode="decimal" type="number" enterkeyhint="done" class="admin-input" id="set-minPrice-${key}" value="${t.minPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Включено км:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-minKm-${key}" value="${t.minKm}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км місто (₴):</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmCity-${key}" value="${t.perKmCity}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
                     </div>
                 </div>`;
             });
