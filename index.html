@@ -2264,7 +2264,44 @@
         };
         function applyIcons() { document.querySelectorAll('[data-icon]').forEach(el => { const key = el.getAttribute('data-icon'); if (ICONS[key] && el.innerHTML.trim() === '') el.innerHTML = ICONS[key]; }); }
 
+        // ==== ПАНЕЛЬ "ГОТОВО" ДЛЯ ЦИФРОВОЇ КЛАВІАТУРИ (в iOS немає кнопки закриття у decimal-клавіатурі) ====
+        const KB_FIELD_SELECTOR = 'input[type="number"], input[type="text"], input[type="tel"], textarea';
+        function positionKeyboardBar() {
+            const bar = document.getElementById('kb-done-bar');
+            if (!bar || bar.style.display === 'none') return;
+            if (window.visualViewport) {
+                const offset = window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop;
+                bar.style.bottom = Math.max(0, offset) + 'px';
+            }
+        }
+        function dismissKeyboard() {
+            if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+            document.getElementById('kb-done-bar').style.display = 'none';
+        }
+        document.addEventListener('focusin', (e) => {
+            if (e.target.matches && e.target.matches(KB_FIELD_SELECTOR)) {
+                document.getElementById('kb-done-bar').style.display = 'flex';
+                setTimeout(positionKeyboardBar, 50);
+            }
+        });
+        document.addEventListener('focusout', (e) => {
+            if (e.target.matches && e.target.matches(KB_FIELD_SELECTOR)) {
+                setTimeout(() => {
+                    const active = document.activeElement;
+                    if (!active || !active.matches || !active.matches(KB_FIELD_SELECTOR)) {
+                        document.getElementById('kb-done-bar').style.display = 'none';
+                    }
+                }, 100);
+            }
+        });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', positionKeyboardBar);
+            window.visualViewport.addEventListener('scroll', positionKeyboardBar);
+        }
+
         initApp();
-    </script>
+    </script>    <div id="kb-done-bar" style="display:none; position:fixed; left:0; right:0; bottom:0; z-index:9999; background:var(--card-bg); border-top:1px solid var(--border-color); padding:8px 12px; justify-content:flex-end; box-shadow: 0 -4px 14px rgba(0,0,0,0.15);">
+        <button onclick="dismissKeyboard()" style="background:var(--accent-color); color:#06231C; border:none; border-radius:8px; padding:9px 20px; font-weight:800; font-size:14px; cursor:pointer;">✓ Готово</button>
+    </div>
 </body>
 </html>
