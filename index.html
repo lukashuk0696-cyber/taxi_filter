@@ -341,6 +341,7 @@
                 <div class="result-row" id="row-res-extraExp"><span>Витрати:</span><span id="res-extraExp">0 ₴</span></div>
                 <div class="result-row" id="row-res-rent"><span>Оренда:</span><span id="res-rent">0 ₴</span></div>
                 <div class="result-row" style="margin-top: 10px; align-items: center;"><span style="font-weight: 600;">Ефективність:</span><span class="eff-badge eff-green" id="res-eff">0 ₴/км</span></div>
+                <div style="text-align: right; font-size: 11px; font-weight: 700; margin-top: 2px;" id="res-eff-diff"></div>
             </div>
             
             <div class="pay-switch">
@@ -766,7 +767,7 @@
         let shiftTimerInterval = null;
         let offDays = [];
 
-        const defaultTariffs = { standard: { name: 'Стандарт', icon: 'car-econ', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 }, comfort: { name: 'Комфорт', icon: 'car-comfort', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 }, business: { name: 'Бізнес', icon: 'car-business', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }, intercity: { name: 'За місто', icon: 'route', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 } };
+        const defaultTariffs = { standard: { name: 'Стандарт', icon: 'car-econ', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10, minProfitPerKm: 40 }, comfort: { name: 'Комфорт', icon: 'car-comfort', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15, minProfitPerKm: 40 }, business: { name: 'Бізнес', icon: 'car-business', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15, minProfitPerKm: 40 }, intercity: { name: 'За місто', icon: 'route', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15, minProfitPerKm: 40 } };
         const defaultExpenses = { comm: 17, type: 'gas', cons: 14, price: 41.9, amort: 0, workMode: 'solo', rentVal: 30, splitPct: 10 };
         const defaultGoals = { dailyGoal: 12, dailyDone: 0, dailyGoalOverride: null, plannedShiftHours: 10, date: new Date().toLocaleDateString() };
         const defaultBranding = { done: 0, target: 700, days: 0 };
@@ -886,6 +887,7 @@
 
         function loadAllData(res) {
             tariffs = safeParse(res.taxi_tariffs_v22, defaultTariffs); Object.keys(defaultTariffs).forEach(k => { if (!tariffs[k]) tariffs[k] = defaultTariffs[k]; });
+            Object.keys(tariffs).forEach(k => { if (tariffs[k].minProfitPerKm === undefined) tariffs[k].minProfitPerKm = 40; });
             const legacyIconMap = { standard: '🚕', comfort: '🛋️', business: '🎩', intercity: '🛣️' };
             Object.keys(legacyIconMap).forEach(k => { if (tariffs[k] && tariffs[k].icon === legacyIconMap[k]) tariffs[k].icon = defaultTariffs[k].icon; });
             expenses = safeParse(res.taxi_expenses_v22, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
@@ -1536,7 +1538,16 @@
             document.getElementById('res-amort').innerText = `-${fmt(amortCost)} ₴`;
             if (extraExp > 0) { document.getElementById('row-res-extraExp').style.display = 'flex'; document.getElementById('res-extraExp').innerText = `-${fmt(extraExp)} ₴`; } else { document.getElementById('row-res-extraExp').style.display = 'none'; }
             if (rentCost > 0) { document.getElementById('row-res-rent').style.display = 'flex'; document.getElementById('res-rent').innerText = `-${fmt(rentCost)} ₴`; } else { document.getElementById('row-res-rent').style.display = 'none'; }
-            const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= 12) effBadge.classList.add('eff-green'); else if (effPrice >= 8) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
+            const minProfitPerKm = tariffs[currentClass]?.minProfitPerKm ?? 40;
+            const effBadge = document.getElementById('res-eff'); effBadge.innerText = `${effPrice.toFixed(2)} ₴/км`; effBadge.className = 'eff-badge'; if (effPrice >= minProfitPerKm) effBadge.classList.add('eff-green'); else if (effPrice >= minProfitPerKm * 0.7) effBadge.classList.add('eff-yellow'); else effBadge.classList.add('eff-red');
+            const effDiff = effPrice - minProfitPerKm;
+            const effDiffEl = document.getElementById('res-eff-diff');
+            if (totalKm > 0) {
+                effDiffEl.style.color = effDiff >= 0 ? 'var(--uklon-green)' : 'var(--accent-danger)';
+                effDiffEl.innerText = effDiff >= 0 ? `+${effDiff.toFixed(1)} ₴/км понад мінімум (${minProfitPerKm} ₴/км)` : `${effDiff.toFixed(1)} ₴/км до мінімуму (${minProfitPerKm} ₴/км)`;
+            } else {
+                effDiffEl.innerText = '';
+            }
         }
 
         // ==== ФІНАНСОВА МАТРИЦЯ ====
@@ -2161,6 +2172,7 @@
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">1 км за містом:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perKmOut-${key}" value="${t.perKmOut}" oninput="autoSaveSettings()"></div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;"><span style="font-size: 13px;">Хв очікування:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="0.1" class="admin-input" id="set-perMin-${key}" value="${t.perMin}" oninput="autoSaveSettings()"></div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:0; align-items:center;"><span style="font-size: 13px;">Ціна 1 дод. точки:</span><input inputmode="decimal" type="number" enterkeyhint="done" step="1" class="admin-input" id="set-stopPrice-${key}" value="${t.stopPrice}" oninput="autoSaveSettings()"></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0; margin-top:8px; align-items:center; padding-top:8px; border-top:1px dashed var(--border-color);"><span style="font-size: 13px; color: var(--uklon-green); font-weight:700;">📊 Мін. рентабельність (₴/км):</span><input inputmode="decimal" type="number" enterkeyhint="done" step="1" class="admin-input" id="set-minProfitPerKm-${key}" value="${t.minProfitPerKm ?? 40}" oninput="autoSaveSettings()"></div>
                     </div>
                 </div>`;
             });
@@ -2216,7 +2228,7 @@
 
             if (tariffModalMode === 'add') {
                 const key = 'custom_' + Date.now();
-                tariffs[key] = { name: name, icon: tariffModalSelectedIcon, minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 };
+                tariffs[key] = { name: name, icon: tariffModalSelectedIcon, minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10, minProfitPerKm: 40 };
                 localStorage.setItem('taxi_tariffs_v22', JSON.stringify(tariffs));
                 renderSettings(); renderCarSelector();
                 notify(`Тариф «${name}» додано`, 'success');
@@ -2244,7 +2256,7 @@
         }
 
         function autoSaveSettings() {
-            Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; });
+            Object.keys(tariffs).forEach(key => { tariffs[key].minPrice = parseFloat(document.getElementById(`set-minPrice-${key}`).value) || 0; tariffs[key].minKm = parseFloat(document.getElementById(`set-minKm-${key}`).value) || 0; tariffs[key].perKmCity = parseFloat(document.getElementById(`set-perKmCity-${key}`).value) || 0; tariffs[key].perKmOut = parseFloat(document.getElementById(`set-perKmOut-${key}`).value) || 0; tariffs[key].perMin = parseFloat(document.getElementById(`set-perMin-${key}`).value) || 0; tariffs[key].stopPrice = parseInt(document.getElementById(`set-stopPrice-${key}`).value) || 0; tariffs[key].minProfitPerKm = parseFloat(document.getElementById(`set-minProfitPerKm-${key}`).value) || 40; });
             expenses.comm = parseFloat(document.getElementById('set-comm').value) || 0; expenses.type = document.getElementById('set-fuel-type').value; expenses.cons = parseFloat(document.getElementById('set-fuel-cons').value) || 0; expenses.price = parseFloat(document.getElementById('set-fuel-price').value) || 0; expenses.amort = parseFloat(document.getElementById('set-amort').value) || 0; expenses.workMode = document.getElementById('set-work-mode').value; expenses.rentVal = parseFloat(document.getElementById('set-rent-val').value) || 0; expenses.splitPct = parseFloat(document.getElementById('set-split-pct').value) || 0;
             clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_tariffs_v22', JSON.stringify(tariffs)); localStorage.setItem('taxi_expenses_v22', JSON.stringify(expenses)); }, 500); updateFuelLabels(expenses.type); recalc();
         }
