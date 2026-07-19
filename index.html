@@ -768,7 +768,7 @@
 
         const defaultTariffs = { standard: { name: 'Стандарт', icon: 'car-econ', minPrice: 90, minKm: 1.6, perKmCity: 16.30, perKmOut: 16.80, perMin: 3.50, stopPrice: 10 }, comfort: { name: 'Комфорт', icon: 'car-comfort', minPrice: 95, minKm: 1.6, perKmCity: 17.80, perKmOut: 18.50, perMin: 4.00, stopPrice: 15 }, business: { name: 'Бізнес', icon: 'car-business', minPrice: 112, minKm: 1.8, perKmCity: 18.60, perKmOut: 19.20, perMin: 5.00, stopPrice: 15 }, intercity: { name: 'За місто', icon: 'route', minPrice: 100, minKm: 1.5, perKmCity: 30.00, perKmOut: 40.00, perMin: 4.00, stopPrice: 15 } };
         const defaultExpenses = { comm: 17, type: 'gas', cons: 14, price: 41.9, amort: 0, workMode: 'solo', rentVal: 30, splitPct: 10 };
-        const defaultGoals = { dailyGoal: 12, dailyDone: 0, dailyGoalOverride: null, plannedShiftHours: 10 };
+        const defaultGoals = { dailyGoal: 12, dailyDone: 0, dailyGoalOverride: null, plannedShiftHours: 10, date: new Date().toLocaleDateString() };
         const defaultBranding = { done: 0, target: 700, days: 0 };
         const defaultDailyCash = { orders: 0, gross: 0, comm: 0, fuel: 0, extraExp: 0, rent: 0, net: 0, totalKm: 0, date: new Date().toLocaleDateString(), history: [], totalCash: 0, totalCard: 0, shiftActive: false, shiftStart: null, shiftHours: 0, actualFuel: 0, cancelPct: 0, orderMinutes: 0 };
 
@@ -890,6 +890,15 @@
             Object.keys(legacyIconMap).forEach(k => { if (tariffs[k] && tariffs[k].icon === legacyIconMap[k]) tariffs[k].icon = defaultTariffs[k].icon; });
             expenses = safeParse(res.taxi_expenses_v22, defaultExpenses); Object.keys(defaultExpenses).forEach(k => { if (expenses[k] === undefined) expenses[k] = defaultExpenses[k]; });
             goals = safeParse(res.taxi_goals_v22, defaultGoals);
+            // Автоматичне обнулення "сьогодні" опівночі — незалежно від Каси й незалежно від місячного підсумку.
+            // Місячний прогрес (brandingData.done) НЕ чіпаємо: вчорашні поїздки залишаються зарахованими в план.
+            const todayStr = new Date().toLocaleDateString();
+            if (goals.date !== todayStr) {
+                goals.dailyDone = 0;
+                goals.dailyGoalOverride = null;
+                goals.date = todayStr;
+                localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
+            }
             brandingData = safeParse(res.taxi_branding_v22, defaultBranding);
             offDays = safeParse(res.taxi_offdays_v22, []);
             loadArchive();
@@ -2008,9 +2017,9 @@
         }
 
         function shareReport() { haptic(); let hours = dailyCashData.shiftActive ? (dailyCashData.shiftHours || 0.01) : (parseFloat(document.getElementById('cash-hours')?.value) || 1); if (hours <= 0) hours = 0.01; const fuelLine = (dailyCashData.actualFuel || 0) > 0 ? `\n⛽ Заправки (факт): -${fmt(dailyCashData.actualFuel)} ₴` : ''; const text = `Підсумок зміни (${dailyCashData.date}):\n\n✅ Замовлень: ${dailyCashData.orders}\n⏱ Годин: ${hours.toFixed(1)}\n📍 Пробіг: ${dailyCashData.totalKm.toFixed(1)} км\n\n💵 Оборот: ${fmt(dailyCashData.gross)} ₴\n (Гот: ${fmt(dailyCashData.totalCash)} | Карта: ${fmt(dailyCashData.totalCard)})\n🟡 Комісія: -${fmt(dailyCashData.comm)} ₴\n⛽ Пальне (розрахунок): -${fmt(dailyCashData.fuel)} ₴${fuelLine}\n\n💰 ЧИСТИМИ: ${fmt(dailyCashData.net)} ₴\n📈 Ставка: ${fmt(dailyCashData.net / hours)} ₴/год\n\n🏦 Баланс (Винен парку): ${fmt(dailyCashData.totalCash - dailyCashData.comm - dailyCashData.rent)} ₴`; if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { notify('Звіт скопійовано', 'success'); }); } }
-        async function resetDailyCashClick() { haptic(); const ok = await confirmDialog('Поточні дані каси буде збережено в архів та обнулено.', 'Завершити зміну?', 'Завершити'); if (ok) { clearInterval(shiftTimerInterval); saveShiftToArchive(); createNewShift(); goals.dailyDone = 0; document.getElementById('inp-daily-done').value = 0; localStorage.setItem('taxi_goals_v22', JSON.stringify(goals)); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerText = "▶ Почати зміну"; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; document.querySelector('.shift-timer-box')?.classList.remove('is-active'); notify('Зміна завершена, архів оновлено', 'success'); } }
+        async function resetDailyCashClick() { haptic(); const ok = await confirmDialog('Поточні дані каси буде збережено в архів та обнулено.', 'Завершити зміну?', 'Завершити'); if (ok) { clearInterval(shiftTimerInterval); saveShiftToArchive(); createNewShift(); updateCashPageUI(); calcBranding(); document.getElementById('btn-shift-toggle').innerText = "▶ Почати зміну"; document.getElementById('btn-shift-toggle').className = "btn-shift start"; document.getElementById('shift-timer-display').innerText = "00:00"; document.querySelector('.shift-timer-box')?.classList.remove('is-active'); notify('Зміна завершена, архів оновлено', 'success'); } }
         function setDaysToEndOfMonth() { haptic(); const now = new Date(); const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1; document.getElementById('brand-days').value = daysLeft; calcBranding(); }
-        async function resetDailyDone() { haptic(); const ok = await confirmDialog("Прогрес по сьогоднішній цілі буде скинуто.", "Скинути прогрес цілі?", "Скинути"); if(ok) { const prevDaily = parseInt(document.getElementById('inp-daily-done').value) || 0; let monthDone = (parseInt(document.getElementById('brand-done').value) || 0) - prevDaily; if(monthDone<0) monthDone=0; document.getElementById('brand-done').value = monthDone; document.getElementById('inp-daily-done').value = 0; calcBranding(); } }
+        async function resetDailyDone() { haptic(); const ok = await confirmDialog("Це для виправлення помилки в сьогоднішньому лічильнику (день сам обнуляється опівночі автоматично). Відняти сьогоднішні від місячного підсумку і обнулити?", "Виправити сьогоднішній лічильник?", "Скинути"); if(ok) { const prevDaily = parseInt(document.getElementById('inp-daily-done').value) || 0; let monthDone = (parseInt(document.getElementById('brand-done').value) || 0) - prevDaily; if(monthDone<0) monthDone=0; document.getElementById('brand-done').value = monthDone; document.getElementById('inp-daily-done').value = 0; calcBranding(); } }
         function manualDailyDoneInput() { clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { const newDaily = parseInt(document.getElementById('inp-daily-done').value) || 0; const delta = newDaily - (goals.dailyDone || 0); let monthDone = (parseInt(document.getElementById('brand-done').value) || 0) + delta; if(monthDone<0) monthDone=0; document.getElementById('brand-done').value = monthDone; calcBranding(); }, 500); }
         function changeDailyDone(step) { haptic(); const input = document.getElementById('inp-daily-done'); let val = (parseInt(input.value) || 0) + step; if(val<0) val=0; input.value = val; let monthDone = parseInt(document.getElementById('brand-done').value) || 0; monthDone += step; if(monthDone<0) monthDone=0; document.getElementById('brand-done').value = monthDone; calcBranding(); }
 
@@ -2023,7 +2032,19 @@
             }, 400);
         }
 
+        function checkGoalsDayRollover() {
+            const todayStr = new Date().toLocaleDateString();
+            if (goals.date !== todayStr) {
+                goals.dailyDone = 0; goals.dailyGoalOverride = null; goals.date = todayStr;
+                localStorage.setItem('taxi_goals_v22', JSON.stringify(goals));
+                const inpDaily = document.getElementById('inp-daily-done'); if (inpDaily) inpDaily.value = 0;
+                return true;
+            }
+            return false;
+        }
+
         function calcBranding() {
+            checkGoalsDayRollover();
             brandingData.done = parseInt(document.getElementById('brand-done').value) || 0; brandingData.target = parseInt(document.getElementById('brand-target').value) || 1; brandingData.days = parseInt(document.getElementById('brand-days').value) || 1;
             clearTimeout(saveSettingsTimeout); saveSettingsTimeout = setTimeout(() => { localStorage.setItem('taxi_branding_v22', JSON.stringify(brandingData)); }, 500);
             let pct = Math.min(100, (brandingData.done / brandingData.target) * 100); let remain = Math.max(0, brandingData.target - brandingData.done); let perDayReq = remain / brandingData.days;
